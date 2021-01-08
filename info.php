@@ -9,9 +9,7 @@ return [
     'authoremail' => 'deatil@github.com',
     'version' => '1.0.0',
     'adaptation' => '2.0.2',
-    'sign' => '6935ade1070a6ce945db58129347758b',
     
-    // 模块地址，自定义插件包时填写
     'path' => '',
     
     // 依赖模块
@@ -23,6 +21,7 @@ return [
     'setting' => [],
     
     // 事件
+    /*
     'event' => [
         'InitLcmsRoute' => [
             'name' => 'HttpRun',
@@ -39,18 +38,10 @@ return [
             'status' => 1,
         ],
     ],
+    */
     
     // 菜单
-    'menus' => '',
-    
-    // 数据表
-    'tables' => [
-        'lakecms_category',
-        'lakecms_tags',
-        'lakecms_tags_content',
-        'lakecms_model',
-        'lakecms_model_field',
-    ],
+    'menus' => include __DIR__ . '/menu.php',
     
     // 安装演示数据
     'demo' => 1,

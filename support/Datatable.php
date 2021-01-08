@@ -9,49 +9,64 @@ use think\facade\Db;
  */
 class Datatable 
 {
-    protected $table; /*数据库操作的表*/
-    protected $fields             = []; /*数据库操作字段*/
-    protected $charset            = 'utf8mb4'; /*数据库操作字符集*/
-    public $prefix                = ''; /*数据库操作表前缀*/
-    protected $model_table_prefix = ''; /*模型默认创建的表前缀*/
-    protected $engine_type        = 'MyISAM'; /*数据库引擎*/
-    protected $key                = 'id'; /*数据库主键*/
-    public $sql                   = ''; /*最后生成的sql语句*/
-    protected $typeAlist          = [
-        "text"     => "VARCHAR",
-        "string"   => "VARCHAR",
-        "password" => "VARCHAR",
-        "textarea" => "TEXT",
-        "bool"     => "INT",
-        "select"   => "INT",
-        "num"      => "INT",
-        "decimal"  => "DECIMAL",
-        "tags"     => "VARCHAR",
-        "datetime" => "INT",
-        "date"     => "INT",
-        "editor"   => "TEXT",
-        "Ueditor"  => "TEXT",
-        "bind"     => "INT",
-        "image"    => "CHAR",
-        "images"   => "CHAR",
-        "attach"   => "CHAR",
+    /* 数据库操作的表 */
+    protected $table; 
+    
+    /* 数据库操作字段 */
+    protected $fields = []; 
+    
+    /* 数据库操作字符集 */
+    protected $charset = 'utf8mb4'; 
+    
+    /* 数据库操作表前缀 */
+    protected $prefix = ''; 
+    
+    /* 数据库引擎 */
+    protected $engineType = 'MyISAM'; 
+    
+    /* 数据库主键 */
+    protected $key = 'id'; 
+    
+    /* 最后生成的sql语句 */
+    public $sql = ''; 
+    
+    /* 类型列表 */
+    protected $types        = [
+        "TINYINT",
+        "INT",
+        "SMALLINT",
+        "MEDIUMINT",
+        "DATETIME",
+        "CHAR",
+        "VARCHAR",
+        "TINYTEXT",
+        "TEXT",
+        "MEDIUMTEXT",
+        "LONGTEXT",
+        "NUMERIC",
+        "DECIMAL",
+        "ENUM",
+        "TINYBLOB",
+        "BLOB",
+        "MEDIUMBLOB",
+        "LONGBLOB",
     ];
 
     /**
-     * 初始化数据库信息
+     * 设置表前缀
      */
-    public function __construct($model_table_prefix = '', $prefix = '') 
+    public function setPrefix($prefix = '') 
     {
-        $this->model_table_prefix = $model_table_prefix;
         $this->prefix = $prefix;
+        return $this;
     }
 
     /**
      * 设置表名
      */
-    public function setTable($table = '', $prefix = true) 
+    public function setTable($table = '') 
     {
-        $this->table = $this->getTablename($table, $prefix);
+        $this->table = $this->getTablename($table);
         return $this;
     }
 
@@ -69,16 +84,21 @@ class Datatable
      */
     public function setEngineType($type = 'MyISAM') 
     {
-        $this->engine_type = $type;
+        $this->engineType = $type;
         return $this;
     }
 
     /**
      * 设置字段类型列表
      */
-    public function setTypeAlist($typeAlist = []) 
+    public function setTypes($types = [], $force = false) 
     {
-        $this->typeAlist = $typeAlist;
+        if ($force) {
+            $this->types = $types;
+        } else {
+            $this->types = array_merge($this->types, $types);
+        }
+        
         return $this;
     }
 
@@ -90,7 +110,7 @@ class Datatable
         $comment = '', 
         $pk = 'id', 
         $charset = null, 
-        $engine_type = null
+        $engineType = null
     ) {
         $this->setTable($table);
 
@@ -99,8 +119,8 @@ class Datatable
         $primary = $pk ? "PRIMARY KEY (`" . $pk . "`)" : '';
         $generatesql = $sql . ',';
         
-        if (empty($engine_type)) {
-            $engine_type = $this->engine_type;
+        if (empty($engineType)) {
+            $engineType = $this->engineType;
         }
         
         if (empty($charset)) {
@@ -110,7 +130,7 @@ class Datatable
         $create = "CREATE TABLE IF NOT EXISTS `" . $this->table . "`("
             . $generatesql
             . $primary
-            . ") ENGINE=" . $engine_type . " AUTO_INCREMENT=1 DEFAULT CHARSET=" . $charset . " ROW_FORMAT=DYNAMIC COMMENT='" . $comment . "';";
+            . ") ENGINE=" . $engineType . " AUTO_INCREMENT=1 DEFAULT CHARSET=" . $charset . " ROW_FORMAT=DYNAMIC COMMENT='" . $comment . "';";
         
         $this->sql = $create;
         
@@ -154,11 +174,15 @@ class Datatable
      */
     public function columField($table, $attr = [], $action = 'add') 
     {
-        $field_attr['table'] = $table ? $this->getTablename($table, true) : $this->table;
+        $field_attr['table'] = $table ? $this->getTablename($table) : $this->table;
         $field_attr['name'] = $attr['name'];
 
         if (empty($attr['define'])) {
-            $field_attr['type']  = $attr['type'] ? $this->typeAlist[$attr['type']] : 'varchar';
+            if (! in_array($attr['type'], $this->types)) {
+                $field_attr['type'] = $attr['type'];
+            } else {
+                $field_attr['type'] = 'VARCHAR';
+            }
             
             if (intval($attr['length']) && $attr['length']) {
                 $field_attr['length'] = "(" . $attr['length'] . ")";
@@ -196,7 +220,7 @@ class Datatable
      */
     public function deleteField($table, $field) 
     {
-        $table = $table ? $this->getTablename($table, true) : $this->table;
+        $table = $table ? $this->getTablename($table) : $this->table;
         $this->sql = "ALTER TABLE `$table` DROP `$field`";
         return $this;
     }
@@ -208,7 +232,7 @@ class Datatable
      */
     public function deleteTable($table) 
     {
-        $table = $table ? $this->getTablename($table, true) : $this->table;
+        $table = $table ? $this->getTablename($table) : $this->table;
         $this->sql = "DROP TABLE IF EXISTS `$table`";
         return $this;
     }
@@ -221,8 +245,8 @@ class Datatable
     public function updateTableName($old_table = '', $new_table = '') 
     {
         if (!empty($old_table) && !empty($new_table)) {
-            $old_table = $this->getTablename($old_table, true);
-            $new_table = $this->getTablename($new_table, true);
+            $old_table = $this->getTablename($old_table);
+            $new_table = $this->getTablename($new_table);
             $this->sql = "RENAME TABLE  `".$old_table."` TO  `".$new_table."` ;";
         }
         
@@ -265,13 +289,9 @@ class Datatable
      * @var $table 要获取名字的表名
      * @var $prefix 获取表前缀, 默认为不获取 false
      */
-    public function getTablename($table, $prefix = false) 
+    public function getTablename($table) 
     {
-        if (false == $prefix) {
-            $this->table = $this->model_table_prefix . $table;
-        } else {
-            $this->table = $this->prefix . $this->model_table_prefix . $table;
-        }
+        $this->table = $this->prefix . $table;
         return $this->table;
     }
 
@@ -293,7 +313,7 @@ class Datatable
             //匹配_
             $patten = "/_+/";
             if (!preg_match_all($patten, $table)) {
-                $table = $this->prefix . $this->model_table_prefix . $table;
+                $table = $this->prefix . $table;
             } else {
                 //匹配是否包含表前缀，如果是 那么就是手动输入
                 $patten = "/$this->prefix/";
@@ -314,7 +334,7 @@ class Datatable
     public function checkTable($table) 
     {
         //获取表名
-        $this->table = $this->getTablename($table, true);
+        $this->table = $this->getTablename($table);
         $result = Db::execute("SHOW TABLES LIKE '%$this->table%'");
         return $result;
     }
@@ -327,7 +347,7 @@ class Datatable
     public function checkField($table, $field) 
     {
         // 检查字段是否存在
-        $table = $this->getTablename($table, true);
+        $table = $this->getTablename($table);
         if (! Db::query("Describe $table $field")) {
             return false;
         }

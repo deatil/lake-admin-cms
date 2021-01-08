@@ -51,52 +51,52 @@ CREATE TABLE `pre__lakecms_category` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='栏目表';
 
-DROP TABLE IF EXISTS `pre__lakecms_model`;
-CREATE TABLE `pre__lakecms_model` (
+DROP TABLE IF EXISTS `lake_lakecms_model`;
+CREATE TABLE `lake_lakecms_model` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `title` char(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '名称',
-  `tablename` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '表名',
+  `tablename` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '表名',
   `comment` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '描述',
   `sort` int(10) NOT NULL DEFAULT '100' COMMENT '排序',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态，1-启用',
   `edit_time` int(10) NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `edit_ip` varchar(50) DEFAULT '' COMMENT '更新IP',
+  `edit_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '更新IP',
   `add_time` int(10) DEFAULT '0' COMMENT '添加时间',
-  `add_ip` varchar(50) DEFAULT '' COMMENT '添加IP',
+  `add_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '添加IP',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='模型列表';
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='模型列表';
 
-DROP TABLE IF EXISTS `pre__lakecms_model_field`;
-CREATE TABLE `pre__lakecms_model_field` (
+DROP TABLE IF EXISTS `lake_lakecms_model_field`;
+CREATE TABLE `lake_lakecms_model_field` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `modelid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '模型ID',
+  `tablename` varchar(50) CHARACTER SET utf8mb4 NOT NULL DEFAULT '0' COMMENT '表名',
   `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '字段名',
   `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '字段注释',
-  `length` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '字段定义',
+  `length` varchar(100) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT '字段长度',
   `type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '数据类型',
-  `extra` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '参数',
-  `value` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '字段默认值',
-  `remark` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '备注',
-  `validate_type` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `validate_rule` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `validate_time` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `error_info` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `show_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '显示类型，1-全部显示，2-添加显示，3-编辑显示，4-都不显示',
-  `is_filter` tinyint(1) NOT NULL DEFAULT '0' COMMENT '筛选字段',
-  `is_must` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否必填',
-  `is_show` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否显示',
-  `is_list_show` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否列表显示',
-  `is_detail_show` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否详情显示',
-  `is_view` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否阅读量',
-  `sort` int(10) NOT NULL DEFAULT '100' COMMENT '排序',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态，1-启用',
-  `edit_time` int(10) NOT NULL DEFAULT '0' COMMENT '更新时间',
-  `edit_ip` varchar(50) DEFAULT '' COMMENT '更新IP',
+  `options` varchar(255) CHARACTER SET utf8mb4 DEFAULT '' COMMENT '参数',
+  `value` varchar(100) CHARACTER SET utf8mb4 DEFAULT '' COMMENT '字段默认值',
+  `remark` varchar(100) CHARACTER SET utf8mb4 DEFAULT '' COMMENT '备注',
+  `validate_type` varchar(25) CHARACTER SET utf8mb4 DEFAULT '' COMMENT '验证类型',
+  `validate_rule` varchar(255) CHARACTER SET utf8mb4 DEFAULT '' COMMENT '验证规则',
+  `validate_time` varchar(10) CHARACTER SET utf8mb4 DEFAULT 'create' COMMENT '验证事件，create-添加，update-编辑，或者自定义',
+  `error_info` varchar(100) CHARACTER SET utf8mb4 DEFAULT '',
+  `show_type` tinyint(1) DEFAULT '1' COMMENT '显示类型，1-全部显示，2-添加显示，3-编辑显示，4-都不显示',
+  `is_filter` tinyint(1) DEFAULT '0' COMMENT '筛选字段',
+  `is_must` tinyint(1) DEFAULT '0' COMMENT '是否必填',
+  `is_show` tinyint(1) DEFAULT '0' COMMENT '是否显示',
+  `is_list_show` tinyint(1) DEFAULT '0' COMMENT '是否列表显示',
+  `is_detail_show` tinyint(1) DEFAULT '0' COMMENT '是否详情显示',
+  `is_view` tinyint(1) DEFAULT '0' COMMENT '是否阅读量',
+  `sort` int(10) DEFAULT '100' COMMENT '排序',
+  `status` tinyint(1) DEFAULT '0' COMMENT '状态，1-启用',
+  `edit_time` int(10) DEFAULT '0' COMMENT '更新时间',
+  `edit_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '更新IP',
   `add_time` int(10) DEFAULT '0' COMMENT '添加时间',
-  `add_ip` varchar(50) DEFAULT '' COMMENT '添加IP',
+  `add_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '添加IP',
   PRIMARY KEY (`id`),
-  KEY `name` (`name`,`modelid`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='模型字段列表';
+  KEY `name` (`name`,`tablename`)
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='模型字段列表';
 
 DROP TABLE IF EXISTS `pre__lakecms_tags`;
 CREATE TABLE `pre__lakecms_tags` (

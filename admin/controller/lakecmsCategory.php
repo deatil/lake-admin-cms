@@ -14,7 +14,7 @@ use app\lakecms\model\Category as CategoryModel;
  * @create 2020-1-7
  * @author deatil
  */
-class lakecmsCategory extends LakecmsBase 
+class LakecmsCategory extends LakecmsBase 
 {    
     /**
      * 列表

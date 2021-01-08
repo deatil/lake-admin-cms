@@ -5,6 +5,7 @@ namespace app\lakecms\service;
 use think\facade\Db;
 
 use app\lakecms\support\Datatable;
+use app\lakecms\model\ModelField as ModelFieldModel;
 
 /**
  * 模型
@@ -14,6 +15,27 @@ use app\lakecms\support\Datatable;
  */
 class Model 
 {
+    /* 类型转换列表 */
+    protected $types = [
+        "text"     => "VARCHAR",
+        "string"   => "VARCHAR",
+        "password" => "VARCHAR",
+        "textarea" => "TEXT",
+        "bool"     => "INT",
+        "select"   => "INT",
+        "num"      => "INT",
+        "decimal"  => "DECIMAL",
+        "tags"     => "VARCHAR",
+        "datetime" => "INT",
+        "date"     => "INT",
+        "editor"   => "TEXT",
+        "Ueditor"  => "TEXT",
+        "bind"     => "INT",
+        "image"    => "INT",
+        "images"   => "VARCHAR",
+        "attach"   => "VARCHAR",
+    ];
+    
     /**
      * 创建
      */
@@ -29,8 +51,9 @@ class Model
     {
         $modelPrefix = 'lakecms_ext_';
         $prefix = app()->db->connect()->getConfig('prefix');
-        $datatable = new Datatable($modelPrefix, $prefix);
-        $datatable->setCharset('utf8mb4')
+        $datatable = new Datatable();
+        $datatable->setPrefix($prefix . $modelPrefix)
+            ->setCharset('utf8mb4')
             ->setEngineType('MyISAM');
         
         return $datatable;
@@ -78,6 +101,11 @@ class Model
         $result = $this->getDatatable()
             ->deleteTable($table)
             ->query();
+        
+        // 删除表字段
+        ModelFieldModel::where([
+            'tablename' => $table,
+        ])->delete();
             
         return $result;
     }
@@ -85,21 +113,47 @@ class Model
     /**
      * 添加字段
      */
-    public function createField($table, $attr = []) {
+    public function createField($table, $attr = []) 
+    {
+        if (isset($attr['type'])) {
+            $newAttr = $attr;
+            $newAttr['type'] = $this->types[$attr['type']] ?: $attr['type'];
+        }
+        
+        $fieldCheck = $this->getDatatable()->checkField($table, $newAttr['name']);
+        if ($fieldCheck !== false) {
+            return false;
+        }
+        
         $result = $this->getDatatable()
-            ->columField($table, $attr, 'add')
+            ->columField($table, $newAttr, 'add')
             ->query();
-            
+        
+        // 添加
+        $attr['tablename'] = $table;
+        ModelFieldModel::create($attr);
+        
         return $result;
     }
     
     /**
      * 更新字段
      */
-    public function changeField($table, $attr = []) {
+    public function changeField($table, $attr = []) 
+    {
+        if (isset($attr['type'])) {
+            $newAttr = $attr;
+            $newAttr['type'] = $this->types[$attr['type']] ?: $attr['type'];
+        }
+        
         $result = $this->getDatatable()
-            ->columField($table, $attr, 'change')
+            ->columField($table, $newAttr, 'change')
             ->query();
+        
+        // 更新
+        ModelFieldModel::where([
+            'tablename' => $table,
+        ])->update($attr);
             
         return $result;
     }
@@ -112,6 +166,12 @@ class Model
         $result = $this->getDatatable()
             ->deleteField($table, $field)
             ->query();
+        
+        // 删除
+        ModelFieldModel::where([
+            'tablename' => $table,
+            'name' => $field,
+        ])->delete();
             
         return $result;
     }
@@ -177,6 +237,7 @@ class Model
                 'value'=> '',
             ],
         ];
+        
         foreach ($attrs as $attr) {
             $this->createField($table, $attr);
         }

@@ -3,8 +3,10 @@
 namespace app\admin\controller;
 
 use Lake\TTree;
+use Lake\Admin\Model\FieldType as FieldTypeModel;
 
 use app\lakecms\service\Datatable;
+use app\lakecms\model\Model as ModelModel;
 use app\lakecms\model\ModelField as ModelFieldModel;
 
 /**
@@ -13,7 +15,7 @@ use app\lakecms\model\ModelField as ModelFieldModel;
  * @create 2020-1-7
  * @author deatil
  */
-class lakecmsField extends LakecmsBase 
+class LakecmsField extends LakecmsBase 
 {    
     /**
      * 列表
@@ -26,7 +28,7 @@ class lakecmsField extends LakecmsBase
             $map = $this->buildparams();
             
             $data = ModelFieldModel::where($map)
-                ->order("id DESC")
+                ->order("sort ASC, id ASC")
                 ->page($page, $limit)
                 ->select()
                 ->toArray();
@@ -40,36 +42,19 @@ class lakecmsField extends LakecmsBase
             ];
             return json($result);
         } else {
-            return $this->fetch();
-        }
-    }
-
-    /**
-     * 结构列表
-     */
-    public function tree() 
-    {
-        if ($this->request->isAjax()) {
-            $result = ModelFieldModel::order([
-                    'sort' => 'ASC', 
-                    'id' => 'ASC',
-                ])
-                ->select()
-                ->toArray();
-
-            $TTree = new TTree();
-            $menuTree = $TTree->withData($result)->buildArray(0);
-            $list = $TTree->buildFormatList($menuTree, 'title');
-            $total = count($list);
+            $table = $this->request->param('table/s');
             
-            $result = [
-                "code" => 0, 
-                "count" => $total, 
-                "data" => $list
-            ];
+            // 模型详情
+            $model = ModelModel::where([
+                'tablename' => $table,
+            ])->find();
 
-            return json($result);
-        } else {
+            $data = [
+                'tablename' => $table,
+                'model' => $model,
+            ];
+            $this->assign($data);
+            
             return $this->fetch();
         }
     }
@@ -81,31 +66,24 @@ class lakecmsField extends LakecmsBase
     {
         if (request()->isPost()) {
             $data = request()->post();
-            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Category.add');
+            $validate = $this->validate($data, '\\app\\lakecms\\validate\\ModelField.add');
             if (true !== $validate) {
                 return $this->error($validate);
             }
             
-            $result = ModelFieldModel::insert($data);
+            $result = ModelFieldModel::create($data);
             if (false === $result) {
                 return $this->error('添加失败！');
             }
             
             return $this->success('添加成功！');
         } else {
-            $parentid = $this->request->param('parentid', 0);
+            $table = $this->request->param('table/s');
+            $this->assign("tablename", $table);
             
-            $parents = ModelFieldModel::order([
-                'sort', 
-                'id' => 'ASC',
-            ])->select()->toArray();
-            
-            $TTree = new TTree();
-            $parentTree = $TTree->withData($parents)->buildArray(0);
-            $parents = $TTree->buildFormatList($parentTree, 'title');
-            
-            $this->assign("parentid", $parentid);
-            $this->assign("parents", $parents);
+            $fieldType = FieldTypeModel::order('listorder')
+                ->column('name,title,default_define,ifoption,ifstring');
+            $this->assign("fieldType", $fieldType);
             
             return $this->fetch();
         }
@@ -118,7 +96,7 @@ class lakecmsField extends LakecmsBase
     {
         if (request()->isPost()) {
             $data = request()->post();
-            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Category.edit');
+            $validate = $this->validate($data, '\\app\\lakecms\\validate\\ModelField.edit');
             if (true !== $validate) {
                 return $this->error($validate);
             }
@@ -154,32 +132,13 @@ class lakecmsField extends LakecmsBase
             ])->find();
             $this->assign("info", $info);
             
-            $parentid = $info['parentid'];
+            // 模型信息
+            $table = $this->request->param('table/s');
+            $this->assign("tablename", $table);
             
-            $parents = ModelFieldModel::order([
-                'sort', 
-                'id' => 'ASC',
-            ])->select()->toArray();
-            
-            $TTree = new TTree();
-            
-            $childsId = $TTree->getListChildsId($parents, $info['id']);
-            $childsId[] = $info['id'];
-            
-            $newParents = [];
-            foreach ($parents as $r) {
-                if (in_array($r['id'], $childsId)) {
-                    continue;
-                }
-                
-                $newParents[] = $r;
-            }
-            
-            $parentTree = $TTree->withData($newParents)->buildArray(0);
-            $parents = $TTree->buildFormatList($parentTree, 'title');
-            
-            $this->assign("parentid", $parentid);
-            $this->assign("parents", $parents);
+            $fieldType = FieldTypeModel::order('listorder')
+                ->column('name,title,default_define,ifoption,ifstring');
+            $this->assign("fieldType", $fieldType);
             
             return $this->fetch();
         }
@@ -204,13 +163,6 @@ class lakecmsField extends LakecmsBase
         ])->find();
         if (empty($data)) {
             return $this->error('数据不存在！');
-        }
-        
-        $children = ModelFieldModel::where([
-            'parentid' => $id,
-        ])->count();
-        if ($children > 0) {
-            return $this->error('当前导航数据还有子导航，暂不能删除！');
         }
         
         $result = ModelFieldModel::where([

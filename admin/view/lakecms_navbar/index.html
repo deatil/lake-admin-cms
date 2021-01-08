@@ -49,10 +49,12 @@
 {/block}
 {block name="script"}
 <script>
-layui.use('table', function() {
+layui.use(['table', 'notice'], function() {
     var table = layui.table,
         $ = layui.$,
+        notice = layui.notice
         form = layui.form;
+        
     table.render({
         elem: '#table',
         toolbar: '#toolbar',
@@ -62,7 +64,7 @@ layui.use('table', function() {
                 { field: 'id', width: 80, title: '#', align: "center" },
                 { field: 'title', width:180, title: '标题' },
                 { field: 'url', title: '链接' },
-                { field: 'sort', width:80, title: '排序', align: "center" },
+                { field: 'sort', width:80, title: '排序', align: "center", edit: 'text' },
                 { field: 'create_time', width:180, title: '创建时间', templet: '#createTimeTpl' },
                 { field: 'status', width: 100, title: '状态', align: "center", templet: '#statusTpl', unresize: true },
                 { fixed: 'right', title: '操作', width: 130, templet: '#actionTpl' }
@@ -82,6 +84,21 @@ layui.use('table', function() {
             }
         })
     });
+    
+    // 监听单元格编辑
+    table.on('edit(table)', function(obj) {
+        var value = obj.value,
+            data = obj.data;
+        $.post('{:url("sort")}', { 'id': data.id, 'value': value }, function(data) {
+            if (data.code == 1) {
+                notice.success(data.msg);
+            } else {
+                notice.warning(data.msg);
+            }
+
+        })
+    });
+
 });
 </script>
 {/block}

@@ -22,7 +22,7 @@ class Model extends Validate
     // 定义验证提示
     protected $message = [
         'title.require' => '模型名称不得为空',
-        'title.chsAlphaNum' => '模型名称只能为只能是汉字、字母和下划线',
+        'title.chsAlphaNum' => '模型名称只能为只能是汉字、字母、数字和下划线',
         'title.max' => '模型名称最大长度为30',
         'tablename.require' => '表键名不得为空',
         'tablename.unique' => '表键名已经存在',

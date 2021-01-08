@@ -13,7 +13,7 @@ use app\lakecms\model\Model as ModelModel;
  * @create 2020-1-7
  * @author deatil
  */
-class lakecmsModel extends LakecmsBase 
+class LakecmsModel extends LakecmsBase 
 {    
     /**
      * 列表
@@ -56,7 +56,7 @@ class lakecmsModel extends LakecmsBase
                 return $this->error($validate);
             }
             
-            $result = ModelModel::insert($data);
+            $result = ModelModel::create($data);
             if (false === $result) {
                 return $this->error('添加失败！');
             }

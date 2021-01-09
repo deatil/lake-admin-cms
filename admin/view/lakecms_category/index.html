@@ -36,6 +36,7 @@
     </div>
 </script>
 <script type="text/html" id="actionTpl">
+    <a href='{:url("setting")}?id={{ d.id }}' class="layui-btn layui-btn-xs layui-btn-normal layui-iframe" title="栏目设置【{{ d.title }}】">设置</a>
     <a href='{:url("edit")}?id={{ d.id }}' class="layui-btn layui-btn-xs layui-iframe" title="编辑栏目【{{ d.title }}】">编辑</a>
     <a href='{:url("delete")}?id={{ d.id }}' class="layui-btn layui-btn-danger layui-btn-xs layui-tr-del">删除</a>
 </script>
@@ -73,7 +74,7 @@ layui.use(['table', 'notice'], function() {
                 { field: 'sort', width:80, title: '排序', align: "center", edit: 'text' },
                 { field: 'create_time', width:180, title: '创建时间', templet: '#createTimeTpl' },
                 { field: 'status', width: 100, title: '状态', align: "center", templet: '#statusTpl', unresize: true },
-                { fixed: 'right', title: '操作', width: 130, templet: '#actionTpl' }
+                { fixed: 'right', title: '操作', width: 180, templet: '#actionTpl' }
             ]
         ]
     });

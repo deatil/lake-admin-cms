@@ -1,6 +1,6 @@
 <?php
 
-namespace app\lcms\model;
+namespace app\lakecms\model;
 
 use think\Model;
 

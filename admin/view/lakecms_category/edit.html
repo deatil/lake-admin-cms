@@ -25,6 +25,37 @@
             
             <div class="layui-form-item">
                 <label class="layui-form-label">
+                    所属模型
+                    &nbsp;<font color="red">*</font>
+                </label>
+                <div class="layui-input-block w500">
+                    <select name="modelid" disabled>
+                        <option value=""></option>
+                        {volist name="models" id="vo"}
+                            <option value="{$vo.id}" {if $vo['id'] == $info['modelid']}selected="selected"{/if}>{$vo.title}</option>
+                        {/volist}
+                    </select>
+                </div>
+                <div class="layui-input-block">
+                    <div class="layui-form-mid layui-word-aux">选择一个模型绑定到栏目</div>
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    栏目标识
+                    &nbsp;<font color="red">*</font>
+                </label>
+                <div class="layui-input-block w500">
+                    <input type="text" name="name" value="{$info.name}" lay-verify="required" autocomplete="off" placeholder="栏目标识" class="layui-input">
+                </div>
+                <div class="layui-input-block">
+                    <div class="layui-form-mid layui-word-aux">填写字母、数字、下划线及其组合</div>
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">
                     标题
                     &nbsp;<font color="red">*</font>
                 </label>
@@ -38,37 +69,36 @@
             
             <div class="layui-form-item">
                 <label class="layui-form-label">
-                    链接地址
-                    &nbsp;<font color="red">*</font>
+                    关键字
                 </label>
                 <div class="layui-input-block w500">
-                    <input type="text" name="url" value="{$info.url}" autocomplete="off" placeholder="链接地址" class="layui-input">
+                    <input type="text" name="keywords" value="{$info.keywords}" autocomplete="off" placeholder="关键字" class="layui-input">
                 </div>
                 <div class="layui-input-block">
-                    <div class="layui-form-mid layui-word-aux">栏目的链接地址</div>
+                    <div class="layui-form-mid layui-word-aux">栏目的关键字，半角逗号隔开</div>
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">描述</label>
+                <div class="layui-input-inline w500">
+                    <textarea name="description" placeholder="栏目的相关描述" class="layui-textarea">{$info.description}</textarea>
                 </div>
             </div>
             
             <div class="layui-form-item">
                 <label class="layui-form-label">
-                    跳转方式
+                    栏目类型
                     &nbsp;<font color="red">*</font>
                 </label>
                 <div class="layui-input-block w500">
-                    <select name="target" lay-verify="required">
-                        <option value="_self" {if $info['target'] == '_self'}selected="selected"{/if}>当前页面</option>
-                        <option value="_blank" {if $info['target'] == '_blank'}selected="selected"{/if}>跳出页面</option>
+                    <select name="type" disabled>
+                        <option value="1" {if $info.type==1}checked{/if}>列表</option>
+                        <option value="2" {if $info.type==2}checked{/if}>单页</option>
                     </select>
                 </div>
                 <div class="layui-input-block">
-                    <div class="layui-form-mid layui-word-aux">栏目链接的跳转方式，目前为两种</div>
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <label class="layui-form-label">描述</label>
-                <div class="layui-input-inline w500">
-                    <textarea name="description" placeholder="栏目的相关描述" class="layui-textarea">{$info.description}</textarea>
+                    <div class="layui-form-mid layui-word-aux">栏目的类型，目前为 列表和单页 两种</div>
                 </div>
             </div>
             

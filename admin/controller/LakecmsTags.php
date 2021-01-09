@@ -2,18 +2,15 @@
 
 namespace app\admin\controller;
 
-use Lake\TTree as Tree;
-
-use app\lakecms\service\Datatable;
-use app\lakecms\model\Navbar as NavbarModel;
+use app\lakecms\model\Tags as TagsModel;
 
 /**
- * 导航
+ * 标签
  *
- * @create 2020-1-7
+ * @create 2020-1-10
  * @author deatil
  */
-class LakecmsNavbar extends LakecmsBase 
+class LakecmsTags extends LakecmsBase 
 {    
     /**
      * 列表
@@ -25,12 +22,12 @@ class LakecmsNavbar extends LakecmsBase
             $page = $this->request->param('page/d', 1);
             $map = $this->buildparams();
             
-            $data = NavbarModel::where($map)
+            $data = TagsModel::where($map)
                 ->order("id DESC")
                 ->page($page, $limit)
                 ->select()
                 ->toArray();
-            $total = NavbarModel::where($map)
+            $total = TagsModel::where($map)
                 ->count();
 
             $result = [
@@ -45,68 +42,25 @@ class LakecmsNavbar extends LakecmsBase
     }
 
     /**
-     * 结构列表
-     */
-    public function tree() 
-    {
-        if ($this->request->isAjax()) {
-            $result = NavbarModel::order([
-                    'sort' => 'ASC', 
-                    'id' => 'ASC',
-                ])
-                ->select()
-                ->toArray();
-
-            $Tree = new Tree();
-            $menuTree = $Tree->withData($result)->buildArray(0);
-            $list = $Tree->buildFormatList($menuTree, 'title');
-            $total = count($list);
-            
-            $result = [
-                "code" => 0, 
-                "count" => $total, 
-                "data" => $list
-            ];
-
-            return json($result);
-        } else {
-            return $this->fetch();
-        }
-    }
-
-    /**
      * 添加
      */
     public function add() 
     {
         if (request()->isPost()) {
             $data = request()->post();
-            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Navbar.add');
+            
+            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Tags.add');
             if (true !== $validate) {
                 return $this->error($validate);
             }
             
-            $result = NavbarModel::create($data);
+            $result = TagsModel::create($data);
             if (false === $result) {
                 return $this->error('添加失败！');
             }
             
             return $this->success('添加成功！');
         } else {
-            $parentid = $this->request->param('parentid', 0);
-            
-            $parents = NavbarModel::order([
-                'sort', 
-                'id' => 'ASC',
-            ])->select()->toArray();
-            
-            $Tree = new Tree();
-            $parenTree = $Tree->withData($parents)->buildArray(0);
-            $parents = $Tree->buildFormatList($parenTree, 'title');
-            
-            $this->assign("parentid", $parentid);
-            $this->assign("parents", $parents);
-            
             return $this->fetch();
         }
     }
@@ -119,7 +73,7 @@ class LakecmsNavbar extends LakecmsBase
         if (request()->isPost()) {
             $data = request()->post();
             
-            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Navbar.edit');
+            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Tags.edit');
             if (true !== $validate) {
                 return $this->error($validate);
             }
@@ -129,14 +83,14 @@ class LakecmsNavbar extends LakecmsBase
                 return $this->error('ID错误');
             }
             
-            $info = NavbarModel::where([
+            $info = TagsModel::where([
                 'id' => $id,
             ])->find();
             if (empty($info)) {
                 return $this->error('数据不存在');
             }
             
-            $result = NavbarModel::where([
+            $result = TagsModel::where([
                     'id' => $id,
                 ])
                 ->update($data);
@@ -148,37 +102,10 @@ class LakecmsNavbar extends LakecmsBase
         } else {
             $id = request()->get('id');
             
-            $info = NavbarModel::where([
+            $info = TagsModel::where([
                 'id' => $id,
             ])->find();
             $this->assign("info", $info);
-            
-            $parentid = $info['parentid'];
-            
-            $parents = NavbarModel::order([
-                'sort', 
-                'id' => 'ASC',
-            ])->select()->toArray();
-            
-            $Tree = new Tree();
-            
-            $childsId = $Tree->getListChildsId($parents, $info['id']);
-            $childsId[] = $info['id'];
-            
-            $newParents = [];
-            foreach ($parents as $r) {
-                if (in_array($r['id'], $childsId)) {
-                    continue;
-                }
-                
-                $newParents[] = $r;
-            }
-            
-            $parenTree = $Tree->withData($newParents)->buildArray(0);
-            $parents = $Tree->buildFormatList($parenTree, 'title');
-            
-            $this->assign("parentid", $parentid);
-            $this->assign("parents", $parents);
             
             return $this->fetch();
         }
@@ -198,21 +125,14 @@ class LakecmsNavbar extends LakecmsBase
             return $this->error("非法操作！");
         }
         
-        $data = NavbarModel::where([
+        $data = TagsModel::where([
             'id' => $id,
         ])->find();
         if (empty($data)) {
             return $this->error('数据不存在！');
         }
         
-        $children = NavbarModel::where([
-            'parentid' => $id,
-        ])->count();
-        if ($children > 0) {
-            return $this->error('当前导航数据还有子导航，暂不能删除！');
-        }
-        
-        $result = NavbarModel::where([
+        $result = TagsModel::where([
             'id' => $id,
         ])->delete();
         if (false === $result) {
@@ -238,7 +158,7 @@ class LakecmsNavbar extends LakecmsBase
         
         $status = input('status', '0', 'trim,intval');
 
-        $result = NavbarModel::where([
+        $result = TagsModel::where([
                 'id' => $id,
             ])
             ->update([
@@ -267,7 +187,7 @@ class LakecmsNavbar extends LakecmsBase
         
         $sort = $this->request->param('value/d', 100);
         
-        $result = NavbarModel::where([
+        $result = TagsModel::where([
             'id' => $id,
         ])->update([
             'sort' => $sort,

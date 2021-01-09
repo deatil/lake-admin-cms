@@ -37,7 +37,7 @@ class ModelTemplate
     /**
      * 列表
      */
-    public function index($path = null)
+    public function indexs($path = null)
     {
         return $this->formatTemplates($path, 'index*');
     }
@@ -45,7 +45,7 @@ class ModelTemplate
     /**
      * 详情
      */
-    public function detail($path = null)
+    public function details($path = null)
     {
         return $this->formatTemplates($path, 'detail*');
     }
@@ -53,7 +53,7 @@ class ModelTemplate
     /**
      * 单页
      */
-    public function page($path = null)
+    public function pages($path = null)
     {
         return $this->formatTemplates($path, 'page*');
     }
@@ -76,9 +76,10 @@ class ModelTemplate
         }
         
         $templates = glob(rtrim($path, '/') . DIRECTORY_SEPARATOR . $string);
+            
         $newTemplates = collect($templates)->map(function ($item) use($path) {
             return substr($item, strlen($path) + 1);
-        });
+        })->toArray();
         
         return $newTemplates;
     }

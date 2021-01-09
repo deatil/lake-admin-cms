@@ -2,8 +2,9 @@
 
 namespace app\admin\controller;
 
-use Lake\TTree;
+use Lake\TTree as Tree;
 
+use app\lakecms\service\ModelTemplate;
 use app\lakecms\model\Model as ModelModel;
 use app\lakecms\model\Category as CategoryModel;
 
@@ -59,9 +60,9 @@ class LakecmsCategory extends LakecmsBase
                 ->select()
                 ->toArray();
 
-            $TTree = new TTree();
-            $menuTree = $TTree->withData($result)->buildArray(0);
-            $list = $TTree->buildFormatList($menuTree, 'title');
+            $Tree = new Tree();
+            $menuTree = $Tree->withData($result)->buildArray(0);
+            $list = $Tree->buildFormatList($menuTree, 'title');
             $total = count($list);
             
             $result = [
@@ -88,7 +89,7 @@ class LakecmsCategory extends LakecmsBase
                 return $this->error($validate);
             }
             
-            $result = CategoryModel::insert($data);
+            $result = CategoryModel::create($data);
             if (false === $result) {
                 return $this->error('添加失败！');
             }
@@ -102,9 +103,9 @@ class LakecmsCategory extends LakecmsBase
                 'id' => 'ASC',
             ])->select()->toArray();
             
-            $TTree = new TTree();
-            $parentTree = $TTree->withData($parents)->buildArray(0);
-            $parents = $TTree->buildFormatList($parentTree, 'title');
+            $Tree = new Tree();
+            $parenTree = $Tree->withData($parents)->buildArray(0);
+            $parents = $Tree->buildFormatList($parenTree, 'title');
             
             $this->assign("parentid", $parentid);
             $this->assign("parents", $parents);
@@ -131,6 +132,7 @@ class LakecmsCategory extends LakecmsBase
     {
         if (request()->isPost()) {
             $data = request()->post();
+            
             $validate = $this->validate($data, '\\app\\lakecms\\validate\\Category.edit');
             if (true !== $validate) {
                 return $this->error($validate);
@@ -147,8 +149,6 @@ class LakecmsCategory extends LakecmsBase
             if (empty($info)) {
                 return $this->error('表单不存在');
             }
-            
-            $data = request()->post();
             
             $result = CategoryModel::where([
                     'id' => $id,
@@ -174,9 +174,9 @@ class LakecmsCategory extends LakecmsBase
                 'id' => 'ASC',
             ])->select()->toArray();
             
-            $TTree = new TTree();
+            $Tree = new Tree();
             
-            $childsId = $TTree->getListChildsId($parents, $info['id']);
+            $childsId = $Tree->getListChildsId($parents, $info['id']);
             $childsId[] = $info['id'];
             
             $newParents = [];
@@ -188,11 +188,75 @@ class LakecmsCategory extends LakecmsBase
                 $newParents[] = $r;
             }
             
-            $parentTree = $TTree->withData($newParents)->buildArray(0);
-            $parents = $TTree->buildFormatList($parentTree, 'title');
+            $parenTree = $Tree->withData($newParents)->buildArray(0);
+            $parents = $Tree->buildFormatList($parenTree, 'title');
             
             $this->assign("parentid", $parentid);
             $this->assign("parents", $parents);
+            
+            $models = ModelModel::where([
+                    ['status', '=', 1],
+                ])
+                ->order([
+                    'sort', 
+                    'id' => 'ASC',
+                ])
+                ->select()
+                ->toArray();
+            $this->assign("models", $models);
+            
+            return $this->fetch();
+        }
+    }
+
+    /**
+     * 设置
+     */
+    public function setting() 
+    {
+        if (request()->isPost()) {
+            $data = request()->post();
+            
+            $id = request()->post('id');
+            if (empty($id)) {
+                return $this->error('ID错误');
+            }
+            
+            $info = CategoryModel::where([
+                'id' => $id,
+            ])->find();
+            if (empty($info)) {
+                return $this->error('表单不存在');
+            }
+            
+            $result = CategoryModel::where([
+                    'id' => $id,
+                ])
+                ->update($data);
+            if (false === $result) {
+                return $this->error('设置失败！');
+            }
+            
+            return $this->success('设置成功！');
+        } else {
+            $id = request()->get('id');
+            
+            $info = CategoryModel::where([
+                'id' => $id,
+            ])->find();
+            $this->assign("info", $info);
+            
+            // 模版列表
+            $modelTemplate = (new ModelTemplate)->withPath(lakecms_theme_path());
+            $indexs = $modelTemplate->indexs();
+            $details = $modelTemplate->details();
+            $pages = $modelTemplate->pages();
+            
+            $this->assign("template", [
+                'indexs' => $indexs,
+                'details' => $details,
+                'pages' => $pages,
+            ]);
             
             return $this->fetch();
         }

@@ -38,7 +38,7 @@ function lakecms_template_path($path = '') {
  * 获取配置
  */
 function lakecms_theme_path() {
-    $theme = lakecms_config('web_theme');
+    $theme = lakecms_config('web_theme', 'default');
     
     $path = lakecms_template_path($theme);
     

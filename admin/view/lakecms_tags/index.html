@@ -2,7 +2,7 @@
 
 {block name="main"}
 <div class="layui-card">
-    <div class="layui-card-header layui-bg-cyan">导航设置</div>
+    <div class="layui-card-header layui-bg-cyan">标签管理</div>
     <div class="layui-card-body">
         <blockquote class="layui-elem-quote">
             <form class="layui-form lake-admin-search-form" method="get" lay-filter="lake-admin-search-from">
@@ -30,12 +30,11 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
-        <a class="layui-btn layui-btn-sm layui-iframe" href="{:url('add')}" title="添加导航">添加导航</a>
-        <a class="layui-btn layui-btn-sm layui-btn-normal" href="{:url('tree')}">树结构</a>
+        <a class="layui-btn layui-btn-sm layui-iframe" href="{:url('add')}" title="添加标签">添加标签</a>
     </div>
 </script>
 <script type="text/html" id="actionTpl">
-    <a href='{:url("edit")}?id={{ d.id }}' class="layui-btn layui-btn-xs layui-iframe" title="编辑导航【{{ d.title }}】">编辑</a>
+    <a href='{:url("edit")}?id={{ d.id }}' class="layui-btn layui-btn-xs layui-iframe" title="编辑标签【{{ d.title }}】">编辑</a>
     <a href='{:url("delete")}?id={{ d.id }}' class="layui-btn layui-btn-danger layui-btn-xs layui-tr-del">删除</a>
 </script>
 
@@ -47,6 +46,7 @@
     {{ layui.util.toDateString(d.create_time * 1000) }}
 </script>
 {/block}
+
 {block name="script"}
 <script>
 layui.use(['table', 'notice'], function() {
@@ -62,8 +62,8 @@ layui.use(['table', 'notice'], function() {
         cols: [
             [
                 { field: 'id', width: 80, title: '#', align: "center" },
-                { field: 'title', width:180, title: '标题' },
-                { field: 'url', title: '链接' },
+                { field: 'title', title: '标题' },
+                { field: 'views', width:80, title: '点击', align: "center" },
                 { field: 'sort', width:80, title: '排序', align: "center", edit: 'text' },
                 { field: 'create_time', width:180, title: '创建时间', templet: '#createTimeTpl' },
                 { field: 'status', width: 100, title: '状态', align: "center", templet: '#statusTpl', unresize: true },

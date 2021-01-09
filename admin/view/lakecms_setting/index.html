@@ -48,7 +48,8 @@
                             <div class="layui-form-field-label">
                                 <textarea name="setting[site_description]" placeholder="请输入站点描述" class="layui-textarea">{$setting['site_description']}</textarea>
                             </div>
-                        </div>                    
+                        </div>
+                        
                         <div class="layui-form-item layui-form-text">
                             <label class="">网站LOGO </label>
                             <div class="layui-form-field-label">
@@ -61,9 +62,20 @@
                                         </div>
                                         {/notempty}
                                     </div>
-                                    <input type="hidden" name="setting[web_site_logo]" data-multiple="false" data-watermark='' data-thumb='' data-size="{:config('app.upload_image_size')}" data-ext="{:config('app.upload_image_ext')}" id="web_site_logo" value="{$setting.web_site_logo|default=''}">
+                                    <input type="hidden" 
+                                        name="setting[web_site_logo]" 
+                                        data-multiple="false" 
+                                        data-watermark='' 
+                                        data-thumb='' 
+                                        data-size="{:config('app.upload_image_size')}" 
+                                        data-ext="{:config('app.upload_image_ext')}" 
+                                        id="web_site_logo" 
+                                        value="{$setting.web_site_logo|default=''}">
                                     <div class="layui-clear"></div>
-                                    <div id="picker_web_site_logo"><i class="layui-icon layui-icon-upload"></i> 上传单张图片</div>
+                                    <div id="picker_web_site_logo">
+                                        <i class="layui-icon layui-icon-upload"></i> 
+                                        上传单张图片
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -11,7 +11,7 @@ return [
         "listorder" => 10,
         "child" => [
             [
-                "route" => "admin/lakecms/index",
+                "route" => "admin/lakecmsContent/index",
                 "method" => "GET",
                 "type" => 1,
                 "is_menu" => 1,
@@ -20,18 +20,25 @@ return [
                 "listorder" => 10,
                 "child" => [
                     [
-                        "route" => "admin/lakecms/panl",
+                        "route" => "admin/lakecmsContent/index",
                         "method" => "GET",
                         "type" => 1,
                         "is_menu" => 0,
-                        "title" => "面板",
+                        "title" => "管理内容",
                     ],
                     [
-                        "route" => "admin/lakecms/cate",
+                        "route" => "admin/lakecmsContent/main",
                         "method" => "GET",
                         "type" => 1,
                         "is_menu" => 0,
-                        "title" => "栏目列表",
+                        "title" => "内容首页",
+                    ],
+                    [
+                        "route" => "admin/lakecmsContent/cate",
+                        "method" => "GET",
+                        "type" => 1,
+                        "is_menu" => 0,
+                        "title" => "列表/单页",
                     ],
                     [
                         "route" => "admin/lakecmsContent/add",
@@ -39,15 +46,13 @@ return [
                         "type" => 1,
                         "is_menu" => 0,
                         "title" => "添加",
-                        "child" => [
-                            [
-                                "route" => "admin/lakecmsContent/add",
-                                "method" => "POST",
-                                "type" => 1,
-                                "is_menu" => 0,
-                                "title" => "添加",
-                            ],
-                        ],
+                    ],
+                    [
+                        "route" => "admin/lakecmsContent/add",
+                        "method" => "POST",
+                        "type" => 1,
+                        "is_menu" => 0,
+                        "title" => "添加",
                     ],
                     [
                         "route" => "admin/lakecmsContent/edit",
@@ -55,15 +60,13 @@ return [
                         "type" => 1,
                         "is_menu" => 0,
                         "title" => "编辑",
-                        "child" => [
-                            [
-                                "route" => "admin/lakecmsContent/edit",
-                                "method" => "POST",
-                                "type" => 1,
-                                "is_menu" => 0,
-                                "title" => "编辑",
-                            ],
-                        ],
+                    ],
+                    [
+                        "route" => "admin/lakecmsContent/edit",
+                        "method" => "POST",
+                        "type" => 1,
+                        "is_menu" => 0,
+                        "title" => "编辑",
                     ],
                     [
                         "route" => "admin/lakecmsContent/delete",
@@ -71,13 +74,6 @@ return [
                         "type" => 1,
                         "is_menu" => 0,
                         "title" => "删除",
-                    ],
-                    [
-                        "route" => "admin/lakecmsContent/sort",
-                        "method" => "POST",
-                        "type" => 1,
-                        "is_menu" => 0,
-                        "title" => "排序",
                     ],
                     [
                         "route" => "admin/lakecmsContent/state",

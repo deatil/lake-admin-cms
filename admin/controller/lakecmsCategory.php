@@ -4,8 +4,7 @@ namespace app\admin\controller;
 
 use Lake\TTree;
 
-use app\lakecms\service\Model;
-use app\lakecms\service\Datatable;
+use app\lakecms\model\Model as ModelModel;
 use app\lakecms\model\Category as CategoryModel;
 
 /**
@@ -26,7 +25,8 @@ class LakecmsCategory extends LakecmsBase
             $page = $this->request->param('page/d', 1);
             $map = $this->buildparams();
             
-            $data = CategoryModel::where($map)
+            $data = CategoryModel::with(['model'])
+                ->where($map)
                 ->order("id DESC")
                 ->page($page, $limit)
                 ->select()
@@ -51,7 +51,8 @@ class LakecmsCategory extends LakecmsBase
     public function tree() 
     {
         if ($this->request->isAjax()) {
-            $result = CategoryModel::order([
+            $result = CategoryModel::with(['model'])
+                ->order([
                     'sort' => 'ASC', 
                     'id' => 'ASC',
                 ])
@@ -108,12 +109,16 @@ class LakecmsCategory extends LakecmsBase
             $this->assign("parentid", $parentid);
             $this->assign("parents", $parents);
             
-            $template = Model::create()->withPath(lakecms_theme_path());
-            $this->assign([
-                'listTemplates' => $template->listTemplates(),
-                'createTemplates' => $template->createTemplates(),
-                'updateTemplates' => $template->updateTemplates(),
-            ]);
+            $models = ModelModel::where([
+                    ['status', '=', 1],
+                ])
+                ->order([
+                    'sort', 
+                    'id' => 'ASC',
+                ])
+                ->select()
+                ->toArray();
+            $this->assign("models", $models);
             
             return $this->fetch();
         }

@@ -28,7 +28,7 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
-        <a class="layui-btn layui-btn-sm layui-btn-normal layui-iframe" href="{:url('add',['table'=>$tablename])}" title="添加字段">添加字段</a>
+        <a class="layui-btn layui-btn-sm layui-btn-normal layui-iframe" href="{:url('add',['modelid'=>$modelid])}" title="添加字段">添加字段</a>
     </div>
 </script>
 
@@ -63,7 +63,7 @@ layui.use('table', function() {
     table.render({
         elem: '#table',
         toolbar: '#toolbar',
-        url: '{:url("index", ["tablename" => $tablename])}',
+        url: '{:url("index", ["modelid" => $modelid])}',
         cols: [
             [
                 { field: 'id', width: 60, title: '#', align: "center" },

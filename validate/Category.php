@@ -17,7 +17,7 @@ class Category extends Validate
         'parentid|上级栏目' => 'require|number',
         'modelid|所属模型' => 'require|number',
         'name|栏目标识' => 'require|alphaNum',
-        'title|栏目标题' => 'require',
+        'title|栏目标题' => 'require|chsAlphaNum',
         'type|栏目类型' => 'require|in:1,2',
         'sort|栏目排序' => 'require|number',
         'status|栏目状态' => 'require|in:0,1',

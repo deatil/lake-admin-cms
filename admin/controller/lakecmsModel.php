@@ -6,6 +6,7 @@ use Lake\TTree;
 
 use app\lakecms\service\Model as ModelService;
 use app\lakecms\model\Model as ModelModel;
+use app\lakecms\model\ModelField as ModelFieldModel;
 
 /**
  * 模型
@@ -62,9 +63,9 @@ class LakecmsModel extends LakecmsBase
             }
             
             // 创建表
-            $table = ModelService::create();
-            $table->createTable($data['tablename'], $data['comment']);
-            $table->setDefaultField($data['tablename']);
+            $modelService = ModelService::create();
+            $modelService->createTable($data['tablename'], $data['comment']);
+            $this->setDefaultField($modelService, $result);
             
             return $this->success('添加成功！');
         } else {
@@ -144,7 +145,6 @@ class LakecmsModel extends LakecmsBase
         if (empty($data)) {
             return $this->error('数据不存在！');
         }
-
         
         $result = ModelModel::where([
             'id' => $id,
@@ -152,6 +152,11 @@ class LakecmsModel extends LakecmsBase
         if (false === $result) {
             return $this->error('删除失败！');
         }
+        
+        // 删除表字段
+        $result = ModelFieldModel::where([
+            'modelid' => $id,
+        ])->delete();
         
         // 删除表
         ModelService::create()->deleteTable($data['tablename']);
@@ -215,6 +220,77 @@ class LakecmsModel extends LakecmsBase
         }
         
         return $this->success("排序成功！");
+    }
+    
+    /**
+     * 添加默认字段
+     */
+    protected function setDefaultField($modelService, $data) 
+    {
+        $attrs = [
+            [
+                'name' => 'status', 
+                'title' => '数据状态', 
+                'type' => 'select', 
+                'length' => 1, 
+                'options' => "0:禁用\r\n1:正常", 
+                'value'=>'1',
+                'remark' => '数据状态', 
+                'is_must' => 1, 
+            ],
+            [
+                'name' => 'edit_time', 
+                'after' => 'status', 
+                'title' => '更新时间', 
+                'type' => 'datetime', 
+                'length' => 10, 
+                'extra' => '', 
+                'remark' => '更新时间', 
+                'is_must' => 0, 
+                'value'=> '0',
+            ],
+            [
+                'name' => 'edit_ip', 
+                'after' => 'edit_time', 
+                'title' => '更新IP', 
+                'type' => 'string', 
+                'length' => 50, 
+                'extra' => '', 
+                'remark' => '更新IP', 
+                'is_must' => 0, 
+                'value'=> '',
+            ],
+            'add_time' => [
+                'name' => 'add_time', 
+                'after' => 'edit_ip', 
+                'title' => '添加时间', 
+                'type' => 'datetime', 
+                'length' => 10, 
+                'extra' => '', 
+                'remark' => '添加时间', 
+                'is_must' => 0, 
+                'value'=> '0',
+            ],
+            'add_ip' => [
+                'name' => 'add_ip', 
+                'after' => 'add_time', 
+                'title' => '添加IP', 
+                'type' => 'string', 
+                'length' => 50, 
+                'extra' => '', 
+                'remark' => '添加IP', 
+                'is_must' => 0, 
+                'value'=> '',
+            ],
+        ];
+        
+        foreach ($attrs as $attr) {
+            $attr['modelid'] = $data->id;
+            $modelService->createField($data->tablename, $attr);
+            
+            // 添加字段管理
+            ModelFieldModel::create($attr);
+        }
     }
     
 }

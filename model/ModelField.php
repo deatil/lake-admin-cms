@@ -25,4 +25,35 @@ class ModelField extends Model
         $model->setAttr('add_time', time());
         $model->setAttr('add_ip', request()->ip());
     }
+    
+    /**
+     * 上一条
+     */
+    public function toPrev()
+    {
+        return $this->where([
+                ['sort', '<', $this->sort] ,
+            ])
+            ->order([
+                'sort' => 'DESC',
+                'id' => 'DESC',
+            ])
+            ->find();
+    }
+    
+    /**
+     * 下一条
+     */
+    public function toNext()
+    {
+        return $this->where([
+                ['sort', '>', $this->sort] ,
+            ])
+            ->order([
+                'sort' => 'ASC',
+                'id' => 'ASC',
+            ])
+            ->find();
+    }
+    
 }

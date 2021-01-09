@@ -31,7 +31,7 @@ class Datatable
     public $sql = ''; 
     
     /* 类型列表 */
-    protected $types        = [
+    protected $types = [
         "TINYINT",
         "INT",
         "SMALLINT",
@@ -209,6 +209,24 @@ class Datatable
             $this->sql = "ALTER TABLE `{$field_attr['table']}` CHANGE `{$field_attr['oldname']}` `{$field_attr['name']}` {$field_attr['define']} COMMENT '{$field_attr['comment']}'";
         }
         
+        return $this;
+    }
+    
+    /**
+     * 添加字段
+     */
+    public function createField($table, $attr = []) 
+    {
+        $this->columField($table, $attr, 'add');
+        return $this;
+    }
+    
+    /**
+     * 更新字段
+     */
+    public function changeField($table, $attr = []) 
+    {
+        $this->columField($table, $attr, 'change');
         return $this;
     }
 

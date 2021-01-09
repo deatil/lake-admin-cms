@@ -6,6 +6,7 @@ use Lake\TTree;
 use Lake\Admin\Model\FieldType as FieldTypeModel;
 
 use app\lakecms\service\Datatable;
+use app\lakecms\service\Model as ModelService;
 use app\lakecms\model\Model as ModelModel;
 use app\lakecms\model\ModelField as ModelFieldModel;
 
@@ -42,15 +43,15 @@ class LakecmsField extends LakecmsBase
             ];
             return json($result);
         } else {
-            $table = $this->request->param('table/s');
+            $modelid = $this->request->param('modelid');
             
             // 模型详情
             $model = ModelModel::where([
-                'tablename' => $table,
+                'id' => $modelid,
             ])->find();
 
             $data = [
-                'tablename' => $table,
+                'modelid' => $modelid,
                 'model' => $model,
             ];
             $this->assign($data);
@@ -66,6 +67,7 @@ class LakecmsField extends LakecmsBase
     {
         if (request()->isPost()) {
             $data = request()->post();
+            
             $validate = $this->validate($data, '\\app\\lakecms\\validate\\ModelField.add');
             if (true !== $validate) {
                 return $this->error($validate);
@@ -76,10 +78,19 @@ class LakecmsField extends LakecmsBase
                 return $this->error('添加失败！');
             }
             
+            // 模型详情
+            $model = ModelModel::where([
+                'id' => $data['modelid'],
+            ])->find();
+            
+            // 添加字段
+            $modelService = ModelService::create();
+            $modelService->createField($model['tablename'], $data);
+            
             return $this->success('添加成功！');
         } else {
-            $table = $this->request->param('table/s');
-            $this->assign("tablename", $table);
+            $modelid = $this->request->param('modelid');
+            $this->assign("modelid", $modelid);
             
             $fieldType = FieldTypeModel::order('listorder')
                 ->column('name,title,default_define,ifoption,ifstring');
@@ -96,6 +107,7 @@ class LakecmsField extends LakecmsBase
     {
         if (request()->isPost()) {
             $data = request()->post();
+            
             $validate = $this->validate($data, '\\app\\lakecms\\validate\\ModelField.edit');
             if (true !== $validate) {
                 return $this->error($validate);
@@ -113,8 +125,6 @@ class LakecmsField extends LakecmsBase
                 return $this->error('表单不存在');
             }
             
-            $data = request()->post();
-            
             $result = ModelFieldModel::where([
                     'id' => $id,
                 ])
@@ -122,6 +132,16 @@ class LakecmsField extends LakecmsBase
             if (false === $result) {
                 return $this->error('修改失败！');
             }
+            
+            // 模型详情
+            $model = ModelModel::where([
+                'id' => $data['modelid'],
+            ])->find();
+            
+            // 更新字段
+            $modelService = ModelService::create();
+            $data['oldname'] = $info['name'];
+            $modelService->changeField($model['tablename'], $data);
             
             return $this->success('修改成功！');
         } else {
@@ -131,10 +151,6 @@ class LakecmsField extends LakecmsBase
                 'id' => $id,
             ])->find();
             $this->assign("info", $info);
-            
-            // 模型信息
-            $table = $this->request->param('table/s');
-            $this->assign("tablename", $table);
             
             $fieldType = FieldTypeModel::order('listorder')
                 ->column('name,title,default_define,ifoption,ifstring');
@@ -171,6 +187,15 @@ class LakecmsField extends LakecmsBase
         if (false === $result) {
             return $this->error('删除失败！');
         }
+        
+        // 模型详情
+        $model = ModelModel::where([
+            'id' => $data['modelid'],
+        ])->find();
+        
+        // 删除字段
+        $modelService = ModelService::create();
+        $modelService->deleteField($model['tablename'], $data['name']);
         
         return $this->success('删除成功！');
     }

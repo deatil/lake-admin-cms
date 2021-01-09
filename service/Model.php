@@ -5,7 +5,6 @@ namespace app\lakecms\service;
 use think\facade\Db;
 
 use app\lakecms\support\Datatable;
-use app\lakecms\model\ModelField as ModelFieldModel;
 
 /**
  * 模型
@@ -60,6 +59,19 @@ class Model
     }
     
     /**
+     * 检测表
+     */
+    public function checkTable($table) 
+    {
+        $datatable = $this->getDatatable();
+        if (! $datatable->checkTable($table)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
      * 创建表
      */
     public function createTable(
@@ -86,7 +98,12 @@ class Model
      */
     public function updateTableName($oldTable = '', $newTable = '') 
     {
-        $result = $this->getDatatable()
+        $datatable = $this->getDatatable();
+        if (! $datatable->checkTable($oldTable)) {
+            return false;
+        }
+        
+        $result = $datatable
             ->updateTableName($oldTable, $newTable)
             ->query();
             
@@ -98,16 +115,28 @@ class Model
      */
     public function deleteTable($table = '') 
     {
-        $result = $this->getDatatable()
-            ->deleteTable($table)
-            ->query();
+        $datatable = $this->getDatatable();
+        if (! $datatable->checkTable($table)) {
+            return false;
+        }
         
-        // 删除表字段
-        ModelFieldModel::where([
-            'tablename' => $table,
-        ])->delete();
+        $result = $datatable->deleteTable($table)
+            ->query();
             
         return $result;
+    }
+    
+    /**
+     * 检测字段
+     */
+    public function checkField($table, $field = '') 
+    {
+        $datatable = $this->getDatatable();
+        if (! $datatable->checkField($table, $field)) {
+            return false;
+        }
+        
+        return true;
     }
     
     /**
@@ -120,18 +149,13 @@ class Model
             $newAttr['type'] = $this->types[$attr['type']] ?: $attr['type'];
         }
         
-        $fieldCheck = $this->getDatatable()->checkField($table, $newAttr['name']);
-        if ($fieldCheck !== false) {
+        $datatable = $this->getDatatable();
+        if ($datatable->checkField($table, $newAttr['name'])) {
             return false;
         }
         
-        $result = $this->getDatatable()
-            ->columField($table, $newAttr, 'add')
+        $result = $datatable->createField($table, $newAttr)
             ->query();
-        
-        // 添加
-        $attr['tablename'] = $table;
-        ModelFieldModel::create($attr);
         
         return $result;
     }
@@ -146,15 +170,21 @@ class Model
             $newAttr['type'] = $this->types[$attr['type']] ?: $attr['type'];
         }
         
-        $result = $this->getDatatable()
-            ->columField($table, $newAttr, 'change')
+        $datatable = $this->getDatatable();
+        
+        // 旧字段不存在
+        if (! $datatable->checkField($table, $newAttr['oldname'])) {
+            return false;
+        }
+        
+        // 新字段存在
+        if ($datatable->checkField($table, $newAttr['name'])) {
+            return false;
+        }
+        
+        $result = $datatable->changeField($table, $newAttr)
             ->query();
         
-        // 更新
-        ModelFieldModel::where([
-            'tablename' => $table,
-        ])->update($attr);
-            
         return $result;
     }
     
@@ -163,86 +193,15 @@ class Model
      */
     public function deleteField($table, $field = '') 
     {
-        $result = $this->getDatatable()
-            ->deleteField($table, $field)
-            ->query();
-        
-        // 删除
-        ModelFieldModel::where([
-            'tablename' => $table,
-            'name' => $field,
-        ])->delete();
-            
-        return $result;
-    }
-    
-    /**
-     * 添加默认字段
-     */
-    public function setDefaultField($table) 
-    {
-        $attrs = [
-            [
-                'name' => 'status', 
-                'title' => '数据状态', 
-                'type' => 'select', 
-                'length' => 1, 
-                'options' => "0:禁用\r\n1:正常", 
-                'value'=>'1',
-                'remark' => '数据状态', 
-                'is_must' => 1, 
-            ],
-            [
-                'name' => 'edit_time', 
-                'after' => 'status', 
-                'title' => '更新时间', 
-                'type' => 'datetime', 
-                'length' => 10, 
-                'extra' => '', 
-                'remark' => '更新时间', 
-                'is_must' => 0, 
-                'value'=> '0',
-            ],
-            [
-                'name' => 'edit_ip', 
-                'after' => 'edit_time', 
-                'title' => '更新IP', 
-                'type' => 'string', 
-                'length' => 50, 
-                'extra' => '', 
-                'remark' => '更新IP', 
-                'is_must' => 0, 
-                'value'=> '',
-            ],
-            'add_time' => [
-                'name' => 'add_time', 
-                'after' => 'edit_ip', 
-                'title' => '添加时间', 
-                'type' => 'datetime', 
-                'length' => 10, 
-                'extra' => '', 
-                'remark' => '添加时间', 
-                'is_must' => 0, 
-                'value'=> '0',
-            ],
-            'add_ip' => [
-                'name' => 'add_ip', 
-                'after' => 'add_time', 
-                'title' => '添加IP', 
-                'type' => 'string', 
-                'length' => 50, 
-                'extra' => '', 
-                'remark' => '添加IP', 
-                'is_must' => 0, 
-                'value'=> '',
-            ],
-        ];
-        
-        foreach ($attrs as $attr) {
-            $this->createField($table, $attr);
+        $datatable = $this->getDatatable();
+        if (! $datatable->checkField($table, $newAttr['name'])) {
+            return false;
         }
         
-        return true;
+        $result = $datatable->deleteField($table, $field)
+            ->query();
+        
+        return $result;
     }
     
 }

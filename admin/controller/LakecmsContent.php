@@ -2,44 +2,66 @@
 
 namespace app\admin\controller;
 
-use app\lakecms\model\Tags as TagsModel;
-use app\lakecms\model\TagsContent as TagsContentModel;
+use Lake\TTree as Tree;
+
+use app\lakecms\model\Category as CategoryModel;
 
 /**
- * 标签
+ * 内容
  *
  * @create 2020-1-10
  * @author deatil
  */
-class LakecmsTags extends LakecmsBase 
+class LakecmsContent extends LakecmsBase 
 {    
     /**
      * 列表
      */
     public function index() 
     {
-        if ($this->request->isAjax()) {
-            $limit = $this->request->param('limit/d', 20);
-            $page = $this->request->param('page/d', 1);
-            $map = $this->buildparams();
-            
-            $data = TagsModel::where($map)
-                ->order("id DESC")
-                ->page($page, $limit)
-                ->select()
-                ->toArray();
-            $total = TagsModel::where($map)
-                ->count();
-
-            $result = [
-                "code" => 0, 
-                "count" => $total, 
-                "data" => $data,
+        $category = CategoryModel::where([
+                ['status', '=', 1], 
+            ])
+            ->order("sort ASC, id DESC")
+            ->select()
+            ->toArray();
+        
+        $newCategory = [];
+        foreach ($category as $cate) {
+            $data = [
+                'id' => $cate['id'],
+                'parentid' => $cate['parentid'],
+                'title' => $cate['title'],
+                'field' => 'id',
+                'spread' => true,
             ];
-            return json($result);
-        } else {
-            return $this->fetch();
+            $newCategory[] = $data;
         }
+        
+        $newCategory = (new Tree)
+            ->withConfig('buildChildKey', 'children')
+            ->withData($newCategory)
+            ->buildArray(0);
+
+        $this->assign("category", $newCategory);
+        
+        return $this->fetch();
+    }
+
+    /**
+     * 内容首页
+     */
+    public function main() 
+    {
+        return $this->fetch();
+    }
+
+    /**
+     * 列表/单页
+     */
+    public function cate() 
+    {
+        return $this->fetch();
     }
 
     /**
@@ -49,19 +71,32 @@ class LakecmsTags extends LakecmsBase
     {
         if (request()->isPost()) {
             $data = request()->post();
-            
-            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Tags.add');
+            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Navbar.add');
             if (true !== $validate) {
                 return $this->error($validate);
             }
             
-            $result = TagsModel::create($data);
+            $result = NavbarModel::create($data);
             if (false === $result) {
                 return $this->error('添加失败！');
             }
             
             return $this->success('添加成功！');
         } else {
+            $parentid = $this->request->param('parentid', 0);
+            
+            $parents = NavbarModel::order([
+                'sort', 
+                'id' => 'ASC',
+            ])->select()->toArray();
+            
+            $Tree = new Tree();
+            $parenTree = $Tree->withData($parents)->buildArray(0);
+            $parents = $Tree->buildFormatList($parenTree, 'title');
+            
+            $this->assign("parentid", $parentid);
+            $this->assign("parents", $parents);
+            
             return $this->fetch();
         }
     }
@@ -74,7 +109,7 @@ class LakecmsTags extends LakecmsBase
         if (request()->isPost()) {
             $data = request()->post();
             
-            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Tags.edit');
+            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Navbar.edit');
             if (true !== $validate) {
                 return $this->error($validate);
             }
@@ -84,14 +119,14 @@ class LakecmsTags extends LakecmsBase
                 return $this->error('ID错误');
             }
             
-            $info = TagsModel::where([
+            $info = NavbarModel::where([
                 'id' => $id,
             ])->find();
             if (empty($info)) {
                 return $this->error('数据不存在');
             }
             
-            $result = TagsModel::where([
+            $result = NavbarModel::where([
                     'id' => $id,
                 ])
                 ->update($data);
@@ -103,10 +138,37 @@ class LakecmsTags extends LakecmsBase
         } else {
             $id = request()->get('id');
             
-            $info = TagsModel::where([
+            $info = NavbarModel::where([
                 'id' => $id,
             ])->find();
             $this->assign("info", $info);
+            
+            $parentid = $info['parentid'];
+            
+            $parents = NavbarModel::order([
+                'sort', 
+                'id' => 'ASC',
+            ])->select()->toArray();
+            
+            $Tree = new Tree();
+            
+            $childsId = $Tree->getListChildsId($parents, $info['id']);
+            $childsId[] = $info['id'];
+            
+            $newParents = [];
+            foreach ($parents as $r) {
+                if (in_array($r['id'], $childsId)) {
+                    continue;
+                }
+                
+                $newParents[] = $r;
+            }
+            
+            $parenTree = $Tree->withData($newParents)->buildArray(0);
+            $parents = $Tree->buildFormatList($parenTree, 'title');
+            
+            $this->assign("parentid", $parentid);
+            $this->assign("parents", $parents);
             
             return $this->fetch();
         }
@@ -126,24 +188,26 @@ class LakecmsTags extends LakecmsBase
             return $this->error("非法操作！");
         }
         
-        $data = TagsModel::where([
+        $data = NavbarModel::where([
             'id' => $id,
         ])->find();
         if (empty($data)) {
             return $this->error('数据不存在！');
         }
         
-        $result = TagsModel::where([
+        $children = NavbarModel::where([
+            'parentid' => $id,
+        ])->count();
+        if ($children > 0) {
+            return $this->error('当前导航数据还有子导航，暂不能删除！');
+        }
+        
+        $result = NavbarModel::where([
             'id' => $id,
         ])->delete();
         if (false === $result) {
             return $this->error('删除失败！');
         }
-        
-        // 删除关联数据
-        TagsContentModel::where([
-            'tagid' => $id,
-        ])->delete();
         
         return $this->success('删除成功！');
     }
@@ -164,7 +228,7 @@ class LakecmsTags extends LakecmsBase
         
         $status = input('status', '0', 'trim,intval');
 
-        $result = TagsModel::where([
+        $result = NavbarModel::where([
                 'id' => $id,
             ])
             ->update([
@@ -193,7 +257,7 @@ class LakecmsTags extends LakecmsBase
         
         $sort = $this->request->param('value/d', 100);
         
-        $result = TagsModel::where([
+        $result = NavbarModel::where([
             'id' => $id,
         ])->update([
             'sort' => $sort,

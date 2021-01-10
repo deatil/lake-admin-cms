@@ -1,0 +1,87 @@
+{extend name="$lake_admin_layout"/}
+
+{block name="main"}
+<div class="layui-row">
+    <div class="layui-col-md3 layui-col-sm12" style="padding:0 10px;">
+        <div class="layui-card">
+            <div class="layui-card-header layui-bg-cyan">栏目列表</div>
+            <div class="layui-card-body">
+                <div class="content-category">
+                    <div style="margin: 5px;padding: 0;">
+                        <a href="javascript:;" title="全部展开、折叠 ">
+                            <span class="button ico_open"></span>
+                            <span id="expand_all" data-open="true">全部展开/折叠 </span>
+                        </a> 
+                    </div>
+                    <div id="category_tree"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md9 layui-col-sm12" style="padding:0 10px;">
+        <div class="layui-card">
+            <div class="layui-card-header layui-bg-cyan">
+                <div class="layui-row">
+                    <div class="layui-col-md10 layui-col-sm12">
+                        内容管理
+                    </div>
+                </div>
+            </div>
+            <div class="layui-card-body">
+                <iframe name="right" id="iframe_categorys_list" src="{:url('main')}" style="height: 100%; width:100%;border:none;" frameborder="0" scrolling="auto"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="script"}
+<script type="text/javascript">
+layui.config({
+    base: "admin/libs/layui-extend/"
+}).use(['jquery', 'notice', 'tree'], function() {
+    var $ = layui.$,
+        notice = layui.notice,
+        tree = layui.tree;
+    
+    // 节点数据
+    var data = {:json_encode($category)};
+    
+    tree.render({
+        elem: '#category_tree',
+        data: data,
+        showCheckbox: false,
+        id: 'category_tree_id',
+        isJump: false,
+        click: function(obj){
+            console.log(obj);
+        }
+    });
+    
+    $("#expand_all").click(function() {
+        if ($(this).data("open")) {
+            $('.layui-tree-setHide').find('.layui-tree-iconClick').trigger('click');
+            $(this).data("open", false);
+        } else {
+            $('.layui-tree-spread').find('.layui-tree-iconClick').trigger('click');
+            $(this).data("open", true);
+        }
+    });
+});
+
+var body_frame_height = parent.layui.$(".lake-admin-iframe-box").height()-100;
+$(window).on('resize', function () {
+    setTimeout(function () {
+    body_frame_height = parent.layui.$(".lake-admin-iframe-box").height()-100;
+        frameheight();
+    }, 100);
+});
+function frameheight(){
+  $("#iframe_categorys").height(body_frame_height);
+  $("#iframe_categorys_list").height(body_frame_height);
+}
+(function (){
+  frameheight();
+})();
+</script>
+{/block}

@@ -18,9 +18,6 @@ class LakecmsSetting extends LakecmsBase
 {
     /**
      * 设置
-     *
-     * @create 2020-8-14
-     * @author deatil
      */
     public function index()
     {

@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use Lake\TTree as Tree;
 
 use app\lakecms\model\Category as CategoryModel;
+use app\lakecms\model\Content as ContentModel;
 
 /**
  * 内容
@@ -53,6 +54,36 @@ class LakecmsContent extends LakecmsBase
      */
     public function main() 
     {
+        // 单页数量
+        $pages = CategoryModel::where([
+                'type' => 2,
+                'status' => 1,
+            ])
+            ->count();
+        $this->assign("pages", $pages);
+        
+        // 列表数量
+        $cates = CategoryModel::with(['model'])
+            ->where([
+                'type' => 1,
+                'status' => 1,
+            ])
+            ->order('sort ASC, id ASC')
+            ->select()
+            ->toArray();
+        
+        $newCates = [];
+        foreach ($cates as $cate) {
+            $cate['count'] = ContentModel::name($cate['model']['tablename'])
+                ->where([
+                    'categoryid' => $cate['id'],
+                    'status' => 1,
+                ])
+                ->count();
+            $newCates[] = $cate;
+        }
+        $this->assign("cates", $newCates);
+        
         return $this->fetch();
     }
 

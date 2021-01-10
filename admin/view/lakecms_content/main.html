@@ -1,5 +1,41 @@
 {extend name="$lake_admin_layout"/}
 
 {block name="main"}
-main
+<style type="text/css">
+.lake-admin-container {
+    background-color: #F8F9FA;
+}
+</style>
+<div class="layui-row layui-col-space10 panel_box">
+    <blockquote class="layui-elem-quote title">
+        数据统计
+    </blockquote>
+    
+    <div class="panel layui-col-xs12 layui-col-sm6 layui-col-lg4">
+        <a href="javascript:;">
+            <div class="panel_icon layui-bg-green">
+                <i class="iconfont icon-shiyongwendang layui-anim"></i>
+            </div>
+            <div class="panel_word">
+                <span class="admin-module">{$pages|default='0'}</span>
+                <cite>单页数量</cite>
+            </div>
+        </a>
+    </div>
+    
+    {foreach name="cates" id="data"}
+    <div class="panel layui-col-xs12 layui-col-sm6 layui-col-lg4">
+        <a href="javascript:;">
+            <div class="panel_icon layui-bg-green">
+                <i class="iconfont icon-shiyongwendang layui-anim"></i>
+            </div>
+            <div class="panel_word">
+                <span class="admin-attachment">{$data['count']|default='0'}</span>
+                <cite>{$data['title']}</cite>
+            </div>
+        </a>
+    </div>
+    {/foreach}
+    
+</div>
 {/block}

@@ -6,7 +6,7 @@
         <div class="layui-card">
             <div class="layui-card-header layui-bg-cyan">栏目列表</div>
             <div class="layui-card-body">
-                <div class="content-category">
+                <div class="content-category" id="content_categorys">
                     <div style="margin: 5px;padding: 0;">
                         <a href="javascript:;" title="全部展开、折叠 ">
                             <span class="button ico_open"></span>
@@ -77,7 +77,7 @@ $(window).on('resize', function () {
     }, 100);
 });
 function frameheight(){
-  $("#iframe_categorys").height(body_frame_height);
+  $("#content_categorys").height(body_frame_height);
   $("#iframe_categorys_list").height(body_frame_height);
 }
 (function (){

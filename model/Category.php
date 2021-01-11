@@ -18,6 +18,12 @@ class Category extends BaseModel
     // 时间字段取出后的默认时间格式
     protected $dateFormat = false;
     
+    // 追加字段
+    protected $append = [
+        'cate_url',
+        'info_url'
+    ];
+    
     public static function onBeforeInsert($model)
     {
         $model->setAttr('edit_time', time());
@@ -27,14 +33,80 @@ class Category extends BaseModel
     }
     
     /**
+     * 栏目链接
+     */
+    public function getCateUrlAttr()
+    {
+        $url = str_replace([
+            '{id}',
+            '{name}',
+            '{title}',
+        ], [
+            $this->id,
+            $this->name,
+            $this->title,
+        ], $this->index_url);
+        
+        return $url;
+    }
+    
+    /**
+     * 内容链接
+     */
+    public function getInfoUrlAttr()
+    {
+        $url = str_replace([
+            '{cateid}',
+            '{name}',
+            '{title}',
+        ], [
+            $this->id,
+            $this->name,
+            $this->title,
+        ], $this->content_url);
+        
+        return $url;
+    }
+    
+    /**
+     * 格式化内容链接
+     */
+    public function formatInfoUrl($id)
+    {
+        $url = str_replace([
+            '{id}',
+        ], [
+            $id,
+        ], $this->info_url);
+        
+        return $url;
+    }
+    
+    /**
      * 模型
-     *
-     * @create 2021-1-9
-     * @author deatil
      */
     public function model()
     {
         return $this->hasOne(Model::class, 'id', 'modelid');
+    }
+    
+    /**
+     * 格式化内容链接
+     */
+    public static function formatInfoUri($cateid, $id)
+    {
+        $data = static::where([
+            ['id', '=', $cateid],
+            ['status', '=', 1],
+        ])->find();
+        
+        $url = str_replace([
+            '{id}',
+        ], [
+            $id,
+        ], $data['info_url']);
+        
+        return $url;
     }
 
 }

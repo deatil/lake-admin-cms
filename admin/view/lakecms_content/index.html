@@ -2,9 +2,9 @@
 
 {block name="main"}
 <div class="layui-row">
-    <div class="layui-col-md3 layui-col-sm12" style="padding:0 10px;">
+    <div class="layui-col-md2 layui-col-sm12" style="padding:0 10px;">
         <div class="layui-card">
-            <div class="layui-card-header layui-bg-cyan">栏目列表</div>
+            <div class="layui-card-header layui-bg-cyan">栏目</div>
             <div class="layui-card-body">
                 <div class="content-category" id="content_categorys">
                     <div style="margin: 5px;padding: 0;">
@@ -18,12 +18,13 @@
             </div>
         </div>
     </div>
-    <div class="layui-col-md9 layui-col-sm12" style="padding:0 10px;">
+    
+    <div class="layui-col-md10 layui-col-sm12" style="padding:0 10px;">
         <div class="layui-card">
             <div class="layui-card-header layui-bg-cyan">
                 <div class="layui-row">
                     <div class="layui-col-md10 layui-col-sm12">
-                        内容管理
+                        内容
                     </div>
                 </div>
             </div>
@@ -53,8 +54,9 @@ layui.config({
         showCheckbox: false,
         id: 'category_tree_id',
         isJump: false,
-        click: function(obj){
-            console.log(obj);
+        click: function(obj) {
+            var url = '{:url("cate")}?cateid=' + obj.data.id
+            $('#iframe_categorys_list').attr('src', url);
         }
     });
     

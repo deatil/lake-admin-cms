@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use Lake\TTree as Tree;
 
 use app\lakecms\model\Category as CategoryModel;
+use app\lakecms\model\ModelField as ModelFieldModel;
 use app\lakecms\model\Content as ContentModel;
 
 /**
@@ -92,7 +93,52 @@ class LakecmsContent extends LakecmsBase
      */
     public function cate() 
     {
-        return $this->fetch();
+        if ($this->request->isAjax()) {
+            $limit = $this->request->param('limit/d', 20);
+            $page = $this->request->param('page/d', 1);
+            $map = $this->buildparams();
+            
+            $cateid = $this->request->param('cateid', 0);
+            
+            $cate = CategoryModel::with(['model'])
+                ->where([
+                    'id' => $cateid,
+                    'type' => 1,
+                    'status' => 1,
+                ])
+                ->find()
+                ->toArray();
+            
+            $modelField = ModelFieldModel::where([
+                    'modelid' => $cate['model']['id'],
+                    'status' => 1,
+                ])
+                ->order('sort ASC, id ASC')
+                ->select()
+                ->toArray();
+            
+            $query = ContentModel::name($cate['model']['tablename'])
+                ->where($map);
+            $data = $query->order("id DESC")
+                ->page($page, $limit)
+                ->select()
+                ->toArray();
+            $total = $query->count();
+
+            $result = [
+                "code" => 0, 
+                "count" => $total, 
+                "data" => $data,
+                "fields" => $modelField,
+            ];
+            
+            return json($result);
+        } else {
+            $cateid = $this->request->param('cateid', 0);
+            $this->assign("cateid", $cateid);
+            
+            return $this->fetch();
+        }
     }
 
     /**

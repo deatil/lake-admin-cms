@@ -25,5 +25,13 @@ class Model extends BaseModel
         $model->setAttr('add_time', time());
         $model->setAttr('add_ip', request()->ip());
     }
+    
+    /**
+     * 模型字段
+     */
+    public function fields()
+    {
+        return $this->hasMany(ModelField::class, 'modelid', 'id');
+    }
 
 }

@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use Lake\TTree as Tree;
 
 use app\lakecms\model\Category as CategoryModel;
+use app\lakecms\model\Model as ModelModel;
 use app\lakecms\model\ModelField as ModelFieldModel;
 use app\lakecms\model\Content as ContentModel;
 
@@ -159,32 +160,49 @@ class LakecmsContent extends LakecmsBase
     public function add() 
     {
         if (request()->isPost()) {
-            $data = request()->post();
-            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Navbar.add');
-            if (true !== $validate) {
-                return $this->error($validate);
+            $data = $this->request->post();
+            
+            $cateid = $this->request->param('cateid', 0);
+            if (empty($cateid)) {
+                $this->error("请指定栏目ID！");
             }
             
-            $result = NavbarModel::create($data);
+            $category = CategoryModel::with(['model'])
+                ->where([
+                    'id' => $cateid,
+                    'type' => 1,
+                    'status' => 1,
+                ])
+                ->find()
+                ->toArray();
+            if (empty($category)) {
+                $this->error('该栏目不存在！');
+            }
+            
+            $result = ContentModel::newCreate($category['model']['tablename'], $data['modelField']);
             if (false === $result) {
                 return $this->error('添加失败！');
             }
             
             return $this->success('添加成功！');
         } else {
-            $parentid = $this->request->param('parentid', 0);
+            $cateid = $this->request->param('cateid', 0);
+            $this->assign("cateid", $cateid);
             
-            $parents = NavbarModel::order([
-                'sort', 
-                'id' => 'ASC',
-            ])->select()->toArray();
+            $cate = CategoryModel::with(['model'])
+                ->where([
+                    'id' => $cateid,
+                    'type' => 1,
+                    'status' => 1,
+                ])
+                ->find()
+                ->toArray();
             
-            $Tree = new Tree();
-            $parenTree = $Tree->withData($parents)->buildArray(0);
-            $parents = $Tree->buildFormatList($parenTree, 'title');
-            
-            $this->assign("parentid", $parentid);
-            $this->assign("parents", $parents);
+            $modelField = ModelModel::formFields([
+                    'id' => $cate['modelid'],
+                    'status' => 1,
+                ], 1);
+            $this->assign("fieldList", $modelField);
             
             return $this->fetch();
         }
@@ -196,68 +214,74 @@ class LakecmsContent extends LakecmsBase
     public function edit() 
     {
         if (request()->isPost()) {
-            $data = request()->post();
+            $data = $this->request->post();
             
-            $validate = $this->validate($data, '\\app\\lakecms\\validate\\Navbar.edit');
-            if (true !== $validate) {
-                return $this->error($validate);
-            }
-            
-            $id = request()->post('id');
+            $id = request()->param('id');
             if (empty($id)) {
-                return $this->error('ID错误');
+                $this->error("信息ID不能为空！");
             }
             
-            $info = NavbarModel::where([
-                'id' => $id,
-            ])->find();
-            if (empty($info)) {
-                return $this->error('数据不存在');
+            $cateid = request()->param('cateid');
+            if (empty($cateid)) {
+                $this->error("请指定栏目ID！");
             }
             
-            $result = NavbarModel::where([
-                    'id' => $id,
+            $category = CategoryModel::with(['model'])
+                ->where([
+                    'id' => $cateid,
+                    'type' => 1,
+                    'status' => 1,
                 ])
-                ->update($data);
+                ->find()
+                ->toArray();
+            if (empty($category)) {
+                $this->error('该栏目不存在！');
+            }
+            
+            $table = $category['model']['tablename'];
+            $data = $data['modelField'];
+            $where = [
+                ['id', '=', $id],
+            ];
+            
+            $result = ContentModel::newUpdate($table, $data, $where);
             if (false === $result) {
                 return $this->error('修改失败！');
             }
             
             return $this->success('修改成功！');
         } else {
-            $id = request()->get('id');
+            $id = request()->param('id');
             
-            $info = NavbarModel::where([
-                'id' => $id,
-            ])->find();
-            $this->assign("info", $info);
+            $cateid = $this->request->param('cateid', 0);
+            $this->assign("cateid", $cateid);
             
-            $parentid = $info['parentid'];
+            $cate = CategoryModel::with(['model'])
+                ->where([
+                    'id' => $cateid,
+                    'type' => 1,
+                    'status' => 1,
+                ])
+                ->find()
+                ->toArray();
             
-            $parents = NavbarModel::order([
-                'sort', 
-                'id' => 'ASC',
-            ])->select()->toArray();
-            
-            $Tree = new Tree();
-            
-            $childsId = $Tree->getListChildsId($parents, $info['id']);
-            $childsId[] = $info['id'];
-            
-            $newParents = [];
-            foreach ($parents as $r) {
-                if (in_array($r['id'], $childsId)) {
-                    continue;
-                }
+            $info = ContentModel::newTable($cate['model']['tablename'])
+                ->where([
+                    'id' => $id,
+                    'categoryid' => $cateid,
+                ])
+                ->find();
                 
-                $newParents[] = $r;
+            $modelField = ModelModel::formFields([
+                    'id' => $cate['modelid'],
+                    'status' => 1,
+                ], 1);
+            foreach ($modelField as $key => $value) {
+                if (isset($info[$value['name']])) {
+                    $modelField[$key]['value'] = $info[$value['name']];
+                }
             }
-            
-            $parenTree = $Tree->withData($newParents)->buildArray(0);
-            $parents = $Tree->buildFormatList($parenTree, 'title');
-            
-            $this->assign("parentid", $parentid);
-            $this->assign("parents", $parents);
+            $this->assign("fieldList", $modelField);
             
             return $this->fetch();
         }
@@ -272,28 +296,31 @@ class LakecmsContent extends LakecmsBase
             return $this->error("非法操作！");
         }
         
-        $id = request()->param('id');
-        if (! $id) {
+        $cateid = $this->request->param('cateid', 0);
+        if (! $cateid) {
             return $this->error("非法操作！");
         }
         
-        $data = NavbarModel::where([
-            'id' => $id,
-        ])->find();
-        if (empty($data)) {
-            return $this->error('数据不存在！');
+        $ids = request()->param('ids/a');
+        if (! $ids) {
+            return $this->error("非法操作！");
         }
         
-        $children = NavbarModel::where([
-            'parentid' => $id,
-        ])->count();
-        if ($children > 0) {
-            return $this->error('当前导航数据还有子导航，暂不能删除！');
-        }
+        $cate = CategoryModel::with(['model'])
+            ->where([
+                'id' => $cateid,
+                'type' => 1,
+                'status' => 1,
+            ])
+            ->find()
+            ->toArray();
         
-        $result = NavbarModel::where([
-            'id' => $id,
-        ])->delete();
+        $result = ContentModel::newTable($cate['model']['tablename'])
+            ->where([
+                ['id', 'in', $ids],
+                ['categoryid', '=', $cateid],
+            ])
+            ->delete();
         if (false === $result) {
             return $this->error('删除失败！');
         }
@@ -310,15 +337,31 @@ class LakecmsContent extends LakecmsBase
             return $this->error("非法操作！");
         }
         
-        $id = request()->param('id');
+        $cateid = $this->request->param('cateid', 0);
+        if (! $cateid) {
+            return $this->error("非法操作！");
+        }
+        
+        $id = request()->param('id/d');
         if (! $id) {
             return $this->error("非法操作！");
         }
         
+        $cate = CategoryModel::with(['model'])
+            ->where([
+                'id' => $cateid,
+                'type' => 1,
+                'status' => 1,
+            ])
+            ->find()
+            ->toArray();
+        
         $status = input('status', '0', 'trim,intval');
 
-        $result = NavbarModel::where([
-                'id' => $id,
+        $result = ContentModel::newTable($cate['model']['tablename'])
+            ->where([
+                ['id', '=', $id],
+                ['categoryid', '=', $cateid],
             ])
             ->update([
                 'status' => $status,
@@ -329,34 +372,5 @@ class LakecmsContent extends LakecmsBase
         
         return $this->success("设置成功！");
     } 
-
-    /**
-     * 排序
-     */
-    public function sort()
-    {
-        if (! request()->isPost()) {
-            return $this->error("非法操作！");
-        }
-        
-        $id = request()->param('id');
-        if (! $id) {
-            return $this->error("非法操作！");
-        }
-        
-        $sort = $this->request->param('value/d', 100);
-        
-        $result = NavbarModel::where([
-            'id' => $id,
-        ])->update([
-            'sort' => $sort,
-        ]);
-        
-        if (false === $result) {
-            return $this->error("排序失败！");
-        }
-        
-        return $this->success("排序成功！");
-    }
     
 }

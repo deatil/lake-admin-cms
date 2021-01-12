@@ -4,6 +4,8 @@ namespace app\lakecms\model;
 
 use think\Model as BaseModel;
 
+use app\lakecms\support\Field as SupportField;
+
 /**
  * 模型
  */
@@ -37,12 +39,16 @@ class Model extends BaseModel
     /**
      * 表单需要使用的模型字段
      */
-    public function formFields($showType = 1)
+    public static function formFields($where, $showType = 1)
     {
-        $fields = $this->fields;
+        $data = static::where($where)->find();
+        $fields = $data['fields'];
         
         $data = collect($fields)
-            ->map(function($item) use($showType) {
+            ->sort(function($item) {
+                return $item['sort'].$item['id'];
+            })
+            ->map(function($item) use($showType, $data) {
                 if ($item['status'] != 1) {
                     return null;
                 }
@@ -86,9 +92,10 @@ class Model extends BaseModel
                     'name' => $item['name'],
                     'title' => $item['title'],
                     'value' => $item['value'],
+                    'options' => SupportField::parseAttr($item['options']),
                     'remark' => $item['remark'],
                     'ifrequire' => $item['is_must'],
-                    'fieldArr' => $this->tablename,
+                    'fieldArr' => 'modelField',
                 ];
             })
             ->filter(function($item) {
@@ -98,6 +105,7 @@ class Model extends BaseModel
             })
             ->values()
             ->toArray();
+            
         return $data;
     }
     
@@ -134,6 +142,24 @@ class Model extends BaseModel
         }
         
         return $data;
+    }
+    
+    /**
+     * 检测规则
+     */
+    public function validateRules()
+    {
+        $listGrids = SupportField::parseRule($this->validate_rule);
+        return $listGrids;
+    }
+    
+    /**
+     * 检测提示
+     */
+    public function validateMessages()
+    {
+        $listGrids = SupportField::parseRule($this->validate_rule);
+        return $listGrids;
     }
 
 }

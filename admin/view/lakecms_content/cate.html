@@ -31,14 +31,16 @@
 
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-container">
-      <a class="layui-btn layui-btn-sm" href="{:url('add',['cateid'=>$cateid])}">新增内容</a>
+      <a class="layui-btn layui-btn-sm layui-iframe" href="{:url('add',['cateid'=>$cateid])}" title="新增内容">新增内容</a>
       <a class="layui-btn layui-btn-sm layui-btn-danger confirm layui-batch-all" data-href='{:url("delete",["cateid"=>$cateid])}'>批量删除</a>
-      <a href="javascript:location.reload();" class="layui-btn layui-btn-sm layui-btn-green layui-batch-reload" title="刷新">刷新</a>
+      <a href="javascript:location.reload();" class="layui-btn layui-btn-sm layui-btn-green layui-batch-reload" title="刷新">
+        <i class="iconfont icon-shuaxin"></i>
+      </a>
     </div>
 </script>
 
 <script type="text/html" id="barTool">
-    <a href='{:url("edit")}?cateid={$cateid}&id={{ d.id }}' class="layui-btn layui-btn-xs">编辑</a>
+    <a href='{:url("edit")}?cateid={$cateid}&id={{ d.id }}' class="layui-btn layui-btn-xs layui-iframe" title="编辑内容">编辑</a>
     <a href='{:url("delete")}?cateid={$cateid}&ids={{ d.id }}' class="layui-btn layui-btn-danger layui-btn-xs layui-tr-del">删除</a>
 </script>
 
@@ -55,13 +57,7 @@
 </script>
 
 <script type="text/html" id="statusTpl">
-    <div>
-        {{#  if(d.status){ }} 
-            <button class="layui-btn layui-btn layui-btn-xs">正常</button> 
-        {{#  } else { }} 
-            <button class="layui-btn layui-btn-danger layui-btn layui-btn-xs">待审核</button> 
-        {{#  } }} 
-    </div>
+    <input type="checkbox" name="status" data-href="{:url('state')}?cateid={$cateid}&id={{ d.id }}" value="{{d.id}}" lay-skin="switch" lay-text="开启|关闭" lay-filter="switchStatus" {{ d.status==1 ? 'checked' : '' }}>
 </script>
 
 <script type="text/html" id="flagTpl">
@@ -107,16 +103,25 @@ layui.use(['table', 'laydate'], function() {
     var list_grid = {:json_encode($cate['list_grids'], true)};
     var userCols = [];
     for (var name in list_grid) {
-        userCols.push({
-            field: list_grid[name].name,
-            title: list_grid[name].title,
-        });
+        var format = '';
+        if (list_grid[name].format != '') {
+            userCols.push({
+                field: list_grid[name].name,
+                title: list_grid[name].title,
+                templet: '#' + list_grid[name].format + 'Tpl',
+            });
+        } else {
+            userCols.push({
+                field: list_grid[name].name,
+                title: list_grid[name].title,
+            });
+        }
     }
     
     var endCols = [
         { field: 'add_time', width: 160, title: '更新时间', templet: '#addTimeTpl' },
-        { field: 'url',width: 60,align:"center", title: 'URL', templet:'#urlTpl'},
-        { field: 'status', width: 60, align: "center", title: '状态', templet: '#statusTpl'},
+        { field: 'url', width: 60,align:"center", title: 'URL', templet:'#urlTpl'},
+        { field: 'status', width: 100, align: "center", title: '状态', templet: '#statusTpl'},
         { fixed: 'right', width: 120, title: '操作', toolbar: '#barTool' }
     ];
     
@@ -152,22 +157,6 @@ layui.use(['table', 'laydate'], function() {
                 filter_time: 'inputtime',
                 filter_time_range: $("#laydate").val()
             }
-        })
-    });
-
-    // 监听单元格编辑
-    table.on('edit(dataTable)', function(obj) {
-        var value = obj.value,data = obj.data;
-        $.post('{:url("sort",["cateid" => $cateid])}', {
-            'id': data.id,
-            'value':value 
-        }, function(data) {
-            if (data.code == 1) {
-                layer.msg(data.msg);
-            }else{
-                layer.msg(data.msg);
-            }
-
         })
     });
 

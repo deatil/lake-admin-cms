@@ -37,6 +37,12 @@
 {/block}
 
 {block name="script"}
+<style>
+.cate-empty {
+    text-align: left;
+    padding: 5px;
+}
+</style>
 <script type="text/javascript">
 layui.config({
     base: "admin/libs/layui-extend/"
@@ -54,6 +60,10 @@ layui.config({
         showCheckbox: false,
         id: 'category_tree_id',
         isJump: false,
+        onlyIconControl: true,
+        text: {
+            none: '<div class="cate-empty">无</div>',
+        },
         click: function(obj) {
             var url = '{:url("cate")}?cateid=' + obj.data.id
             $('#iframe_categorys_list').attr('src', url);

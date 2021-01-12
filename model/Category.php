@@ -4,6 +4,8 @@ namespace app\lakecms\model;
 
 use think\Model as BaseModel;
 
+use app\lakecms\support\Field as SupportField;
+
 /**
  * 栏目
  */
@@ -74,20 +76,8 @@ class Category extends BaseModel
      */
     public function getListGridsAttr()
     {
-        $listGrids = lake_parse_attr($this->list_grid);
-        
-        $data = [];
-        foreach ($listGrids as $key => $listGrid) {
-            $items = explode('|', $listGrid);
-            
-            $data[] = [
-                'name' => $key,
-                'title' => $items[0] ?? '无',
-                'format' => $items[1] ?? '',
-            ];
-        }
-        
-        return $data;
+        $listGrids = SupportField::parseGrid($this->list_grid);
+        return $listGrids;
     }
     
     /**

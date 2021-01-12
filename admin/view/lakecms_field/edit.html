@@ -5,7 +5,7 @@
     <div class="layui-card-header layui-bg-cyan">编辑字段</div>
     <div class="layui-card-body">
         <blockquote class="layui-elem-quote">
-            <p>默认以下字段名称已存在，请不要建立同名的字段：<br>id、status、edit_time、edit_ip、add_time、add_ip</p>
+            <p>默认以下字段名称已存在，请不要建立同名的字段：<br>id、categoryid、tatus、edit_time、edit_ip、add_time、add_ip</p>
         </blockquote>
         <form class="layui-form" method="post">
             <div class="layui-form-item">
@@ -87,20 +87,20 @@
             </div>
             
             <div class="layui-form-item">
-                <label class="layui-form-label">验证方式</label>
-                <div class="layui-input-block w550">
-                    <div class="layui-input-inline w300">
-                        <input type="text" name="validate_type" autocomplete="off" placeholder="验证方式" class="layui-input" value="{$info.validate_type}" id="validate_type">
-                    </div>
-                    
+                <label class="layui-form-label">验证规则</label>
+                <div class="layui-input-block w500">
+                    <textarea name="validate_rule" rows="6" placeholder="每行为 值[:描述]" class="layui-textarea">{$info.validate_rule}</textarea>
+                </div>
+                <div class="layui-input-block w500" style="margin-top: 10px;">
                     <div class="layui-input-inline">
-                        <select lay-filter="validate_type">
-                            <option data-define="">常用验证</option>
+                        <select lay-filter="validate_rule">
+                            <option data-define="">常用规则</option>
                             <option data-define="require" >require</option>
                             <option data-define="must" >must</option>
                             <option data-define="number" >number</option>
                             <option data-define="integer" >integer</option>
                             <option data-define="float" >float</option>
+                            <option data-define="length:1,5" >length</option>
                             <option data-define="boolean" >boolean</option>
                             <option data-define="email" >email</option>
                             <option data-define="mobile" >mobile</option>
@@ -115,26 +115,17 @@
                             <option data-define="chsDash" >chsDash</option>
                             <option data-define="url" >url</option>
                             <option data-define="ip" >ip</option>
-                            <option data-define="in" >in</option>
-                            <option data-define="notIn" >notIn</option>
-                            <option data-define="between" >between</option>
-                            <option data-define="notBetween" >notBetween</option>
+                            <option data-define="in:1,2" >in</option>
+                            <option data-define="notIn:1,2" >notIn</option>
+                            <option data-define="between:1-2" >between</option>
+                            <option data-define="notBetween:1-2" >notBetween</option>
                             <option data-define="unique" >unique</option>
-                            <option data-define="regex" >regex</option>
+                            <option data-define="regex:" >regex</option>
                         </select>
-                    </div>
-
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">数据校验</label>
-                <div class="layui-input-block w550">
-                    <div class="layui-input-inline w300">
-                        <input type="text" name="validate_rule" autocomplete="off" placeholder="正则校验数据合法性，留空不校验" class="layui-input" value="{$info.validate_rule}" id="validate_rule">
                     </div>
                     
                     <div class="layui-input-inline">
-                        <select lay-filter="validate_rule">
+                        <select lay-filter="validate_regex">
                             <option data-define="">常用正则</option>
                             <option data-define="/^[0-9.-]+$/">数字</option>
                             <option data-define="/^[0-9-]+$/">整数</option>
@@ -150,6 +141,19 @@
                         </select>
                     </div>
                 </div>
+                <div class="layui-input-block w500">
+                    <div class="layui-form-mid layui-word-aux">字段的验证规则，换行分割不同字段，与thinkphp规则相同</div>
+                </div>
+            </div>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label">提示信息</label>
+                <div class="layui-input-block w500">
+                    <textarea name="validate_message" rows="6" placeholder="每行为 值:描述" class="layui-textarea">{$info.validate_message}</textarea>
+                </div>
+                <div class="layui-input-block">
+                    <div class="layui-form-mid layui-word-aux">数据校验未通过的提示信息，换行分割不同字段，与thinkphp提示信息相同</div>
+                </div>
             </div>
             
             <div class="layui-form-item">
@@ -161,13 +165,6 @@
                         <option value="create" {if $info.validate_time=='create'}selected{/if}>添加</option>
                         <option value="update" {if $info.validate_time=='update'}selected{/if}>编辑</option>
                     </select>
-                </div>
-            </div>
-            
-            <div class="layui-form-item">
-                <label class="layui-form-label">提示信息</label>
-                <div class="layui-input-block w500">
-                    <input type="text" name="error_info" placeholder="数据校验未通过的提示信息" class="layui-input" value="{$info.error_info}">
                 </div>
             </div>
             
@@ -285,11 +282,14 @@ layui.use(['layer', 'form'], function() {
             $('#options').hide();
         }
     });
-    form.on('select(validate_type)', function(data) {
-        $('#validate_type').val($(data.elem).find("option:selected").attr("data-define"));
-    });
     form.on('select(validate_rule)', function(data) {
-        $('#validate_rule').val($(data.elem).find("option:selected").attr("data-define"));
+        var new_rule = $(data.elem).find("option:selected").attr("data-define");
+        
+        var validate_rule = $('[name="validate_rule"]');
+        validate_rule.append(new_rule);
+    });
+    form.on('select(validate_regex)', function(data) {
+        $('[name="validate_rule"]').append($(data.elem).find("option:selected").attr("data-define"));
     });
 });
 </script>

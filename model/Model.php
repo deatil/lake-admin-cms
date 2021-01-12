@@ -115,8 +115,8 @@ class Model extends BaseModel
             }
             
             if (! empty($field['validate_message'])) {
-                $validate_messages = lake_parse_attr($field['validate_message'] );
-                foreach ($validate_messages as $key => $message) {
+                $validateMessages = lake_parse_attr($field['validate_message'] );
+                foreach ($validateMessages as $key => $message) {
                     $data['message'][$field['name'].'.'.$key] = $message;
                 }
             }

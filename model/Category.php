@@ -21,8 +21,8 @@ class Category extends BaseModel
     // 追加字段
     protected $append = [
         'cate_url',
-        'info_url'
-        'list_grids'
+        'info_url',
+        'list_grids',
     ];
     
     public static function onBeforeInsert($model)
@@ -72,9 +72,22 @@ class Category extends BaseModel
     /**
      * 列表定义
      */
-    public function getListGridAttr()
+    public function getListGridsAttr()
     {
-        return explode(',', $this->list_grid);
+        $listGrids = lake_parse_attr($this->list_grid);
+        
+        $data = [];
+        foreach ($listGrids as $key => $listGrid) {
+            $items = explode('|', $listGrid);
+            
+            $data[] = [
+                'name' => $key,
+                'title' => $items[0] ?? '无',
+                'format' => $items[1] ?? '',
+            ];
+        }
+        
+        return $data;
     }
     
     /**

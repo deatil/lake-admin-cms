@@ -28,13 +28,17 @@ class LakecmsField extends LakecmsBase
             $page = $this->request->param('page/d', 1);
             $map = $this->buildparams();
             
-            $data = ModelFieldModel::where($map)
+            $modelid = $this->request->param('modelid', 0);
+            $query = ModelFieldModel::where([
+                    'modelid' => $modelid,
+                ])->where($map);
+            
+            $data = $query
                 ->order("sort ASC, id ASC")
                 ->page($page, $limit)
                 ->select()
                 ->toArray();
-            $total = ModelFieldModel::where($map)
-                ->count();
+            $total = $query->count();
 
             $result = [
                 "code" => 0, 

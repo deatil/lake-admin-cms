@@ -56,10 +56,12 @@
 
 {block name="script"}
 <script>
-layui.use('table', function() {
+layui.use(['table', 'notice'], function() {
     var table = layui.table,
         $ = layui.$,
+        notice = layui.notice
         form = layui.form;
+        
     table.render({
         elem: '#table',
         toolbar: '#toolbar',
@@ -85,9 +87,9 @@ layui.use('table', function() {
             data = obj.data;
         $.post('{:url("sort")}', { 'id': data.id, 'value': value }, function(data) {
             if (data.code == 1) {
-                layer.msg(data.msg);
+                notice.success(data.msg);
             } else {
-                layer.msg(data.msg);
+                notice.warning(data.msg);
             }
 
         })

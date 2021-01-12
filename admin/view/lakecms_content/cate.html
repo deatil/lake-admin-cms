@@ -42,10 +42,6 @@
     <a href='{:url("delete")}?cateid={$cateid}&ids={{ d.id }}' class="layui-btn layui-btn-danger layui-btn-xs layui-tr-del">删除</a>
 </script>
 
-<script type="text/html" id="title">
-  {{ d.title }}
-</script>
-
 <script type="text/html" id="addTimeTpl">
     {{ layui.util.toDateString(d.add_time * 1000) }}
 </script>
@@ -102,22 +98,45 @@ layui.use(['table', 'laydate'], function() {
         elem: '#laydate',
         range: true,
     });
+    
+    var startCols = [
+        { type: 'checkbox', fixed: 'left' },
+        { field: 'id', width: 60, title: '#', align: "center" },
+    ];
+    
+    var list_grid = {:json_encode($cate['list_grids'], true)};
+    var userCols = [];
+    for (var name in list_grid) {
+        userCols.push({
+            field: list_grid[name].name,
+            title: list_grid[name].title,
+        });
+    }
+    
+    var endCols = [
+        { field: 'add_time', width: 160, title: '更新时间', templet: '#addTimeTpl' },
+        { field: 'url',width: 60,align:"center", title: 'URL', templet:'#urlTpl'},
+        { field: 'status', width: 60, align: "center", title: '状态', templet: '#statusTpl'},
+        { fixed: 'right', width: 120, title: '操作', toolbar: '#barTool' }
+    ];
+    
+    var newCols = [];
+    for (var name in startCols) {
+        newCols.push(startCols[name]);
+    }
+    for (var name2 in userCols) {
+        newCols.push(userCols[name2]);
+    }
+    for (var name3 in endCols) {
+        newCols.push(endCols[name3]);
+    }
+    
     table.render({
         elem: '#dataTable',
         toolbar: '#toolbarDemo',
         url: '{:url("cate",["cateid"=>$cateid])}',
         cols: [
-            [
-                { type: 'checkbox', fixed: 'left' },
-                { field: 'id', width: 60, title: '#', align: "center" },
-                { field: 'title', title: '标题', templet: '#title'},
-                { field: 'views', width: 80, align: "center", title: '点击量' },
-                { field: 'add_time', width: 160, title: '更新时间', templet: '#addTimeTpl' },
-                { field: 'url',width: 60,align:"center", title: 'URL', templet:'#urlTpl'},
-                { field: 'sort', width: 70, title: '排序', edit: 'text' },
-                { field: 'status', width: 60, align: "center", title: '状态', templet: '#statusTpl'},
-                { fixed: 'right', width: 120, title: '操作', toolbar: '#barTool' }
-            ]
+            newCols
         ],
         page: {}
     });

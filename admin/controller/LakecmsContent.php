@@ -118,6 +118,9 @@ class LakecmsContent extends LakecmsBase
                 ->toArray();
             
             $query = ContentModel::newTable($cate['model']['tablename'])
+                ->where([
+                    ['categoryid', '=', $cateid],
+                ])
                 ->where($map);
             $data = $query->order("id DESC")
                 ->page($page, $limit)
@@ -136,6 +139,15 @@ class LakecmsContent extends LakecmsBase
         } else {
             $cateid = $this->request->param('cateid', 0);
             $this->assign("cateid", $cateid);
+            
+            $cate = CategoryModel::where([
+                    'id' => $cateid,
+                    'type' => 1,
+                    'status' => 1,
+                ])
+                ->find()
+                ->toArray();
+            $this->assign("cate", $cate);
             
             return $this->fetch();
         }

@@ -25,7 +25,7 @@ class LakecmsSetting extends LakecmsBase
         $default_setting = [
             'web_site_status' => 0,
             'web_site_recycle' => '0',
-            'web_theme' => 'lake',
+            // 'web_theme' => 'lake',
     
             'web_site_logo' => '', // 网站LOGO
             'web_site_company' => '', // 公司名称
@@ -37,6 +37,7 @@ class LakecmsSetting extends LakecmsBase
             'web_site_statistics' => '', // 站点代码
             
             'site_url' => '', // 站点代码
+            'site_name' => '',
             'site_name' => '',
             'site_title' => '',
             'site_keyword' => '',
@@ -91,6 +92,43 @@ class LakecmsSetting extends LakecmsBase
             }
             
             $this->assign('setting', $setting);
+
+            return $this->fetch();
+        }
+
+    }
+    
+    /**
+     * 设置主题
+     */
+    public function theme()
+    {
+        if ($this->request->isPost()) {
+            $name = $this->request->param('name', 'default');
+            
+            $info = SettingsModel::where([
+                'name' => 'web_theme',
+            ])->find();
+            
+            if (! empty($info)) {
+                SettingsModel::where([
+                    'name' => 'web_theme',
+                ])->update([
+                    'value' => $name,
+                ]);
+            } else {
+                SettingsModel::insert([
+                    'name' => 'web_theme',
+                    'value' => $name,
+                ]);
+            }
+            
+            return $this->success('设置更新成功！');
+        } else {
+            $theme = SettingsModel::where([
+                    'name' => 'web_theme',
+                ])->value('value');
+            $this->assign("theme", $theme);
             
             // 主题
             $themes = lakecms_themes();
@@ -98,7 +136,6 @@ class LakecmsSetting extends LakecmsBase
 
             return $this->fetch();
         }
-
     }
     
 }

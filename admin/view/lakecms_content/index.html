@@ -23,8 +23,12 @@
         <div class="layui-card">
             <div class="layui-card-header layui-bg-cyan">
                 <div class="layui-row">
-                    <div class="layui-col-md10 layui-col-sm12">
+                    <div class="layui-col-md12">
                         内容
+                        
+                        <a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-light layui-batch-reload lake-admin-cate-reload" title="刷新">
+                            <i class="iconfont icon-shuaxin"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -38,6 +42,10 @@
 
 {block name="script"}
 <style>
+.lake-admin-cate-reload {
+    float: right;
+    margin-top: 5px;
+}
 .cate-empty {
     text-align: left;
     padding: 5px;
@@ -77,6 +85,18 @@ layui.config({
         } else {
             $('.layui-tree-spread').find('.layui-tree-iconClick').trigger('click');
             $(this).data("open", true);
+        }
+    });
+    
+    // 刷新
+    $(document).on("click", ".lake-admin-cate-reload", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        var iframe = $('#iframe_categorys_list');
+        if (iframe[0].contentWindow) {
+            var location = iframe[0].contentWindow.location;
+            location.href = location.pathname + location.search;
         }
     });
 });

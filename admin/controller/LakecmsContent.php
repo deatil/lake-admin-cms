@@ -2,8 +2,11 @@
 
 namespace app\admin\controller;
 
+use think\helper\Arr;
+
 use Lake\TTree as Tree;
 
+use app\lakecms\support\Validate;
 use app\lakecms\model\Category as CategoryModel;
 use app\lakecms\model\Model as ModelModel;
 use app\lakecms\model\ModelField as ModelFieldModel;
@@ -179,6 +182,24 @@ class LakecmsContent extends LakecmsBase
                 $this->error('该栏目不存在！');
             }
             
+            $validateFields = ModelModel::validateFields([
+                'modelid' => $category['model']['id'],
+                'status' => 1,
+            ]);
+            
+            // 验证
+            $validate = new Validate();
+            $validate->withRules(Arr::get($validateFields, 'rule', []));
+            $validate->withMessages(Arr::get($validateFields, 'message', []));
+            $validate->withScenes(Arr::get($validateFields, 'scene', []));
+            $validate->scene('create');
+            
+            $result = $this->validate($data['modelField'], $validate, []);
+            if (true !== $result) {
+                return $this->error($result);
+            }
+            
+            $data['modelField']['categoryid'] = $cateid;
             $result = ContentModel::newCreate($category['model']['tablename'], $data['modelField']);
             if (false === $result) {
                 return $this->error('添加失败！');
@@ -236,6 +257,24 @@ class LakecmsContent extends LakecmsBase
                 ->toArray();
             if (empty($category)) {
                 $this->error('该栏目不存在！');
+            }
+            
+            
+            $validateFields = ModelModel::validateFields([
+                'modelid' => $category['model']['id'],
+                'status' => 1,
+            ]);
+            
+            // 验证
+            $validate = new Validate();
+            $validate->withRules(Arr::get($validateFields, 'rule', []));
+            $validate->withMessages(Arr::get($validateFields, 'message', []));
+            $validate->withScenes(Arr::get($validateFields, 'scene', []));
+            $validate->scene('update');
+            
+            $result = $this->validate($data['modelField'], $validate, []);
+            if (true !== $result) {
+                return $this->error($result);
             }
             
             $table = $category['model']['tablename'];

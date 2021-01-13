@@ -1,0 +1,27 @@
+{extend name="$lake_admin_layout"/}
+
+{block name="main"}
+<div class="layui-card">
+    <div class="layui-card-header layui-bg-cyan">模版设置</div>
+    <div class="layui-card-body">
+        <form class="layui-form" method="post">
+            <div class="layui-form-item">
+                <label>网站模板</label>
+                <div class="w300">
+                    <select name="name">
+                        {volist name="themes" id="vo"}
+                            <option value="{$vo['name']}" {eq name="theme" value="$vo['name']" }selected{/eq}>{$vo['name']}</option> 
+                        {/volist}
+                    </select>
+                </div>
+                <div class="layui-form-mid layui-word-aux">选择给网站使用的模版</div>
+            </div>
+            
+            <div class="layui-form-item">
+                <button class="layui-btn" lay-submit="" lay-filter="formSubmit">保存设置</button>
+            </div>
+        </form>
+    </div>
+</div>
+{/block}
+

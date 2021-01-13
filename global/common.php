@@ -55,9 +55,40 @@ function lakecms_themes($path = null) {
     
     $themes = glob($path.'*');
     
-    $newThemes = collect($themes)->map(function ($item) use($path) {
-        return substr($item, strlen($path));
-    });
+    $newThemes = collect($themes)
+        ->map(function($item) {
+            $infoFile = $item . '/info.php';
+            if (! empty($item) && file_exists($infoFile)) {
+                $info = include $infoFile;
+                
+                $coverFile = $item . '/' . Arr::get($info, 'cover');
+                if (file_exists($infoFile)) {
+                    $coverData = file_get_contents($infoFile);
+                    $cover = "data:image/png;base64,".base64_encode($coverData);
+                } else {
+                    $cover = "";
+                }
+                
+                return [
+                    'name' => Arr::get($info, 'name'),
+                    'remark' => Arr::get($info, 'remark'),
+                    'cover' => $cover,
+                    'version' => Arr::get($info, 'version'),
+                    'author' => Arr::get($info, 'author'),
+                ];
+            }
+            
+            return null;
+        })
+        ->filter(function($item) {
+            if (! empty($item)) {
+                return $item;
+            }
+            
+            return null;
+        })
+        ->values()
+        ->toArray();
     
     return $newThemes;
 }

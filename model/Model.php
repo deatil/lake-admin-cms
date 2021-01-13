@@ -5,6 +5,7 @@ namespace app\lakecms\model;
 use think\Model as BaseModel;
 
 use app\lakecms\support\Field as SupportField;
+use app\lakecms\model\ModelField;
 
 /**
  * 模型
@@ -112,18 +113,30 @@ class Model extends BaseModel
     /**
      * 表单验证的模型字段
      */
-    public function validateFields()
+    public static function validateFields($where)
     {
-        $fields = $this->fields;
+        $fields = ModelField::where($where)
+            ->order("id ASC")
+            ->select()
+            ->toArray();
         
         $data = [];
         foreach ($fields as $field) {
             if (! empty($field['validate_rule'])) {
-                $data['rule'][$field['name'] . '|' . $field['title']] = explode('|', $field['validate_rule']);
+                $validateRules = SupportField::parseRule($field['validate_rule']);
+            } else {
+                $validateRules = [];
             }
             
+            if ($field['is_must'] == 1) {
+                $validateRules[] = 'require';
+            }
+            
+            $validateRule = implode('|', $validateRules);
+            $data['rule'][$field['name'] . '|' . $field['title']] = $validateRule;
+            
             if (! empty($field['validate_message'])) {
-                $validateMessages = lake_parse_attr($field['validate_message'] );
+                $validateMessages = SupportField::parseMessage($field['validate_message'] );
                 foreach ($validateMessages as $key => $message) {
                     $data['message'][$field['name'].'.'.$key] = $message;
                 }
@@ -149,8 +162,8 @@ class Model extends BaseModel
      */
     public function validateRules()
     {
-        $listGrids = SupportField::parseRule($this->validate_rule);
-        return $listGrids;
+        $validateRules = SupportField::parseRule($this->validate_rule);
+        return $validateRules;
     }
     
     /**
@@ -158,8 +171,8 @@ class Model extends BaseModel
      */
     public function validateMessages()
     {
-        $listGrids = SupportField::parseRule($this->validate_rule);
-        return $listGrids;
+        $validateMessages = SupportField::parseMessage($this->validate_rule);
+        return $validateMessages;
     }
 
 }

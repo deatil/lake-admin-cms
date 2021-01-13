@@ -144,18 +144,6 @@
                             <div class="layui-form-mid layui-word-aux">单页和详情页有效</div>
                         </div>
                         
-                        <div class="layui-form-item web_list">
-                            <label>网站模板</label>
-                            <div class="w300">
-                                <select name="setting[web_theme]">
-                                    {volist name="themes" id="vo"}
-                                        <option value="{$vo}" {eq name="setting['web_theme']" value="$vo" }selected{/eq}>{$vo}</option> 
-                                    {/volist}
-                                </select>
-                            </div>
-                            <div class="layui-form-mid layui-word-aux">选择给网站使用的模版</div>
-                        </div>                        
-                        
                     </div>
                 </div>
             </div>

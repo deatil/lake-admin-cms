@@ -25,7 +25,7 @@ class LakecmsContent extends LakecmsBase
      */
     public function index() 
     {
-        $category = CategoryModel::where([
+        $cate = CategoryModel::where([
                 ['status', '=', 1], 
             ])
             ->order("sort ASC, id DESC")
@@ -33,11 +33,12 @@ class LakecmsContent extends LakecmsBase
             ->toArray();
         
         $newCategory = [];
-        foreach ($category as $cate) {
+        foreach ($cate as $cate) {
             $data = [
                 'id' => $cate['id'],
                 'parentid' => $cate['parentid'],
                 'title' => $cate['title'],
+                'type' => $cate['type'],
                 'field' => 'id',
                 'spread' => true,
             ];
@@ -93,7 +94,114 @@ class LakecmsContent extends LakecmsBase
     }
 
     /**
-     * 列表/单页
+     * 单页
+     */
+    public function page() 
+    {
+        if (request()->isPost()) {
+            $data = $this->request->post();
+            
+            $id = $data['id'];
+            if (empty($id)) {
+                $this->error("信息ID不能为空！");
+            }
+            unset($data['id']);
+            
+            $cateid = request()->param('cateid');
+            if (empty($cateid)) {
+                $this->error("请指定栏目ID！");
+            }
+            
+            $cate = CategoryModel::with(['model'])
+                ->where([
+                    'id' => $cateid,
+                    'type' => 2,
+                    'status' => 1,
+                ])
+                ->find();
+            if (empty($cate)) {
+                $this->error('该栏目不存在！');
+            }
+            
+            $validateFields = ModelModel::validateFields([
+                'modelid' => $cate['model']['id'],
+                'status' => 1,
+            ], 1);
+            
+            // 验证
+            $validate = new Validate();
+            $validate->withRules(Arr::get($validateFields, 'rule', []));
+            $validate->withMessages(Arr::get($validateFields, 'message', []));
+            $validate->withScenes(Arr::get($validateFields, 'scene', []));
+            $validate->scene('update');
+            
+            $data['modelField'] = ModelModel::formatFormFields([
+                'id' => $cate['model']['id'],
+                'status' => 1,
+            ], $data['modelField']);
+            
+            $result = $this->validate($data['modelField'], $validate, []);
+            if (true !== $result) {
+                return $this->error($result);
+            }
+            
+            $table = $cate['model']['tablename'];
+            $data = $data['modelField'];
+            $where = [
+                ['id', '=', $id],
+            ];
+            
+            $result = ContentModel::newUpdate($table, $data, $where);
+            if (false === $result) {
+                return $this->error('修改失败！');
+            }
+            
+            return $this->success('修改成功！');
+        } else {
+            $cateid = $this->request->param('cateid', 0);
+            $this->assign("cateid", $cateid);
+            
+            $cate = CategoryModel::with(['model'])
+                ->where([
+                    'id' => $cateid,
+                    'type' => 2,
+                    'status' => 1,
+                ])
+                ->find();
+            
+            $info = ContentModel::newTable($cate['model']['tablename'])
+                ->where([
+                    'categoryid' => $cateid,
+                ])
+                ->order('id ASC')
+                ->find();
+            if (empty($info)) {
+                $createData['categoryid'] = $cateid;
+                ContentModel::newCreate($cate['model']['tablename'], $createData);
+            }
+            $this->assign("info", $info);
+            
+            $modelField = ModelModel::formFields([
+                    'id' => $cate['modelid'],
+                    'status' => 1,
+                ], 1);
+            foreach ($modelField as $key => $value) {
+                if (isset($info[$value['name']])) {
+                    $modelField[$key]['value'] = $info[$value['name']];
+                }
+                
+                if ($value['type'] == 'datetime') {
+                    $modelField[$key]['value'] = date('Y-m-d H:i:s', $info[$value['name']]);
+                }
+            }
+            $this->assign("fieldList", $modelField);
+            
+            return $this->fetch();
+        }
+    }
+
+    /**
+     * 列表
      */
     public function cate() 
     {
@@ -170,7 +278,7 @@ class LakecmsContent extends LakecmsBase
                 $this->error("请指定栏目ID！");
             }
             
-            $category = CategoryModel::with(['model'])
+            $cate = CategoryModel::with(['model'])
                 ->where([
                     'id' => $cateid,
                     'type' => 1,
@@ -178,14 +286,14 @@ class LakecmsContent extends LakecmsBase
                 ])
                 ->find()
                 ->toArray();
-            if (empty($category)) {
+            if (empty($cate)) {
                 $this->error('该栏目不存在！');
             }
             
             $validateFields = ModelModel::validateFields([
-                'modelid' => $category['model']['id'],
+                'modelid' => $cate['model']['id'],
                 'status' => 1,
-            ]);
+            ], 2);
             
             // 验证
             $validate = new Validate();
@@ -194,13 +302,18 @@ class LakecmsContent extends LakecmsBase
             $validate->withScenes(Arr::get($validateFields, 'scene', []));
             $validate->scene('create');
             
+            $data['modelField'] = ModelModel::formatFormFields([
+                'id' => $cate['model']['id'],
+                'status' => 1,
+            ], $data['modelField']);
+            
             $result = $this->validate($data['modelField'], $validate, []);
             if (true !== $result) {
                 return $this->error($result);
             }
             
             $data['modelField']['categoryid'] = $cateid;
-            $result = ContentModel::newCreate($category['model']['tablename'], $data['modelField']);
+            $result = ContentModel::newCreate($cate['model']['tablename'], $data['modelField']);
             if (false === $result) {
                 return $this->error('添加失败！');
             }
@@ -247,7 +360,7 @@ class LakecmsContent extends LakecmsBase
                 $this->error("请指定栏目ID！");
             }
             
-            $category = CategoryModel::with(['model'])
+            $cate = CategoryModel::with(['model'])
                 ->where([
                     'id' => $cateid,
                     'type' => 1,
@@ -255,15 +368,14 @@ class LakecmsContent extends LakecmsBase
                 ])
                 ->find()
                 ->toArray();
-            if (empty($category)) {
+            if (empty($cate)) {
                 $this->error('该栏目不存在！');
             }
             
-            
             $validateFields = ModelModel::validateFields([
-                'modelid' => $category['model']['id'],
+                'modelid' => $cate['model']['id'],
                 'status' => 1,
-            ]);
+            ], 3);
             
             // 验证
             $validate = new Validate();
@@ -272,12 +384,17 @@ class LakecmsContent extends LakecmsBase
             $validate->withScenes(Arr::get($validateFields, 'scene', []));
             $validate->scene('update');
             
+            $data['modelField'] = ModelModel::formatFormFields([
+                'id' => $cate['model']['id'],
+                'status' => 1,
+            ], $data['modelField']);
+            
             $result = $this->validate($data['modelField'], $validate, []);
             if (true !== $result) {
                 return $this->error($result);
             }
             
-            $table = $category['model']['tablename'];
+            $table = $cate['model']['tablename'];
             $data = $data['modelField'];
             $where = [
                 ['id', '=', $id],
@@ -318,6 +435,10 @@ class LakecmsContent extends LakecmsBase
             foreach ($modelField as $key => $value) {
                 if (isset($info[$value['name']])) {
                     $modelField[$key]['value'] = $info[$value['name']];
+                }
+                
+                if ($value['type'] == 'datetime') {
+                    $modelField[$key]['value'] = date('Y-m-d H:i:s', $info[$value['name']]);
                 }
             }
             $this->assign("fieldList", $modelField);

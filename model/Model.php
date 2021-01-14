@@ -29,6 +29,12 @@ class Model extends BaseModel
         $model->setAttr('add_ip', request()->ip());
     }
     
+    public static function onBeforeUpdate($model)
+    {
+        $model->setAttr('edit_time', time());
+        $model->setAttr('edit_ip', request()->ip());
+    }
+    
     /**
      * 模型字段
      */
@@ -111,9 +117,28 @@ class Model extends BaseModel
     }
     
     /**
+     * 格式化字段信息
+     */
+    public static function formatFormFields($where, $userData)
+    {
+        $data = static::where($where)->find();
+        $fields = $data['fields'];
+        
+        foreach ($fields as $field) {
+            if (isset($userData[$field['name']])) {
+                if ($field['type'] == 'datetime') {
+                    $userData[$field['name']] = strtotime($userData[$field['name']]);
+                }
+            }
+        }
+        
+        return $userData;
+    }
+    
+    /**
      * 表单验证的模型字段
      */
-    public static function validateFields($where)
+    public static function validateFields($where, $showType = 1)
     {
         $fields = ModelField::where($where)
             ->order("id ASC")
@@ -122,6 +147,15 @@ class Model extends BaseModel
         
         $data = [];
         foreach ($fields as $field) {
+            // 过滤不需要的字段
+            if ($field['show_type'] != 1) {
+                if ($field['show_type'] != $showType
+                    || $field['show_type'] == 4
+                ) {
+                    continue;
+                }
+            }
+            
             if (! empty($field['validate_rule'])) {
                 $validateRules = SupportField::parseRule($field['validate_rule']);
             } else {
@@ -132,8 +166,10 @@ class Model extends BaseModel
                 $validateRules[] = 'require';
             }
             
-            $validateRule = implode('|', $validateRules);
-            $data['rule'][$field['name'] . '|' . $field['title']] = $validateRule;
+            if (! empty($validateRules)) {
+                $validateRule = implode('|', $validateRules);
+                $data['rule'][$field['name'] . '|' . $field['title']] = $validateRule;
+            }
             
             if (! empty($field['validate_message'])) {
                 $validateMessages = SupportField::parseMessage($field['validate_message'] );

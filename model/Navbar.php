@@ -25,5 +25,11 @@ class Navbar extends Model
         $model->setAttr('add_time', time());
         $model->setAttr('add_ip', request()->ip());
     }
+    
+    public static function onBeforeUpdate($model)
+    {
+        $model->setAttr('edit_time', time());
+        $model->setAttr('edit_ip', request()->ip());
+    }
 
 }

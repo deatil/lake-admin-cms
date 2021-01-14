@@ -35,6 +35,12 @@ class Category extends BaseModel
         $model->setAttr('add_ip', request()->ip());
     }
     
+    public static function onBeforeUpdate($model)
+    {
+        $model->setAttr('edit_time', time());
+        $model->setAttr('edit_ip', request()->ip());
+    }
+    
     /**
      * 栏目链接
      */

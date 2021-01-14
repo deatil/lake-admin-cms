@@ -63,9 +63,26 @@ class LakecmsModel extends LakecmsBase
             }
             
             // 创建表
-            $modelService = ModelService::create();
-            $modelService->createTable($data['tablename'], $data['comment']);
-            $this->setDefaultField($modelService, $result);
+            try {
+                $modelService = ModelService::create();
+                $modelService->createTable($data['tablename'], $data['comment']);
+                $this->setDefaultField($modelService, $result);
+            } catch(\Exception $e) {
+                // 删除模型
+                ModelModel::where([
+                    'id' => $result['id'],
+                ])->delete();
+                
+                // 删除表字段
+                ModelFieldModel::where([
+                    'modelid' => $result['id'],
+                ])->delete();
+                
+                // 删除表
+                ModelService::create()->deleteTable($result['tablename']);
+                
+                return $this->error('添加失败！');
+            }
             
             return $this->success('添加成功！');
         } else {
@@ -231,7 +248,7 @@ class LakecmsModel extends LakecmsBase
             [
                 'name' => 'categoryid', 
                 'title' => '所属栏目', 
-                'type' => 'num', 
+                'type' => 'number', 
                 'length' => 10, 
                 'options' => "", 
                 'value' => '',
@@ -239,14 +256,14 @@ class LakecmsModel extends LakecmsBase
                 'is_must' => 1, 
             ],
             [
-                'name' => 'views', 
-                'title' => '浏览量', 
-                'type' => 'num', 
-                'length' => 10, 
+                'name' => 'status', 
+                'title' => '状态', 
+                'type' => 'switch', 
+                'length' => 1, 
                 'after' => 'categoryid', 
                 'options' => "", 
-                'value' => '0',
-                'remark' => '浏览量', 
+                'value' => '1',
+                'remark' => '状态', 
                 'is_must' => 1, 
             ],
             [

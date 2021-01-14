@@ -73,7 +73,12 @@ layui.config({
             none: '<div class="cate-empty">无</div>',
         },
         click: function(obj) {
-            var url = '{:url("cate")}?cateid=' + obj.data.id
+            if (obj.data.type == 2) {
+                var url = '{:url("page")}?cateid=' + obj.data.id
+            } else {
+                var url = '{:url("cate")}?cateid=' + obj.data.id
+            }
+            
             $('#iframe_categorys_list').attr('src', url);
         }
     });

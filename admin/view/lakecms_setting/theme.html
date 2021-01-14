@@ -1,27 +1,147 @@
 {extend name="$lake_admin_layout"/}
 
 {block name="main"}
+<style>
+.lakecms-theme-item {
+    border: 1px solid #edf0f5;
+    background: #fbfafa;
+}
+.lakecms-theme-item:hover {
+    border: 1px solid #cbd0d8;
+}
+.lakecms-theme-cover {
+    height: 200px;
+    max-width: 100%;
+    overflow: hidden;
+}
+.lakecms-theme-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit:cover;
+}
+.lakecms-theme-detail {
+    padding: 5px 0;
+    color: #999;
+}
+.lakecms-theme-action {
+    margin-top: 5px;
+}
+.lakecms-theme-name {
+    color: #666;
+    font-size: 18px;
+    padding: 5px 0;
+}
+.lakecms-theme-remark {
+    font-size: 13px;
+    height: 48px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+.lakecms-theme-version {
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.lakecms-theme-author {
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.lakecms-theme-btn {
+    padding: 0 25px;
+}
+.lakecms-theme-active, 
+.lakecms-theme-active:active, 
+.lakecms-theme-active:hover 
+{
+    border: 1px solid #e6e6e6;
+    background-color: #FBFBFB;
+    color: #C9C9C9;
+    cursor: not-allowed;
+    opacity: 1;
+}
+</style>
 <div class="layui-card">
     <div class="layui-card-header layui-bg-cyan">模版设置</div>
     <div class="layui-card-body">
-        <form class="layui-form" method="post">
-            <div class="layui-form-item">
-                <label>网站模板</label>
-                <div class="w300">
-                    <select name="name">
-                        {volist name="themes" id="vo"}
-                            <option value="{$vo['name']}" {eq name="theme" value="$vo['name']" }selected{/eq}>{$vo['name']}</option> 
-                        {/volist}
-                    </select>
+        <div class="layui-row layui-col-space10">
+            {volist name="themes" id="vo"}
+            <div class="layui-col-xs6 layui-col-sm4 layui-col-md3 layui-col-lg3">
+                <div class="layui-card-body lakecms-theme-item">
+                    <div class="lakecms-theme-cover">
+                        <img src="{$vo['cover']}" class="lakecms-theme-cover-img" />
+                    </div>
+                    <div class="lakecms-theme-detail">
+                        <div class="lakecms-theme-name">
+                            {$vo['name']}
+                        </div>
+                        <div class="lakecms-theme-remark">
+                            {$vo['remark']}
+                        </div>
+                        <div class="lakecms-theme-version">
+                            版本: v{$vo['version']}
+                        </div>
+                        <div class="lakecms-theme-author">
+                            作者: {$vo['author']}
+                        </div>
+                        <div class="lakecms-theme-action">
+                            {eq name="theme" value="$vo['name']" }
+                                <a href="javascript:;" class="layui-btn layui-btn-sm lakecms-theme-btn lakecms-theme-active" data-name="{$vo['name']}">启用</a>
+                            {else /}
+                                <a href="javascript:;" class="layui-btn layui-btn-sm lakecms-theme-btn" data-name="{$vo['name']}">启用</a>
+                            {/eq}
+                        </div>
+                    </div>
                 </div>
-                <div class="layui-form-mid layui-word-aux">选择给网站使用的模版</div>
             </div>
-            
-            <div class="layui-form-item">
-                <button class="layui-btn" lay-submit="" lay-filter="formSubmit">保存设置</button>
-            </div>
-        </form>
+            {/volist}
+        </div>
     </div>
 </div>
 {/block}
 
+{block name="script"}
+<script type="text/javascript">
+layui.config({
+    base: "admin/libs/layui-extend/"
+}).use(['jquery', 'notice'], function() {
+    var $ = layui.$,
+        notice = layui.notice;
+
+    // 选择
+    $(document).on("click", ".lakecms-theme-btn", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if ($(this).hasClass("lakecms-theme-active")) {
+            return ;
+        }
+        
+        var thiz = this;
+        var name = $(this).data("name");
+        
+        layer.confirm('确认要启用该模版码？', {
+            btn: ['确认', '取消'] //按钮
+        }, function(index) {
+            layer.close(index);
+            
+            $.post('{:url("theme")}', {
+                name: name
+            }).success(function(data) {
+                if (data.code == 1) {
+                    $(".lakecms-theme-btn").removeClass("lakecms-theme-active");
+                    $(thiz).addClass("lakecms-theme-active");
+                    notice.success(data.msg);
+                } else {
+                    notice.danger(data.msg);
+                }
+            });
+        });
+    });
+});
+</script>
+{/block}

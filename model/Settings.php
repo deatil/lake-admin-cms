@@ -4,6 +4,7 @@ namespace app\lakecms\model;
 
 use think\Model;
 use think\facade\Cache;
+use think\helper\Arr;
 
 /**
  * 设置
@@ -41,4 +42,19 @@ class Settings extends Model
         
         return $setting;
     }
+    
+    /**
+     * 获取配置
+     */
+    public static function config($key = null, $default = null) 
+    {
+        $data = static::getSettings();
+        
+        if (! empty($key)) {
+            return Arr::get($data, $key, $default);
+        }
+        
+        return $data;
+    }
+
 }

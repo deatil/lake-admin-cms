@@ -15,7 +15,7 @@ use app\lakecms\model\Settings as SettingsModel;
 class Template 
 {
     /**
-     * 获取配置
+     * 模版根目录
      */
     public static function path($path = '') 
     {
@@ -25,23 +25,23 @@ class Template
             mkdir($templatePath, 755);
         }
         
-        return $templatePath . ($path ? $path . DIRECTORY_SEPARATOR : $path);
+        return $templatePath . $path;
     }
 
     /**
-     * 获取配置
+     * 当前模版目录
      */
-    public static function themePath() 
+    public static function themePath($path = '') 
     {
         $theme = SettingsModel::config('web_theme', 'default');
         
-        $path = static::path($theme);
+        $themePath = static::path($theme);
         
-        return $path;
+        return $themePath . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
     /**
-     * 获取配置
+     * 所有主题
      */
     public static function themes($path = null) 
     {
@@ -49,7 +49,7 @@ class Template
             $path = static::path();
         }
         
-        $themes = glob($path.'*');
+        $themes = glob($path.'/*');
         
         $newThemes = collect($themes)
             ->map(function($item) {

@@ -87,9 +87,16 @@ class LakecmsField extends LakecmsBase
                 'id' => $data['modelid'],
             ])->find();
             
-            // 添加字段
-            $modelService = ModelService::create();
-            $modelService->createField($model['tablename'], $data);
+            try {
+                // 添加字段
+                $modelService = ModelService::create();
+                $modelService->createField($model['tablename'], $data);
+            } catch(\Exception $e) {
+                ModelFieldModel::where([
+                        'id' => $result['id'],
+                    ])
+                    ->delete();
+            }
             
             return $this->success('添加成功！');
         } else {

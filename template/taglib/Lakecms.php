@@ -20,7 +20,7 @@ class Lakecms extends Taglib
         /**
          * 标签定义： 
          * attr 属性列表 
-         * close 是否闭合（0 或者1 默认1） 
+         * close 是否闭合（0 或者 1，默认 1） 
          * alias 标签别名 
          * level 嵌套层次
          */
@@ -34,37 +34,60 @@ class Lakecms extends Taglib
             'close' => 0,
         ],
         
-        'navbarlist' => [
+        'navbars' => [
+            'attr' => 'page,limit,order,where', 
+            'close' => 1,
+            'level' => 3,
+        ],
+        'navbar' => [
+            'attr' => 'id,where', 
             'attr' => '', 
             'close' => 0,
         ],
-        'contentlist' => [
-            'attr' => '', 
+        'cates' => [
+            'attr' => 'page,limit,order,where', 
+            'close' => 1,
+            'level' => 3,
+        ],
+        'cate' => [
+            'attr' => 'id,where', 
+            'close' => 0,
+        ],
+        'contents' => [
+            'attr' => 'cateid,catename,page,limit,order,where', 
             'close' => 1, 
             'level' => 3,
         ],
         'content' => [
-            'attr' => 'name', 
+            'attr' => 'cateid,catename,id,where', 
             'close' => 0,
+        ],
+        'contentprev' => [
+            'attr' => 'cateid,catename,id,where', 
+            'close' => 1, 
+            'level' => 1,
+        ],
+        'contentnext' => [
+            'attr' => 'cateid,catename,id,where', 
+            'close' => 1, 
+            'level' => 1,
         ],
         'page' => [
-            'attr' => 'name', 
+            'attr' => 'cateid,catename,where', 
             'close' => 0,
         ],
-        'prev' => [
-            'attr' => '', 
-            'close' => 1, 
-            'level' => 1,
-        ],
-        'next' => [
-            'attr' => '', 
-            'close' => 1, 
-            'level' => 1,
-        ],
         'tags' => [
-            'attr' => '', 
+            'attr' => 'cateid,catename,page,limit,order,where', 
             'close' => 1, 
             'level' => 3,
+        ],
+        'tag' => [
+            'attr' => 'name,where', 
+            'close' => 1, 
+        ],
+        'setting' => [
+            'attr' => 'name,default', 
+            'close' => 1, 
         ],
     ];
     
@@ -108,7 +131,7 @@ class Lakecms extends Taglib
     /**
      * 信息列表
      */
-    public function tagContentlist($tag, $content)
+    public function tagContents($tag, $content)
     {
         $id = isset($tag['id']) ? $tag['id'] : 'item';
         $empty = isset($tag['empty']) ? $tag['empty'] : '';
@@ -126,7 +149,7 @@ class Lakecms extends Taglib
         
         $var = md5(microtime());
         $parse = '<?php ';
-        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getContentList([' . implode(',', $params) . ']);';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateContentList([' . implode(',', $params) . ']);';
         $parse .= ' ?>';
         $parse .= '{volist name="$__' . $var . '__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;

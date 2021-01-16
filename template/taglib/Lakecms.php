@@ -129,6 +129,60 @@ class Lakecms extends Taglib
     }
     
     /**
+     * 导航列表
+     */
+    public function tagNavbars($tag, $content)
+    {
+        $id = isset($tag['id']) ? $tag['id'] : 'item';
+        $empty = isset($tag['empty']) ? $tag['empty'] : '';
+        $key = !empty($tag['key']) ? $tag['key'] : 'i';
+        $mod = isset($tag['mod']) ? $tag['mod'] : '2';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $var = md5(microtime());
+        $parse = '<?php ';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getNavbarList([' . implode(',', $params) . ']);';
+        $parse .= ' ?>';
+        $parse .= '{volist name="$__' . $var . '__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+        $parse .= '{php}$__LAKECMS_NAVBARS__=$__' . $var . '__;{/php}';
+        
+        return $parse;
+    }
+    
+    /**
+     * 信息详情
+     */
+    public function tagNavbar($tag, $content)
+    {
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $var = md5(microtime());
+        $parse = '<?php ';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getNavbarInfo([' . implode(',', $params) . ']);';
+        $parse .= ' ?>';
+        $parse .= '{php}$__LAKECMS_NAVBAR__=$__' . $var . '__;{/php}';
+        
+        return $parse;
+    }
+    
+    /**
      * 信息列表
      */
     public function tagContents($tag, $content)
@@ -154,7 +208,30 @@ class Lakecms extends Taglib
         $parse .= '{volist name="$__' . $var . '__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;
         $parse .= '{/volist}';
-        $parse .= '{php}$__NAVBARLIST__=$__' . $var . '__;{/php}';
+        $parse .= '{php}$__LAKECMS_CONTENTS__=$__' . $var . '__;{/php}';
+        
+        return $parse;
+    }
+    
+    /**
+     * 信息详情
+     */
+    public function tagContent($tag, $content)
+    {
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $var = md5(microtime());
+        $parse = '<?php ';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateContentInfo([' . implode(',', $params) . ']);';
+        $parse .= ' ?>';
+        $parse .= '{php}$__LAKECMS_CONTENTS__=$__' . $var . '__;{/php}';
         
         return $parse;
     }

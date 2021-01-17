@@ -29,7 +29,7 @@ class Template
     }
 
     /**
-     * 当前模版目录
+     * 当前主题目录
      */
     public static function themePath($path = '') 
     {
@@ -38,6 +38,16 @@ class Template
         $themePath = static::path($theme);
         
         return $themePath . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
+
+    /**
+     * 当前模版目录
+     */
+    public static function themeViewPath($path = '') 
+    {
+        $themeViewPath = static::themePath('view');
+        
+        return $themeViewPath . ($path ? DIRECTORY_SEPARATOR . $path : $path);
     }
 
     /**

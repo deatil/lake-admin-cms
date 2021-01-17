@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use Lake\TTree as Tree;
 
+use app\lakecms\service\Template;
 use app\lakecms\service\ModelTemplate;
 use app\lakecms\model\Model as ModelModel;
 use app\lakecms\model\Category as CategoryModel;
@@ -247,13 +248,14 @@ class LakecmsCategory extends LakecmsBase
             $this->assign("info", $info);
             
             // 模版列表
-            $modelTemplate = (new ModelTemplate)->withPath(lakecms_theme_path());
-            $indexs = $modelTemplate->indexs();
+            $themeViewPath = Template::themeViewPath();
+            $modelTemplate = (new ModelTemplate)->withPath($themeViewPath);
+            $lists = $modelTemplate->lists();
             $details = $modelTemplate->details();
             $pages = $modelTemplate->pages();
             
             $this->assign("template", [
-                'indexs' => $indexs,
+                'lists' => $lists,
                 'details' => $details,
                 'pages' => $pages,
             ]);

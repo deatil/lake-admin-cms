@@ -49,13 +49,13 @@
                 </label>
                 <div class="layui-input-block">
                     <div class="layui-input-inline w300">
-                        <input type="text" name="template_index" autocomplete="off" placeholder="列表模版" class="layui-input" value="{$info.template_index}" id="template_index">
+                        <input type="text" name="template_list" autocomplete="off" placeholder="列表模版" class="layui-input" value="{$info.template_list}" id="template_list">
                     </div>
                     
                     <div class="layui-input-inline">
-                        <select lay-filter="template_index">
+                        <select lay-filter="template_list">
                             <option data-define=""></option>
-                            {volist name="template.indexs" id="vo"}
+                            {volist name="template.lists" id="vo"}
                                 <option data-define="{$vo}" >{$vo}</option>
                             {/volist}
                         </select>
@@ -208,16 +208,16 @@ layui.use(['layer', 'form'], function() {
         layer = layui.layer,
         $ = layui.$;
     
-    var template_index = $('#template_index').val();
-    $("[lay-filter='template_index'] option[data-define='"+template_index+"']").attr("selected", true);
+    var template_list = $('#template_list').val();
+    $("[lay-filter='template_list'] option[data-define='"+template_list+"']").attr("selected", true);
     var template_detail = $('#template_detail').val();
     $("[lay-filter='template_detail'] option[data-define='"+template_detail+"']").attr("selected", true);
     var template_page = $('#template_page').val();
     $("[lay-filter='template_page'] option[data-define='"+template_page+"']").attr("selected", true);
     form.render('select');
 
-    form.on('select(template_index)', function(data) {
-        $('#template_index').val($(data.elem).find("option:selected").attr("data-define"));
+    form.on('select(template_list)', function(data) {
+        $('#template_list').val($(data.elem).find("option:selected").attr("data-define"));
     });
     form.on('select(template_detail)', function(data) {
         $('#template_detail').val($(data.elem).find("option:selected").attr("data-define"));

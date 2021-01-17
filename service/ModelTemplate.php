@@ -37,9 +37,9 @@ class ModelTemplate
     /**
      * 列表
      */
-    public function indexs($path = null)
+    public function lists($path = null)
     {
-        return $this->formatTemplates($path, 'index*');
+        return $this->formatTemplates($path, 'list*');
     }
     
     /**
@@ -61,7 +61,7 @@ class ModelTemplate
     /**
      * 列表模版
      */
-    public function formatTemplates($path = null, $string = 'list*')
+    public function formatTemplates($path = null, $string = 'index*')
     {
         if (empty($path)) {
             $path = $this->path;

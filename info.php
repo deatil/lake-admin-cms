@@ -2,8 +2,8 @@
 
 return [
     'module' => 'lakecms',
-    'name' => 'cms系统',
-    'introduce' => 'cms内容管理系统，基于lake-admin开发',
+    'name' => 'cms模块',
+    'introduce' => '简单高效方便的CMS系统模块',
     'author' => 'deatil',
     'authorsite' => 'http://github.com/deatil',
     'authoremail' => 'deatil@github.com',
@@ -23,14 +23,14 @@ return [
     // 事件
     /*
     'event' => [
-        'InitLcmsRoute' => [
+        [
             'name' => 'HttpRun',
             'class' => 'app\\lakecms\\behavior\\InitLcmsRoute',
             'description' => 'cms路由设置',
             'listorder' => 100,
             'status' => 1,
         ],
-        'InitLcmsTemplate' => [
+        [
             'name' => 'HttpRun',
             'class' => 'app\\lakecms\\behavior\\InitLcmsTemplate',
             'description' => 'cms模板配置',

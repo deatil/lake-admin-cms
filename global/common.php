@@ -3,8 +3,8 @@
 use think\helper\Arr;
 use Lake\File;
 
-use app\lakecms\model\Settings as SettingsModel;
 use app\lakecms\service\Template;
+use app\lakecms\model\Settings as SettingsModel;
 
 // lcms配置信息
 app()->config->set(lakecms_config(), 'lakecms');
@@ -21,6 +21,13 @@ function lakecms_config($key = null, $default = null) {
  */
 function lakecms_theme_path() {
     return Template::themePath();
+}
+
+/**
+ * 获取配置
+ */
+function lakecms_theme_view_path() {
+    return Template::themeViewPath();
 }
 
 /**

@@ -28,5 +28,5 @@ return [
     // 标签库标签结束标记
     'taglib_end' => '}',
     // 标签库
-    'taglib_build_in' => 'cx,app\lakecms\taglib\Lakecms',
+    'taglib_build_in' => 'cx,app\lakecms\template\taglib\Lakecms',
 ];

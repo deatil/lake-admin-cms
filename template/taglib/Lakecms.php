@@ -35,54 +35,54 @@ class Lakecms extends Taglib
         ],
         
         'navbars' => [
-            'attr' => 'page,limit,order,where', 
+            'attr' => 'page,limit,order,condition', 
             'close' => 1,
             'level' => 3,
         ],
         'navbar' => [
-            'attr' => 'id,where', 
+            'attr' => 'id,condition', 
             'attr' => '', 
-            'close' => 0,
+            'close' => 1,
         ],
         'cates' => [
-            'attr' => 'page,limit,order,where', 
+            'attr' => 'page,limit,order,condition', 
             'close' => 1,
             'level' => 3,
         ],
         'cate' => [
-            'attr' => 'id,where', 
-            'close' => 0,
+            'attr' => 'id,condition', 
+            'close' => 1,
         ],
         'contents' => [
-            'attr' => 'cateid,catename,page,limit,order,where', 
+            'attr' => 'cateid,catename,page,limit,order,condition', 
             'close' => 1, 
             'level' => 3,
         ],
         'content' => [
-            'attr' => 'cateid,catename,id,where', 
-            'close' => 0,
+            'attr' => 'cateid,catename,id,condition', 
+            'close' => 1,
         ],
         'contentprev' => [
-            'attr' => 'cateid,catename,id,where', 
+            'attr' => 'cateid,catename,id,condition', 
             'close' => 1, 
             'level' => 1,
         ],
         'contentnext' => [
-            'attr' => 'cateid,catename,id,where', 
+            'attr' => 'cateid,catename,id,condition', 
             'close' => 1, 
             'level' => 1,
         ],
         'page' => [
-            'attr' => 'cateid,catename,where', 
-            'close' => 0,
+            'attr' => 'cateid,catename,condition', 
+            'close' => 1,
         ],
         'tags' => [
-            'attr' => 'cateid,catename,page,limit,order,where', 
+            'attr' => 'cateid,catename,page,limit,order,condition', 
             'close' => 1, 
             'level' => 3,
         ],
         'tag' => [
-            'attr' => 'name,where', 
+            'attr' => 'name,condition', 
             'close' => 1, 
         ],
         'setting' => [
@@ -439,7 +439,12 @@ class Lakecms extends Taglib
      */
     public function tagSetting($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'setting';
+        $name = isset($tag['name']) ? $tag['name'] : '';
+        if (empty($name)) {
+            return null;
+        }
+        
+        $default = isset($tag['default']) ? $tag['default'] : '';
         
         $params = [];
         foreach ($tag as $k => & $v) {
@@ -450,13 +455,12 @@ class Lakecms extends Taglib
             $params[] = '"' . $k . '"=>' . $v;
         }
         
+        $var = md5(json_encode($params));
         $parse = '<?php';
-        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getSetting([' . implode(',', $params) . ']);';
-        $parse .= '?>';
-        
-        if (isset($tag['echo'])) {
-            $parse .= '<?php echo $' . $id . '; ?>';
-        }
+        $parse .= 'if (! $__' . $var . '__) { ';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getSetting([' . implode(',', $params) . ']);';
+        $parse .= ' } ?>';
+        $parse .= '<?php echo isset($__' . $var . '__[$'.$name.']) ? $__' . $var . '__[$'.$name.'] : '.$default.'; ?>';
         
         return $parse;
     }

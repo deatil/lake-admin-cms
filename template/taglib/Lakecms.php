@@ -123,7 +123,7 @@ class Lakecms extends Taglib
         $sql = isset($tag['sql']) ? $tag['sql'] : '';
         $sql = addslashes($sql);
         $parse = '<?php ';
-        $parse .= '\think\facade\Db::execute(\'' . $sql . '\');';
+        $parse .= 'echo \think\facade\Db::execute(\'' . $sql . '\');';
         $parse .= ' ?>';
         return $parse;
     }
@@ -160,10 +160,41 @@ class Lakecms extends Taglib
     }
     
     /**
-     * 信息详情
+     * 导航详情
      */
     public function tagNavbar($tag, $content)
     {
+        $id = isset($tag['id']) ? $tag['id'] : 'navbar';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $parse = '<?php';
+        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getNavbarInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $id . '):';
+        $parse .= '?>';
+        $parse .= $content;
+        $parse .= '<?php endif; ?>';
+        
+        return $parse;
+    }
+    
+    /**
+     * 导航列表
+     */
+    public function tagCates($tag, $content)
+    {
+        $id = isset($tag['id']) ? $tag['id'] : 'item';
+        $empty = isset($tag['empty']) ? $tag['empty'] : '';
+        $key = !empty($tag['key']) ? $tag['key'] : 'i';
+        $mod = isset($tag['mod']) ? $tag['mod'] : '2';
+        
         $params = [];
         foreach ($tag as $k => & $v) {
             if (in_array($k, ['condition'])) {
@@ -175,9 +206,38 @@ class Lakecms extends Taglib
         
         $var = md5(microtime());
         $parse = '<?php ';
-        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getNavbarInfo([' . implode(',', $params) . ']);';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateList([' . implode(',', $params) . ']);';
         $parse .= ' ?>';
-        $parse .= '{php}$__LAKECMS_NAVBAR__=$__' . $var . '__;{/php}';
+        $parse .= '{volist name="$__' . $var . '__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+        $parse .= '{php}$__LAKECMS_CATES__=$__' . $var . '__;{/php}';
+        
+        return $parse;
+    }
+    
+    /**
+     * 分类详情
+     */
+    public function tagCate($tag, $content)
+    {
+        $id = isset($tag['id']) ? $tag['id'] : 'cate';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $parse = '<?php';
+        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getCateInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $id . '):';
+        $parse .= '?>';
+        $parse .= $content;
+        $parse .= '<?php endif; ?>';
         
         return $parse;
     }
@@ -218,6 +278,115 @@ class Lakecms extends Taglib
      */
     public function tagContent($tag, $content)
     {
+        $id = isset($tag['id']) ? $tag['id'] : 'content';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $parse = '<?php';
+        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getCateContentInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $id . '):';
+        $parse .= '?>';
+        $parse .= $content;
+        $parse .= '<?php endif;?>';
+        
+        return $parse;
+    }
+    
+    /**
+     * 信息上一条
+     */
+    public function tagContentprev($tag, $content)
+    {
+        $id = isset($tag['id']) ? $tag['id'] : 'contentprev';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $parse = '<?php';
+        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getCateContentPrevInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $id . '):';
+        $parse .= '?>';
+        $parse .= $content;
+        $parse .= '<?php endif;?>';
+        
+        return $parse;
+    }
+    
+    /**
+     * 信息下一条
+     */
+    public function tagContentnext($tag, $content)
+    {
+        $id = isset($tag['id']) ? $tag['id'] : 'contentnext';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $parse = '<?php';
+        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getCateContentNextInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $id . '):';
+        $parse .= '?>';
+        $parse .= $content;
+        $parse .= '<?php endif;?>';
+        
+        return $parse;
+    }
+    
+    /**
+     * 单页
+     */
+    public function tagPage($tag, $content)
+    {
+        $id = isset($tag['id']) ? $tag['id'] : 'contentnext';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $parse = '<?php ';
+        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getCatePageInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $id . '):';
+        $parse .= '?>';
+        $parse .= $content;
+        $parse .= '<?php endif; ?>';
+        
+        return $parse;
+    }
+    
+    /**
+     * 标签列表
+     */
+    public function tagTags($tag, $content)
+    {
+        $id = isset($tag['id']) ? $tag['id'] : 'item';
+        $empty = isset($tag['empty']) ? $tag['empty'] : '';
+        $key = !empty($tag['key']) ? $tag['key'] : 'i';
+        $mod = isset($tag['mod']) ? $tag['mod'] : '2';
+        
         $params = [];
         foreach ($tag as $k => & $v) {
             if (in_array($k, ['condition'])) {
@@ -229,9 +398,65 @@ class Lakecms extends Taglib
         
         $var = md5(microtime());
         $parse = '<?php ';
-        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateContentInfo([' . implode(',', $params) . ']);';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getTagList([' . implode(',', $params) . ']);';
         $parse .= ' ?>';
+        $parse .= '{volist name="$__' . $var . '__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
         $parse .= '{php}$__LAKECMS_CONTENTS__=$__' . $var . '__;{/php}';
+        
+        return $parse;
+    }
+    
+    /**
+     * 标签详情
+     */
+    public function tagTag($tag, $content)
+    {
+        $id = isset($tag['id']) ? $tag['id'] : 'tag';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $parse = '<?php';
+        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getTagInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $id . '):';
+        $parse .= '?>';
+        $parse .= $content;
+        $parse .= '<?php endif; ?>';
+        
+        return $parse;
+    }
+    
+    /**
+     * 设置项
+     */
+    public function tagSetting($tag, $content)
+    {
+        $id = isset($tag['id']) ? $tag['id'] : 'setting';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $parse = '<?php';
+        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getSetting([' . implode(',', $params) . ']);';
+        $parse .= '?>';
+        
+        if (isset($tag['echo'])) {
+            $parse .= '<?php echo $' . $id . '; ?>';
+        }
         
         return $parse;
     }

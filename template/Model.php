@@ -32,22 +32,28 @@ class Model
         // 排序
         $order = isset($tag['order']) ? $tag['order'] : "id DESC";
         
+        $field = empty($params['field']) ? '*' : $params['field'];
+        $cache = !isset($params['cache']) ? $config['cachelifetime'] === 'true' ? true : (int)$config['cachelifetime'] : (int)$params['cache'];
+        $cache = !$cache ? false : $cache;
+        
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $map = [
             ['status', '=', 1],
         ];
         
         $data = NavbarModel::with(['model'])
+            ->field($field)
             ->where($map)
-            ->where($where)
+            ->where($condition)
             ->order($order)
             ->page($page, $limit)
+            ->cache($cache)
             ->select()
             ->toArray();
         $total = NavbarModel::where($map)
-            ->where($where)
+            ->where($condition)
             ->count();
             
         return [$data, $total];
@@ -65,7 +71,7 @@ class Model
         $id = $tag['id'];
         
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $map = [
             ['status', '=', 1],
@@ -75,7 +81,7 @@ class Model
                 'id' => $id,
             ])
             ->where($map)
-            ->where($where)
+            ->where($condition)
             ->find();
         
         return $info;
@@ -96,7 +102,7 @@ class Model
         $order = isset($tag['order']) ? $tag['order'] : "id DESC";
         
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $map = [
             ['status', '=', 1],
@@ -104,13 +110,13 @@ class Model
         
         $data = CategoryModel::with(['model'])
             ->where($map)
-            ->where($where)
+            ->where($condition)
             ->order($order)
             ->page($page, $limit)
             ->select()
             ->toArray();
         $total = CategoryModel::where($map)
-            ->where($where)
+            ->where($condition)
             ->count();
             
         return [$data, $total];
@@ -128,7 +134,7 @@ class Model
         $id = $tag['id'];
         
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $map = [
             ['status', '=', 1],
@@ -138,7 +144,7 @@ class Model
                 'id' => $id,
             ])
             ->where($map)
-            ->where($where)
+            ->where($condition)
             ->find();
         
         return $info;
@@ -169,7 +175,7 @@ class Model
         $order = isset($tag['order']) ? $tag['order'] : "id DESC";
         
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $cate = CategoryModel::with(['model'])
             ->orWhere([
@@ -182,7 +188,7 @@ class Model
                 'type' => 1,
                 'status' => 1,
             ])
-            ->where($where)
+            ->where($condition)
             ->find();
         if (empty($cate)) {
             return [];
@@ -248,7 +254,7 @@ class Model
         $id = $tag['id'];
         
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $map = [
             ['status', '=', 1],
@@ -259,7 +265,7 @@ class Model
                 'id' => $id,
                 'categoryid' => $cate['id'],
             ])
-            ->where($where)
+            ->where($condition)
             ->find();
         
         return $info;
@@ -303,7 +309,7 @@ class Model
         $id = $tag['id'];
         
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $map = [
             ['status', '=', 1],
@@ -314,7 +320,7 @@ class Model
                 ['id', '<', $id],
                 ['categoryid', '=', $cate['id']],
             ])
-            ->where($where)
+            ->where($condition)
             ->order('id DESC')
             ->find();
         
@@ -359,7 +365,7 @@ class Model
         $id = $tag['id'];
         
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $map = [
             ['status', '=', 1],
@@ -370,7 +376,7 @@ class Model
                 ['id', '>', $id],
                 ['categoryid', '=', $cate['id']],
             ])
-            ->where($where)
+            ->where($condition)
             ->order('id ASC')
             ->find();
         
@@ -409,13 +415,13 @@ class Model
         }
         
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $info = ContentModel::newTable($cate['model']['tablename'])
             ->where([
                 'categoryid' => $cate['id'],
             ])
-            ->where($where)
+            ->where($condition)
             ->order('id ASC')
             ->find();
         if (empty($info)) {
@@ -440,7 +446,7 @@ class Model
         $order = isset($tag['order']) ? $tag['order'] : "id DESC";
         
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $map = [
             ['status', '=', 1],
@@ -448,13 +454,13 @@ class Model
         
         $data = TagsModel::with(['model'])
             ->where($map)
-            ->where($where)
+            ->where($condition)
             ->order($order)
             ->page($page, $limit)
             ->select()
             ->toArray();
         $total = TagsModel::where($map)
-            ->where($where)
+            ->where($condition)
             ->count();
             
         return [$data, $total];
@@ -472,7 +478,7 @@ class Model
         $name = $tag['name'];
         
         // 附加条件
-        $where = isset($tag['where']) ? $tag['where'] : '';
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         $map = [
             ['status', '=', 1],
@@ -482,7 +488,7 @@ class Model
                 'name' => $name,
             ])
             ->where($map)
-            ->where($where)
+            ->where($condition)
             ->find();
         
         return $info;

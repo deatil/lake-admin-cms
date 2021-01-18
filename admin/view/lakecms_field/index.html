@@ -78,7 +78,8 @@ layui.use(['table', 'notice'], function() {
                 { field: 'status', width: 100, align:"center", title: '状态', templet: '#switchTpl', unresize: true },
                 { fixed: 'right', width: 120, title: '操作', templet: '#barTool' }
             ]
-        ]
+        ],
+        page: 20,
     });
 
     // 监听单元格编辑

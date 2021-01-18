@@ -17,4 +17,11 @@ class TagsContent extends Model
     
     // 时间字段取出后的默认时间格式
     protected $dateFormat = false;
+    
+    public static function onBeforeInsert($model)
+    {
+        $model->setAttr('add_time', time());
+        $model->setAttr('add_ip', request()->ip());
+    }
+
 }

@@ -66,5 +66,44 @@ class Content extends BaseModel
     ) {
         return self::update($data, $where, $allowField, $table);
     }
+    
+    /**
+     * 更新标签关联
+     */
+    public static function updateTagsContent(
+        array $tags = [], 
+        int $modelid,
+        int $cateid,
+        int $contentid
+    ) {
+        TagsContent::where([
+            ['modelid', '=', $modelid],
+            ['cateid', '=', $cateid],
+            ['contentid', '=', $contentid],
+        ])->delete();
+        foreach ($tags as $tag) {
+            $tagData = Tags::where([
+                ['title', '=', $tag],
+            ])->find();
+            if (empty($tagData)) {
+                $newTag = Tags::create([
+                    'title' => $tag,
+                ]);
+                
+                if ($newTag !== false) {
+                    $newTagId = $newTag->id;
+                }
+            } else {
+                $newTagId = $tagData->id;
+            }
+            
+            TagsContent::create([
+                ['tagid', '=', $newTagId],
+                ['modelid', '=', $modelid],
+                ['cateid', '=', $cateid],
+                ['contentid', '=', $contentid],
+            ]);
+        }
+    }
 
 }

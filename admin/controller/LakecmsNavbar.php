@@ -21,35 +21,6 @@ class LakecmsNavbar extends LakecmsBase
     public function index() 
     {
         if ($this->request->isAjax()) {
-            $limit = $this->request->param('limit/d', 20);
-            $page = $this->request->param('page/d', 1);
-            $map = $this->buildparams();
-            
-            $data = NavbarModel::where($map)
-                ->order("id DESC")
-                ->page($page, $limit)
-                ->select()
-                ->toArray();
-            $total = NavbarModel::where($map)
-                ->count();
-
-            $result = [
-                "code" => 0, 
-                "count" => $total, 
-                "data" => $data,
-            ];
-            return json($result);
-        } else {
-            return $this->fetch();
-        }
-    }
-
-    /**
-     * 结构列表
-     */
-    public function tree() 
-    {
-        if ($this->request->isAjax()) {
             $result = NavbarModel::order([
                     'sort' => 'ASC', 
                     'id' => 'ASC',
@@ -68,6 +39,35 @@ class LakecmsNavbar extends LakecmsBase
                 "data" => $list
             ];
 
+            return json($result);
+        } else {
+            return $this->fetch();
+        }
+    }
+
+    /**
+     * 全部
+     */
+    public function all() 
+    {
+        if ($this->request->isAjax()) {
+            $limit = $this->request->param('limit/d', 20);
+            $page = $this->request->param('page/d', 1);
+            $map = $this->buildparams();
+            
+            $data = NavbarModel::where($map)
+                ->order("id DESC")
+                ->page($page, $limit)
+                ->select()
+                ->toArray();
+            $total = NavbarModel::where($map)
+                ->count();
+
+            $result = [
+                "code" => 0, 
+                "count" => $total, 
+                "data" => $data,
+            ];
             return json($result);
         } else {
             return $this->fetch();

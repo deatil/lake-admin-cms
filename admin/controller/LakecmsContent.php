@@ -231,14 +231,22 @@ class LakecmsContent extends LakecmsBase
             
             $query = ContentModel::newTable($cate['model']['tablename'])
                 ->where([
-                    ['categoryid', '=', $cateid],
+                    ['categoryid', '=', $cate['id']],
                 ])
                 ->where($map);
+            $queryCount = clone $query;
             $data = $query->order("id DESC")
                 ->page($page, $limit)
                 ->select()
                 ->toArray();
-            $total = $query->count();
+            $total = $queryCount->count();
+            
+            foreach ($data as $key => $item) {
+                $data[$key]['url'] = (string) url('lakecms/content/index', [
+                    'cateid' => $cate['id'],
+                    'id' => $item['id'],
+                ]);
+            }
 
             $result = [
                 "code" => 0, 

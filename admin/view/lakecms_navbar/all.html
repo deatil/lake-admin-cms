@@ -2,14 +2,13 @@
 
 {block name="main"}
 <div class="layui-card">
-    <div class="layui-card-header layui-bg-cyan">栏目管理</div>
+    <div class="layui-card-header layui-bg-cyan">导航设置</div>
     <div class="layui-card-body">
         <blockquote class="layui-elem-quote">
             <form class="layui-form lake-admin-search-form" method="get" lay-filter="lake-admin-search-from">
                 <div class="layui-inline">
                     <select name="field" class="lake-admin-search-field">
                         <option value="">全部</option>
-                        <option value="name">标识</option>
                         <option value="title">标题</option>
                     </select>
                 </div>
@@ -31,13 +30,13 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
-        <a class="layui-btn layui-btn-sm layui-iframe" href="{:url('add')}" title="添加栏目">添加栏目</a>
-        <a class="layui-btn layui-btn-sm layui-btn-normal" href="{:url('tree')}">树结构</a>
+        <a class="layui-btn layui-btn-sm layui-iframe" href="{:url('add')}" title="添加导航">添加导航</a>
+        <a class="layui-btn layui-btn-sm layui-btn-normal" href="{:url('index')}">导航列表</a>
     </div>
 </script>
 <script type="text/html" id="actionTpl">
-    <a href='{:url("setting")}?id={{ d.id }}' class="layui-btn layui-btn-xs layui-btn-normal layui-iframe" title="栏目设置【{{ d.title }}】">设置</a>
-    <a href='{:url("edit")}?id={{ d.id }}' class="layui-btn layui-btn-xs layui-iframe" title="编辑栏目【{{ d.title }}】">编辑</a>
+    <a href="{:url('add')}?parentid={{ d.id }}" class="layui-btn layui-btn-xs layui-btn-normal layui-iframe" title="添加导航">添加</a>
+    <a href='{:url("edit")}?id={{ d.id }}' class="layui-btn layui-btn-xs layui-iframe" title="编辑导航【{{ d.title }}】">编辑</a>
     <a href='{:url("delete")}?id={{ d.id }}' class="layui-btn layui-btn-danger layui-btn-xs layui-tr-del">删除</a>
 </script>
 
@@ -45,21 +44,10 @@
     <input type="checkbox" name="status" data-href="{:url('state')}?id={{d.id}}" value="{{d.id}}" lay-skin="switch" lay-text="开启|关闭" lay-filter="switchStatus" {{ d.status==1 ? 'checked' : '' }}>
 </script>
 
-<script type="text/html" id="modelTpl">
-    {{ d.model.title }}
-</script>
-
-<script type="text/html" id="urlTpl">
-    <a href="{{ d.url }}" target="_blank">
-        <i class="iconfont icon-lianjie"></i>
-    </a>
-</script>
-
 <script type="text/html" id="createTimeTpl">
     {{ layui.util.toDateString(d.create_time * 1000) }}
 </script>
 {/block}
-
 {block name="script"}
 <script>
 layui.use(['table', 'notice'], function() {
@@ -75,14 +63,12 @@ layui.use(['table', 'notice'], function() {
         cols: [
             [
                 { field: 'id', width: 80, title: '#', align: "center" },
-                { field: 'name', width:130, title: '唯一标识', title: '标题' },
-                { field: 'title', title: '栏目名称' },
-                { width:130, title: '所属模型', templet: '#modelTpl' },
-                { field: 'url', width: 60,align:"center", title: 'URL', templet:'#urlTpl'},
+                { field: 'title', width:180, title: '标题' },
+                { field: 'url', title: '链接' },
                 { field: 'sort', width:80, title: '排序', align: "center", edit: 'text' },
                 { field: 'create_time', width:180, title: '创建时间', templet: '#createTimeTpl' },
                 { field: 'status', width: 100, title: '状态', align: "center", templet: '#statusTpl', unresize: true },
-                { fixed: 'right', title: '操作', width: 180, templet: '#actionTpl' }
+                { fixed: 'right', title: '操作', width: 160, templet: '#actionTpl' }
             ]
         ]
     });

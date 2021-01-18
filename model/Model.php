@@ -52,9 +52,7 @@ class Model extends BaseModel
         $fields = $data['fields'];
         
         $data = collect($fields)
-            ->sort(function($item) {
-                return $item['sort'].$item['id'];
-            })
+            ->order('sort', 'asc')
             ->map(function($item) use($showType, $data) {
                 if ($item['status'] != 1) {
                     return null;

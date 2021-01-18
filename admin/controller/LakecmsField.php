@@ -31,14 +31,16 @@ class LakecmsField extends LakecmsBase
             $modelid = $this->request->param('modelid', 0);
             $query = ModelFieldModel::where([
                     'modelid' => $modelid,
-                ])->where($map);
+                ])
+                ->where($map);
+            $queryCount = clone $query;
             
             $data = $query
                 ->order("sort ASC, id ASC")
                 ->page($page, $limit)
                 ->select()
                 ->toArray();
-            $total = $query->count();
+            $total = $queryCount->count();
 
             $result = [
                 "code" => 0, 

@@ -99,7 +99,7 @@ return [
                         "method" => "GET",
                         "type" => 1,
                         "is_menu" => 1,
-                        "title" => "导航设置",
+                        "title" => "导航管理",
                         "icon" => "icon-liebiaosousuo",
                         "listorder" => 10,
                         "child" => [
@@ -108,14 +108,14 @@ return [
                                 "method" => "GET",
                                 "type" => 1,
                                 "is_menu" => 0,
-                                "title" => "导航设置",
+                                "title" => "导航管理",
                             ],
                             [
-                                "route" => "admin/lakecmsNavbar/tree",
+                                "route" => "admin/lakecmsNavbar/all",
                                 "method" => "GET",
                                 "type" => 1,
                                 "is_menu" => 0,
-                                "title" => "导航结构",
+                                "title" => "全部导航",
                             ],
                             [
                                 "route" => "admin/lakecmsNavbar/add",

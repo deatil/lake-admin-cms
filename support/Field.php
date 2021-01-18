@@ -54,7 +54,9 @@ class Field
         
         $value = [];
         foreach ($array as $val) {
-            list($k, $v) = explode(':', $val, 2);
+            $vals = explode(':', $val, 2);
+            $k = $vals[0] ?? '';
+            $v = $vals[1] ?? '';
             
             if (! empty($v)) {
                 $value[$k] = $v;
@@ -81,7 +83,9 @@ class Field
         
         $data = [];
         foreach ($array as $val) {
-            list($k, $v) = explode(':', $val, 2);
+            $vals = explode(':', $val, 2);
+            $k = $vals[0] ?? '';
+            $v = $vals[1] ?? '';
             
             $newV = explode('|', $v, 2);
             if (count($newV) == 2) {

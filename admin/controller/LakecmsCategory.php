@@ -35,6 +35,13 @@ class LakecmsCategory extends LakecmsBase
                 ->toArray();
             $total = CategoryModel::where($map)
                 ->count();
+            foreach ($data as $key => $item) {
+                if ($item['type'] == 1) {
+                    $data[$key]['url'] = (string) url('lakecms/cate/index', ['cateid' => $item['id']]);
+                } else {
+                    $data[$key]['url'] = (string) url('lakecms/page/index', ['cateid' => $item['id']]);
+                }
+            }
 
             $result = [
                 "code" => 0, 

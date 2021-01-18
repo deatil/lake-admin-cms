@@ -135,10 +135,11 @@ class LakecmsContent extends LakecmsBase
             $validate->withScenes(Arr::get($validateFields, 'scene', []));
             $validate->scene('update');
             
-            $data['modelField'] = ModelModel::formatFormFields([
-                'id' => $cate['model']['id'],
-                'status' => 1,
-            ], $data['modelField']);
+            $fields = ModelModel::where([
+                    'id' => $cate['model']['id'],
+                    'status' => 1,
+                ])->value('fields');
+            $data['modelField'] = ModelModel::formatFormFields($fields, $data['modelField']);
             
             $result = $this->validate($data['modelField'], $validate, []);
             if (true !== $result) {
@@ -310,10 +311,11 @@ class LakecmsContent extends LakecmsBase
             $validate->withScenes(Arr::get($validateFields, 'scene', []));
             $validate->scene('create');
             
-            $data['modelField'] = ModelModel::formatFormFields([
-                'id' => $cate['model']['id'],
-                'status' => 1,
-            ], $data['modelField']);
+            $fields = ModelModel::where([
+                    'id' => $cate['model']['id'],
+                    'status' => 1,
+                ])->value('fields');
+            $data['modelField'] = ModelModel::formatFormFields($fields, $data['modelField']);
             
             $result = $this->validate($data['modelField'], $validate, []);
             if (true !== $result) {
@@ -324,6 +326,10 @@ class LakecmsContent extends LakecmsBase
             $result = ContentModel::newCreate($cate['model']['tablename'], $data['modelField']);
             if (false === $result) {
                 return $this->error('添加失败！');
+            }
+            
+            if (isset($data['modelField'])) {
+                
             }
             
             return $this->success('添加成功！');
@@ -392,10 +398,11 @@ class LakecmsContent extends LakecmsBase
             $validate->withScenes(Arr::get($validateFields, 'scene', []));
             $validate->scene('update');
             
-            $data['modelField'] = ModelModel::formatFormFields([
-                'id' => $cate['model']['id'],
-                'status' => 1,
-            ], $data['modelField']);
+            $fields = ModelModel::where([
+                    'id' => $cate['model']['id'],
+                    'status' => 1,
+                ])->value('fields');
+            $data['modelField'] = ModelModel::formatFormFields($fields, $data['modelField']);
             
             $result = $this->validate($data['modelField'], $validate, []);
             if (true !== $result) {

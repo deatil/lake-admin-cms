@@ -118,14 +118,14 @@ CREATE TABLE `lake_lakecms_tags` (
 
 DROP TABLE IF EXISTS `lake_lakecms_tags_content`;
 CREATE TABLE `lake_lakecms_tags_content` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `tagid` int(10) NOT NULL DEFAULT '0' COMMENT '标签ID',
   `modelid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '模型ID',
   `cateid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '栏目ID',
   `contentid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '信息ID',
   `add_time` int(10) DEFAULT '0' COMMENT '添加时间',
   `add_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '添加IP',
-  PRIMARY KEY (`id`),
   KEY `tag` (`tagid`),
-  KEY `modelid` (`contentid`)
+  KEY `modelid` (`contentid`),
+  KEY `cateid` (`cateid`),
+  KEY `cate_content_index` (`modelid`, `cateid`, `contentid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='tags数据表';

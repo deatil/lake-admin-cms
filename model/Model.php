@@ -117,11 +117,8 @@ class Model extends BaseModel
     /**
      * 格式化字段信息
      */
-    public static function formatFormFields($where, $userData)
+    public static function formatFormFields($fields, $userData)
     {
-        $data = static::where($where)->find();
-        $fields = $data['fields'];
-        
         foreach ($fields as $field) {
             if (isset($userData[$field['name']])) {
                 if ($field['type'] == 'datetime') {
@@ -131,6 +128,23 @@ class Model extends BaseModel
         }
         
         return $userData;
+    }
+    
+    /**
+     * 格式化标签信息
+     */
+    public static function formatFormFieldTags($fields, $userData)
+    {
+        $tags = [];
+        foreach ($fields as $field) {
+            if (isset($userData[$field['name']])) {
+                if ($field['type'] == 'tags') {
+                    $tags[] = $userData[$field['name']];
+                }
+            }
+        }
+        
+        return $tags;
     }
     
     /**

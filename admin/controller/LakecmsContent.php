@@ -135,10 +135,11 @@ class LakecmsContent extends LakecmsBase
             $validate->withScenes(Arr::get($validateFields, 'scene', []));
             $validate->scene('update');
             
-            $fields = ModelModel::where([
+            $model = ModelModel::where([
                     'id' => $cate['model']['id'],
                     'status' => 1,
-                ])->value('fields');
+                ])->find();
+            $fields = $model['fields'];
             $data['modelField'] = ModelModel::formatFormFields($fields, $data['modelField']);
             
             $result = $this->validate($data['modelField'], $validate, []);
@@ -155,6 +156,15 @@ class LakecmsContent extends LakecmsBase
             $result = ContentModel::newUpdate($table, $data, $where);
             if (false === $result) {
                 return $this->error('修改失败！');
+            }
+            
+            // 关联标签
+            if (isset($data['modelField'])) {
+                $tags = ModelModel::formatFormFieldTags($fields, $data['modelField']);
+            
+                foreach ($tags as $tag) {
+                    ContentModel::updateTagsContent($tag, $cate['model']['id'], $cateid, $id);
+                }
             }
             
             return $this->success('修改成功！');
@@ -311,10 +321,11 @@ class LakecmsContent extends LakecmsBase
             $validate->withScenes(Arr::get($validateFields, 'scene', []));
             $validate->scene('create');
             
-            $fields = ModelModel::where([
+            $model = ModelModel::where([
                     'id' => $cate['model']['id'],
                     'status' => 1,
-                ])->value('fields');
+                ])->find();
+            $fields = $model['fields'];
             $data['modelField'] = ModelModel::formatFormFields($fields, $data['modelField']);
             
             $result = $this->validate($data['modelField'], $validate, []);
@@ -328,8 +339,13 @@ class LakecmsContent extends LakecmsBase
                 return $this->error('添加失败！');
             }
             
+            // 关联标签
             if (isset($data['modelField'])) {
-                
+                $tags = ModelModel::formatFormFieldTags($fields, $data['modelField']);
+            
+                foreach ($tags as $tag) {
+                    ContentModel::updateTagsContent($tag, $cate['model']['id'], $cateid, $result->id);
+                }
             }
             
             return $this->success('添加成功！');
@@ -398,10 +414,11 @@ class LakecmsContent extends LakecmsBase
             $validate->withScenes(Arr::get($validateFields, 'scene', []));
             $validate->scene('update');
             
-            $fields = ModelModel::where([
+            $model = ModelModel::where([
                     'id' => $cate['model']['id'],
                     'status' => 1,
-                ])->value('fields');
+                ])->find();
+            $fields = collect($model['fields'])->toArray();
             $data['modelField'] = ModelModel::formatFormFields($fields, $data['modelField']);
             
             $result = $this->validate($data['modelField'], $validate, []);
@@ -418,6 +435,15 @@ class LakecmsContent extends LakecmsBase
             $result = ContentModel::newUpdate($table, $data, $where);
             if (false === $result) {
                 return $this->error('修改失败！');
+            }
+            
+            // 关联标签
+            if (isset($data)) {
+                $tags = ModelModel::formatFormFieldTags($fields, $data);
+            
+                foreach ($tags as $tag) {
+                    ContentModel::updateTagsContent($tag, $cate['model']['id'], $cateid, $id);
+                }
             }
             
             return $this->success('修改成功！');

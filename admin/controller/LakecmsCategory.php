@@ -23,6 +23,44 @@ class LakecmsCategory extends LakecmsBase
     public function index() 
     {
         if ($this->request->isAjax()) {
+            $result = CategoryModel::with(['model'])
+                ->order([
+                    'sort' => 'ASC', 
+                    'id' => 'ASC',
+                ])
+                ->select()
+                ->toArray();
+            foreach ($result as $key => $item) {
+                if ($item['type'] == 1) {
+                    $result[$key]['url'] = (string) url('lakecms/cate/index', ['cateid' => $item['id']]);
+                } else {
+                    $result[$key]['url'] = (string) url('lakecms/page/index', ['cateid' => $item['id']]);
+                }
+            }
+            
+            $Tree = new Tree();
+            $menuTree = $Tree->withData($result)->buildArray(0);
+            $list = $Tree->buildFormatList($menuTree, 'title');
+            $total = count($list);
+            
+            $result = [
+                "code" => 0, 
+                "count" => $total, 
+                "data" => $list
+            ];
+
+            return json($result);
+        } else {
+            return $this->fetch();
+        }
+    }
+
+    /**
+     * 全部
+     */
+    public function all() 
+    {
+        if ($this->request->isAjax()) {
             $limit = $this->request->param('limit/d', 20);
             $page = $this->request->param('page/d', 1);
             $map = $this->buildparams();
@@ -48,37 +86,6 @@ class LakecmsCategory extends LakecmsBase
                 "count" => $total, 
                 "data" => $data,
             ];
-            return json($result);
-        } else {
-            return $this->fetch();
-        }
-    }
-
-    /**
-     * 结构列表
-     */
-    public function tree() 
-    {
-        if ($this->request->isAjax()) {
-            $result = CategoryModel::with(['model'])
-                ->order([
-                    'sort' => 'ASC', 
-                    'id' => 'ASC',
-                ])
-                ->select()
-                ->toArray();
-
-            $Tree = new Tree();
-            $menuTree = $Tree->withData($result)->buildArray(0);
-            $list = $Tree->buildFormatList($menuTree, 'title');
-            $total = count($list);
-            
-            $result = [
-                "code" => 0, 
-                "count" => $total, 
-                "data" => $list
-            ];
-
             return json($result);
         } else {
             return $this->fetch();

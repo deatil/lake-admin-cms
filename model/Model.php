@@ -139,7 +139,8 @@ class Model extends BaseModel
         foreach ($fields as $field) {
             if (isset($userData[$field['name']])) {
                 if ($field['type'] == 'tags') {
-                    $tags[] = $userData[$field['name']];
+                    $array = preg_split('/[,;\r\n ]+/', trim($userData[$field['name']], ",;\r\n"));
+                    $tags[] = $array;
                 }
             }
         }

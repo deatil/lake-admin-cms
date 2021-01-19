@@ -87,6 +87,7 @@ class Content extends BaseModel
             ])->find();
             if (empty($tagData)) {
                 $newTag = Tags::create([
+                    'name' => date('YmdHis'),
                     'title' => $tag,
                 ]);
                 
@@ -98,10 +99,10 @@ class Content extends BaseModel
             }
             
             TagsContent::create([
-                ['tagid', '=', $newTagId],
-                ['modelid', '=', $modelid],
-                ['cateid', '=', $cateid],
-                ['contentid', '=', $contentid],
+                'tagid' => $newTagId,
+                'modelid' => $modelid,
+                'cateid' => $cateid,
+                'contentid' => $contentid,
             ]);
         }
     }

@@ -24,7 +24,9 @@
             <div class="layui-card-header layui-bg-cyan">
                 <div class="layui-row">
                     <div class="layui-col-md12">
-                        内容
+                        <span class="lakecms-top-title">
+                            内容
+                        </span>
                         
                         <a href="javascript:;" class="layui-btn layui-btn-sm layui-btn-light layui-batch-reload lake-admin-cate-reload" title="刷新">
                             <i class="iconfont icon-shuaxin"></i>
@@ -58,6 +60,9 @@
     text-align: left;
     padding: 5px;
 }
+.layui-tree-set-active > .layui-tree-entry .layui-tree-main {
+    background: #f2f2f2;
+}
 </style>
 <script type="text/javascript">
 layui.config({
@@ -81,6 +86,10 @@ layui.config({
             none: '<div class="cate-empty">无</div>',
         },
         click: function(obj) {
+            // 点击高亮
+            $(".layui-tree-set").removeClass('layui-tree-set-active');
+            obj.elem.addClass('layui-tree-set-active');
+            
             if (obj.data.type == 2) {
                 var url = '{:url("page")}?cateid=' + obj.data.id
             } else {

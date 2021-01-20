@@ -18,23 +18,19 @@
 
 {block name="script"}
 <script type="text/javascript">
-layui.use(['form','layer'], function() {
+layui.use(['form', 'layer', 'notice'], function() {
     $('.ajax-post').on('click', function(e) {
         var form = layui.form,
-        layer = layui.layer,target,
-        target_form = $(this).attr('target-form');
-        target = $('.form-horizontal').attr("action");
+            notice = layui.notice,
+            layer = layui.layer,
+            target_form = $(this).attr('target-form'),
+            target = $('.form-horizontal').attr("action");
+        
         $.post(target, $('.form-horizontal').serialize()).success(function(data) {
             if (data.code == 1) {
-                layer.confirm(data.msg, {
-                    btn: ['继续添加', '返回列表']
-                }, function() {
-                    location.href = '{:url("add", ["cateid"=>$cateid])}';
-                }, function() {
-                    location.href = '{:url("cate", ["cateid"=>$cateid])}';
-                });
+                notice.success(data.msg);
             } else {
-                layer.msg(data.msg);
+                notice.error(data.msg);
             }
         });
         return false;

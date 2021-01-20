@@ -221,6 +221,8 @@ class LakecmsContent extends LakecmsBase
             $page = $this->request->param('page/d', 1);
             $map = $this->buildparams();
             
+            $keyword = $this->request->param('keyword/s', '', 'trim');
+            
             $cateid = $this->request->param('cateid', 0);
             
             $cate = CategoryModel::with(['model'])
@@ -239,6 +241,11 @@ class LakecmsContent extends LakecmsBase
                 ->order('sort ASC, id ASC')
                 ->select()
                 ->toArray();
+            foreach ($modelField as $field) {
+                if ($field['is_filter'] == 1) {
+                    $map[] = [$field['name'], 'like', "%$keyword%"];
+                }
+            }
             
             $query = ContentModel::newTable($cate['model']['tablename'])
                 ->where([
@@ -263,7 +270,6 @@ class LakecmsContent extends LakecmsBase
                 "code" => 0, 
                 "count" => $total, 
                 "data" => $data,
-                "fields" => $modelField,
             ];
             
             return json($result);

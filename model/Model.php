@@ -67,7 +67,8 @@ class Model extends BaseModel
                 }
                 
                 $type = $item['type'];
-                // 查看是否赋值
+                
+                // 格式数据
                 if (empty($item['value'])) {
                     switch ($type) {
                         // 开关
@@ -79,7 +80,6 @@ class Model extends BaseModel
                             break;
                     }
                 } else {
-                    // 如果值是数组则转换成字符串，适用于复选框等类型
                     if (is_array($item['value'])) {
                         $item['value'] = implode(',', $item['value']);
                     }
@@ -121,8 +121,45 @@ class Model extends BaseModel
     {
         foreach ($fields as $field) {
             if (isset($userData[$field['name']])) {
+                if ($field['type'] == 'date') {
+                    $userData[$field['name']] = strtotime($userData[$field['name']]);
+                }
+                
                 if ($field['type'] == 'datetime') {
                     $userData[$field['name']] = strtotime($userData[$field['name']]);
+                }
+                
+                if ($field['type'] == 'Ueditor') {
+                    $userData[$field['name']] = htmlspecialchars(stripslashes($userData[$field['name']]));
+                }
+            }
+        }
+        
+        return $userData;
+    }
+    
+    /**
+     * 格式化显示字段信息
+     */
+    public static function formatFormShowFields($fields, $userData)
+    {
+        foreach ($fields as $field) {
+            if (isset($userData[$field['name']])) {
+                $data = $userData[$field['name']];
+                if ($field['type'] == 'checkbox') {
+                    $userData[$field['name']] = empty($data) ? [] : explode(',', $data);
+                }
+                
+                if ($field['type'] == 'date') {
+                    $userData[$field['name']] = empty($data) ? '' : date('Y-m-d', $data);
+                }
+                
+                if ($field['type'] == 'datetime') {
+                    $userData[$field['name']] = empty($data) ? '' : date('Y-m-d H:i:s', $data);
+                }
+                
+                if ($field['type'] == 'Ueditor') {
+                    $userData[$field['name']] = htmlspecialchars_decode($data);
                 }
             }
         }

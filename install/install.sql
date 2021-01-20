@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `lake_lakecms_category`;
-CREATE TABLE `lake_lakecms_category` (
+DROP TABLE IF EXISTS `pre__lakecms_category`;
+CREATE TABLE `pre__lakecms_category` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '栏目ID',
   `parentid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '父ID',
   `modelid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '模型ID',
@@ -26,8 +26,8 @@ CREATE TABLE `lake_lakecms_category` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='栏目表';
 
-DROP TABLE IF EXISTS `lake_lakecms_model`;
-CREATE TABLE `lake_lakecms_model` (
+DROP TABLE IF EXISTS `pre__lakecms_model`;
+CREATE TABLE `pre__lakecms_model` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `title` char(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '名称',
   `tablename` varchar(50) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT '表名',
@@ -41,8 +41,8 @@ CREATE TABLE `lake_lakecms_model` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='模型列表';
 
-DROP TABLE IF EXISTS `lake_lakecms_model_field`;
-CREATE TABLE `lake_lakecms_model_field` (
+DROP TABLE IF EXISTS `pre__lakecms_model_field`;
+CREATE TABLE `pre__lakecms_model_field` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `modelid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '模型ID',
   `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '字段名',
@@ -72,8 +72,8 @@ CREATE TABLE `lake_lakecms_model_field` (
   KEY `name` (`name`)
 ) ENGINE=MyISAM AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='模型字段列表';
 
-DROP TABLE IF EXISTS `lake_lakecms_navbar`;
-CREATE TABLE `lake_lakecms_navbar` (
+DROP TABLE IF EXISTS `pre__lakecms_navbar`;
+CREATE TABLE `pre__lakecms_navbar` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `parentid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '父ID',
   `title` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '标题',
@@ -89,16 +89,16 @@ CREATE TABLE `lake_lakecms_navbar` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='tags主表';
 
-DROP TABLE IF EXISTS `lake_lakecms_settings`;
-CREATE TABLE `lake_lakecms_settings` (
+DROP TABLE IF EXISTS `pre__lakecms_settings`;
+CREATE TABLE `pre__lakecms_settings` (
   `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '配置名称',
   `value` text COLLATE utf8mb4_unicode_ci COMMENT '配置值',
   `remark` text COLLATE utf8mb4_unicode_ci COMMENT '配置说明',
   UNIQUE KEY `name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='配置';
 
-DROP TABLE IF EXISTS `lake_lakecms_tags`;
-CREATE TABLE `lake_lakecms_tags` (
+DROP TABLE IF EXISTS `pre__lakecms_tags`;
+CREATE TABLE `pre__lakecms_tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '名称',
   `title` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '标题',
@@ -106,7 +106,7 @@ CREATE TABLE `lake_lakecms_tags` (
   `description` mediumtext CHARACTER SET utf8mb4 COMMENT '描述',
   `views` mediumint(8) unsigned DEFAULT '0' COMMENT '点击数',
   `sort` int(10) DEFAULT '100' COMMENT '排序',
-  `status` tinyint(1) DEFAULT '0' COMMENT '状态，1-启用',
+  `status` tinyint(1) DEFAULT '1' COMMENT '状态，1-启用',
   `edit_time` int(10) DEFAULT '0' COMMENT '更新时间',
   `edit_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '更新IP',
   `add_time` int(10) DEFAULT '0' COMMENT '添加时间',
@@ -116,8 +116,8 @@ CREATE TABLE `lake_lakecms_tags` (
   KEY `views` (`views`,`sort`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='tags主表';
 
-DROP TABLE IF EXISTS `lake_lakecms_tags_content`;
-CREATE TABLE `lake_lakecms_tags_content` (
+DROP TABLE IF EXISTS `pre__lakecms_tags_content`;
+CREATE TABLE `pre__lakecms_tags_content` (
   `tagid` int(10) NOT NULL DEFAULT '0' COMMENT '标签ID',
   `modelid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '模型ID',
   `cateid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '栏目ID',

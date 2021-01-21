@@ -234,7 +234,6 @@ class Content extends BaseModel
      */
     public static function formatShowFields($fields, $userData)
     {
-        $newdata = [];
         foreach ($fields as $field) {
             if (! isset($userData[$field['name']])) {
                 continue;
@@ -242,15 +241,16 @@ class Content extends BaseModel
             
             $key = $field['name'];
             $value = $userData[$field['name']];
+            
             switch ($field['type']) {
                 case 'array':
-                    $newdata[$key] = lake_parse_attr($value);
+                    $userData[$key] = lake_parse_attr($value);
                     break;
                 case 'radio':
                     if (! empty($value)) {
                         if (! empty($field['options'])) {
                             $optionArr = lake_parse_attr($field['options']);
-                            $newdata[$key] = isset($optionArr[$value]) ? $optionArr[$value] : $value;
+                            $userData[$key] = isset($optionArr[$value]) ? $optionArr[$value] : $value;
                         }
                     }
                     break;
@@ -258,7 +258,7 @@ class Content extends BaseModel
                     if (! empty($value)) {
                         if (! empty($field['options'])) {
                             $optionArr = lake_parse_attr($field['options']);
-                            $newdata[$key] = isset($optionArr[$value]) ? $optionArr[$value] : $value;
+                            $userData[$key] = isset($optionArr[$value]) ? $optionArr[$value] : $value;
                         }
                     }
                     break;
@@ -267,47 +267,47 @@ class Content extends BaseModel
                         if (! empty($field['options'])) {
                             $optionArr = lake_parse_attr($field['options']);
                             $valueArr = explode(',', $value);
+                            
+                            $newData = [];
                             foreach ($valueArr as $v) {
                                 if (isset($optionArr[$v])) {
-                                    $newdata[$key][$v] = $optionArr[$v];
+                                    $newData[$v] = $optionArr[$v];
                                 } elseif ($v) {
-                                    $newdata[$key][$v] = $v;
+                                    $newData[$v] = $v;
                                 }
                             }
+                            
+                            $userData[$key] = $newData;
                         } else {
-                            $newdata[$key] = [];
+                            $userData[$key] = [];
                         }
                     }
                     break;
                 case 'image':
-                    $newdata[$key] = empty($value) ? '' : lake_get_file_path($value);
+                    $userData[$key] = empty($value) ? '' : lake_get_file_path($value);
                     break;
                 case 'images':
-                    $newdata[$key] = empty($value) ? [] : lake_get_file_path($value . ',');
+                    $userData[$key] = empty($value) ? [] : lake_get_file_path($value . ',');
                     break;
                 case 'file':
-                    $newdata[$key] = empty($value) ? '' : lake_get_file_path($value);
+                    $userData[$key] = empty($value) ? '' : lake_get_file_path($value);
                     break;
                 case 'files':
-                    $newdata[$key] = empty($value) ? [] : lake_get_file_path($value . ',');
+                    $userData[$key] = empty($value) ? [] : lake_get_file_path($value . ',');
                     break;
                 case 'tags':
-                    $newdata[$key] = explode(',', $value);
+                    $userData[$key] = explode(',', $value);
                     break;
                 case 'Ueditor':
-                    $newdata[$key] = htmlspecialchars_decode($value);
+                    $userData[$key] = htmlspecialchars_decode($value);
                     break;
                 default:
-                    $newdata[$key] = $value;
+                    $userData[$key] = $value;
                     break;
-            }
-            
-            if (! isset($newdata[$key])) {
-                $newdata[$key] = '';
             }
         }
         
-        return $newdata;
+        return $userData;
     }
     
     /**
@@ -319,8 +319,6 @@ class Content extends BaseModel
         int $cateid,
         int $contentid
     ) {
-        $pinyin = new Pinyin();
-        
         TagsContent::where([
             ['modelid', '=', $modelid],
             ['cateid', '=', $cateid],
@@ -332,7 +330,7 @@ class Content extends BaseModel
             ])->find();
             if (empty($tagData)) {
                 $newTag = Tags::create([
-                    'name' => date('YmdHis'),
+                    'name' => Pinyin::encode($tag, 'all', 'utf8'),
                     'title' => $tag,
                 ]);
                 

@@ -42,6 +42,6 @@ function lakecms_themes($path = null) {
  * 获取中文字符拼音首字母组合
  */
 function lakecms_get_py_first($zh) {
-    return (new Pinyin())->getPinyinFirst($zh);
+    return Pinyin::encode($zh, 'all', 'utf8');
 }
 

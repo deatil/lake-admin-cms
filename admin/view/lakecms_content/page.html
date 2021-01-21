@@ -20,18 +20,23 @@
 
 {block name="script"}
 <script type="text/javascript">
-layui.use(['form','layer'], function() {
+layui.config({
+    version: "{:config('lake.release')}",
+    base: 'admin/libs/layui-extend/'
+}).use(['form', 'layer', 'notice'], function() {
     $('.ajax-post').on('click', function(e) {
         var form = layui.form,
-        layer = layui.layer,target,
-        target_form = $(this).attr('target-form');
-        target = $('.form-horizontal').attr("action");
+            notice = layui.notice,
+            layer = layui.layer,
+            target_form = $(this).attr('target-form'),
+            target = $('.form-horizontal').attr("action");
+        
         $.post(target, $('.form-horizontal').serialize()).success(function(data) {
             if (data.code == 1) {
-                layer.msg(data.msg);
+                notice.success(data.msg);
                 location.reload();
             } else {
-                layer.msg(data.msg);
+                notice.error(data.msg);
             }
         });
         return false;

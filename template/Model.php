@@ -213,6 +213,8 @@ class Model
             ->toArray();
         $total = $query->count();
         
+        $data = ContentModel::formatShowFields($modelField, $data);
+        
         return [$data, $total];
     }
     
@@ -267,6 +269,17 @@ class Model
             ])
             ->where($condition)
             ->find();
+        if (empty($info)) {
+            return [];
+        }
+        
+        $modelField = ModelFieldModel::where([
+                'modelid' => $cate['model']['id'],
+                'status' => 1,
+            ])
+            ->order('sort ASC, id ASC')
+            ->select();
+        $info = ContentModel::formatShowFields($modelField, $info);
         
         return $info;
     }
@@ -324,6 +337,14 @@ class Model
             ->order('id DESC')
             ->find();
         
+        $modelField = ModelFieldModel::where([
+                'modelid' => $cate['model']['id'],
+                'status' => 1,
+            ])
+            ->order('sort ASC, id ASC')
+            ->select();
+        $info = ContentModel::formatShowFields($modelField, $info);
+        
         return $info;
     }
     
@@ -379,6 +400,14 @@ class Model
             ->where($condition)
             ->order('id ASC')
             ->find();
+        
+        $modelField = ModelFieldModel::where([
+                'modelid' => $cate['model']['id'],
+                'status' => 1,
+            ])
+            ->order('sort ASC, id ASC')
+            ->select();
+        $info = ContentModel::formatShowFields($modelField, $info);
         
         return $info;
     }

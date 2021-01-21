@@ -123,24 +123,24 @@ class LakecmsContent extends LakecmsBase
                 $this->error('该栏目不存在！');
             }
             
-            $validateFields = ModelModel::validateFields([
+            $validateFields = ContentModel::validateFields([
                 'modelid' => $cate['model']['id'],
                 'status' => 1,
             ], 1);
             
             // 验证
-            $validate = new Validate();
-            $validate->withRules(Arr::get($validateFields, 'rule', []));
-            $validate->withMessages(Arr::get($validateFields, 'message', []));
-            $validate->withScenes(Arr::get($validateFields, 'scene', []));
-            $validate->scene('update');
+            $validate = (new Validate())
+                ->withRules(Arr::get($validateFields, 'rule', []))
+                ->withMessages(Arr::get($validateFields, 'message', []))
+                ->withScenes(Arr::get($validateFields, 'scene', []))
+                ->scene('update');
             
             $model = ModelModel::where([
                     'id' => $cate['model']['id'],
                     'status' => 1,
                 ])->find();
             $fields = $model['fields'];
-            $data['modelField'] = ModelModel::formatFormFields($fields, $data['modelField']);
+            $data['modelField'] = ContentModel::formatFormFieldsInsert($fields, $data['modelField']);
             
             $result = $this->validate($data['modelField'], $validate, []);
             if (true !== $result) {
@@ -160,7 +160,7 @@ class LakecmsContent extends LakecmsBase
             
             // 关联标签
             if (isset($data['modelField'])) {
-                $tags = ModelModel::formatFormFieldTags($fields, $data['modelField']);
+                $tags = ContentModel::formatFormFieldTags($fields, $data['modelField']);
             
                 foreach ($tags as $tag) {
                     ContentModel::updateTagsContent($tag, $cate['model']['id'], $cateid, $id);
@@ -192,19 +192,11 @@ class LakecmsContent extends LakecmsBase
             }
             $this->assign("info", $info);
             
-            $modelField = ModelModel::formFields([
+            $modelField = ContentModel::formFields([
                     'id' => $cate['modelid'],
                     'status' => 1,
                 ], 1);
-            foreach ($modelField as $key => $value) {
-                if (isset($info[$value['name']])) {
-                    $modelField[$key]['value'] = $info[$value['name']];
-                }
-                
-                if ($value['type'] == 'datetime') {
-                    $modelField[$key]['value'] = date('Y-m-d H:i:s', $info[$value['name']]);
-                }
-            }
+            $modelField = ContentModel::formatFormFieldsShow($modelField, $info);
             $this->assign("fieldList", $modelField);
             
             return $this->fetch();
@@ -315,24 +307,24 @@ class LakecmsContent extends LakecmsBase
                 $this->error('该栏目不存在！');
             }
             
-            $validateFields = ModelModel::validateFields([
+            $validateFields = ContentModel::validateFields([
                 'modelid' => $cate['model']['id'],
                 'status' => 1,
             ], 2);
             
             // 验证
-            $validate = new Validate();
-            $validate->withRules(Arr::get($validateFields, 'rule', []));
-            $validate->withMessages(Arr::get($validateFields, 'message', []));
-            $validate->withScenes(Arr::get($validateFields, 'scene', []));
-            $validate->scene('create');
+            $validate = (new Validate())
+                ->withRules(Arr::get($validateFields, 'rule', []))
+                ->withMessages(Arr::get($validateFields, 'message', []))
+                ->withScenes(Arr::get($validateFields, 'scene', []))
+                ->scene('create');
             
             $model = ModelModel::where([
                     'id' => $cate['model']['id'],
                     'status' => 1,
                 ])->find();
             $fields = $model['fields'];
-            $data['modelField'] = ModelModel::formatFormFields($fields, $data['modelField']);
+            $data['modelField'] = ContentModel::formatFormFieldsInsert($fields, $data['modelField']);
             
             $result = $this->validate($data['modelField'], $validate, []);
             if (true !== $result) {
@@ -347,7 +339,7 @@ class LakecmsContent extends LakecmsBase
             
             // 关联标签
             if (isset($data['modelField'])) {
-                $tags = ModelModel::formatFormFieldTags($fields, $data['modelField']);
+                $tags = ContentModel::formatFormFieldTags($fields, $data['modelField']);
             
                 foreach ($tags as $tag) {
                     ContentModel::updateTagsContent($tag, $cate['model']['id'], $cateid, $result->id);
@@ -368,10 +360,11 @@ class LakecmsContent extends LakecmsBase
                 ->find()
                 ->toArray();
             
-            $modelField = ModelModel::formFields([
+            $modelField = ContentModel::formFields([
                     'id' => $cate['modelid'],
                     'status' => 1,
-                ], 1);
+                ], 2);
+            $modelField = ContentModel::formatFormFieldsShow($modelField, []);
             $this->assign("fieldList", $modelField);
             
             return $this->fetch();
@@ -408,24 +401,24 @@ class LakecmsContent extends LakecmsBase
                 $this->error('该栏目不存在！');
             }
             
-            $validateFields = ModelModel::validateFields([
+            $validateFields = ContentModel::validateFields([
                 'modelid' => $cate['model']['id'],
                 'status' => 1,
             ], 3);
             
             // 验证
-            $validate = new Validate();
-            $validate->withRules(Arr::get($validateFields, 'rule', []));
-            $validate->withMessages(Arr::get($validateFields, 'message', []));
-            $validate->withScenes(Arr::get($validateFields, 'scene', []));
-            $validate->scene('update');
+            $validate = (new Validate())
+                ->withRules(Arr::get($validateFields, 'rule', []))
+                ->withMessages(Arr::get($validateFields, 'message', []))
+                ->withScenes(Arr::get($validateFields, 'scene', []))
+                ->scene('update');
             
             $model = ModelModel::where([
                     'id' => $cate['model']['id'],
                     'status' => 1,
                 ])->find();
             $fields = collect($model['fields'])->toArray();
-            $data['modelField'] = ModelModel::formatFormFields($fields, $data['modelField']);
+            $data['modelField'] = ContentModel::formatFormFieldsInsert($fields, $data['modelField']);
             
             $result = $this->validate($data['modelField'], $validate, []);
             if (true !== $result) {
@@ -445,7 +438,7 @@ class LakecmsContent extends LakecmsBase
             
             // 关联标签
             if (isset($data)) {
-                $tags = ModelModel::formatFormFieldTags($fields, $data);
+                $tags = ContentModel::formatFormFieldTags($fields, $data);
             
                 foreach ($tags as $tag) {
                     ContentModel::updateTagsContent($tag, $cate['model']['id'], $cateid, $id);
@@ -475,19 +468,11 @@ class LakecmsContent extends LakecmsBase
                 ])
                 ->find();
                 
-            $modelField = ModelModel::formFields([
+            $modelField = ContentModel::formFields([
                     'id' => $cate['modelid'],
                     'status' => 1,
-                ], 1);
-            foreach ($modelField as $key => $value) {
-                if (isset($info[$value['name']])) {
-                    $modelField[$key]['value'] = $info[$value['name']];
-                }
-                
-                if ($value['type'] == 'datetime') {
-                    $modelField[$key]['value'] = date('Y-m-d H:i:s', $info[$value['name']]);
-                }
-            }
+                ], 3);
+            $modelField = ContentModel::formatFormFieldsShow($modelField, $info);
             $this->assign("fieldList", $modelField);
             
             return $this->fetch();

@@ -123,7 +123,7 @@ class LakecmsSetting extends LakecmsBase
                 ]);
             }
             
-            return $this->success('设置更新成功！');
+            return $this->success('启用模版('.$name.')成功！');
         } else {
             $theme = SettingsModel::where([
                     'name' => 'web_theme',

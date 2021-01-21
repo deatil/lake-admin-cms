@@ -200,9 +200,6 @@
                     <input type="radio" name="is_show" value="1" title="是">
                     <input type="radio" name="is_show" value="0" title="否" checked>
                 </div>
-                <div class="layui-input-block">
-                    <div class="layui-form-mid layui-word-aux">是否在后台列表显示</div>
-                </div>
             </div>
             
             <div class="layui-form-item">
@@ -211,6 +208,9 @@
                     <input type="radio" name="is_list_show" value="1" title="是">
                     <input type="radio" name="is_list_show" value="0" title="否" checked>
                 </div>
+                <div class="layui-input-block">
+                    <div class="layui-form-mid layui-word-aux">是否在列表显示，主要用于api</div>
+                </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">详情显示</label>
@@ -218,12 +218,18 @@
                     <input type="radio" name="is_detail_show" value="1" title="是">
                     <input type="radio" name="is_detail_show" value="0" title="否" checked>
                 </div>
+                <div class="layui-input-block">
+                    <div class="layui-form-mid layui-word-aux">是否在详情显示，主要用于api</div>
+                </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">浏览量</label>
                 <div class="layui-input-block w500">
                     <input type="radio" name="is_view" value="1" title="是">
                     <input type="radio" name="is_view" value="0" title="否" checked>
+                </div>
+                <div class="layui-input-block">
+                    <div class="layui-form-mid layui-word-aux">设置访问详情时的浏览量统计</div>
                 </div>
             </div>
             

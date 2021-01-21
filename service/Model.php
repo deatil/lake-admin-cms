@@ -14,7 +14,9 @@ use app\lakecms\support\Datatable;
  */
 class Model 
 {
-    /* 类型转换列表 */
+    /**
+     * 类型转换列表 
+     */
     protected $types = [
         "array" => "VARCHAR",
         "checkbox" => "VARCHAR",

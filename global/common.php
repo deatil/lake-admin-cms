@@ -3,6 +3,7 @@
 use think\helper\Arr;
 use Lake\File;
 
+use app\lakecms\support\Pinyin;
 use app\lakecms\service\Template;
 use app\lakecms\model\Settings as SettingsModel;
 
@@ -36,3 +37,11 @@ function lakecms_theme_view_path() {
 function lakecms_themes($path = null) {
     return Template::themes($path);
 }
+
+/**
+ * 获取中文字符拼音首字母组合
+ */
+function lakecms_get_py_first($zh) {
+    return (new Pinyin())->getPinyinFirst($zh);
+}
+

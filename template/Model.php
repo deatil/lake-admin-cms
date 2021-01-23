@@ -47,6 +47,9 @@ class Model
         // 是否使用树结构
         $tree = isset($tag['tree']) ? true : false;
         
+        // 分页
+        $page = isset($params['page']) ? true : false;
+        
         $map = [
             ['status', '=', 1],
         ];
@@ -55,20 +58,32 @@ class Model
             ->where($map)
             ->where($condition)
             ->order($order)
-            ->page($page, $limit)
             ->cache($cache)
-            ->select()
-            ->toArray();
-        $total = NavbarModel::where($map)
-            ->where($condition)
-            ->count();
+            ->paginate([
+                'list_rows' => $limit,
+                'page' => $page
+            ]);
         
+        // 列表
+        $dataList = $data->toArray();
         if ($tree !== false) {
             $Tree = new Tree();
-            $data = $Tree->withData($data)->buildArray(0);
+            $list = $Tree->withData($list['data'])->buildArray(0);
+        } else {
+            $list = $list['data'];
         }
         
-        return [$data, $total];
+        // 总数
+        $total = $data->total();
+        
+        // 分页
+        $page = $data->render();
+        
+        return [
+            'list' => $list, 
+            'total' => $total,
+            'page' => $page,
+        ];
     }
     
     /**
@@ -134,6 +149,9 @@ class Model
         // 是否使用树结构
         $tree = isset($tag['tree']) ? true : false;
         
+        // 分页
+        $page = isset($params['page']) ? true : false;
+        
         $map = [
             ['status', '=', 1],
         ];
@@ -143,20 +161,32 @@ class Model
             ->where($map)
             ->where($condition)
             ->order($order)
-            ->page($page, $limit)
             ->cache($cache)
-            ->select()
-            ->toArray();
-        $total = CategoryModel::where($map)
-            ->where($condition)
-            ->count();
+            ->paginate([
+                'list_rows' => $limit,
+                'page' => $page
+            ]);
         
+        // 列表
+        $dataList = $data->toArray();
         if ($tree !== false) {
             $Tree = new Tree();
-            $data = $Tree->withData($data)->buildArray(0);
+            $list = $Tree->withData($list['data'])->buildArray(0);
+        } else {
+            $list = $list['data'];
         }
-            
-        return [$data, $total];
+        
+        // 总数
+        $total = $data->total();
+        
+        // 分页
+        $page = $data->render();
+        
+        return [
+            'list' => $list, 
+            'total' => $total,
+            'page' => $page,
+        ];
     }
     
     /**
@@ -224,7 +254,12 @@ class Model
         $catename = isset($tag['catename']) ? $tag['catename'] : '';
         
         if (empty($cateid) && empty($catename)) {
-            return [];
+            return [
+                'cate' => [], 
+                'list' => [], 
+                'total' => 0,
+                'page' => '',
+            ];
         }
         
         // 当前页
@@ -241,6 +276,12 @@ class Model
         
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
+        
+        // 缓存
+        $cache = !isset($params['cache']) ? false : (int) $params['cache'];
+        
+        // 分页
+        $page = isset($params['page']) ? true : false;
         
         $cate = CategoryModel::with(['model'])
             ->where(function($query) use($cateid, $catename) {
@@ -259,7 +300,12 @@ class Model
             ->where($condition)
             ->find();
         if (empty($cate)) {
-            return [];
+            return [
+                'cate' => [], 
+                'list' => [], 
+                'total' => 0,
+                'page' => '',
+            ];
         }
         
         $cate = $cate->toArray();
@@ -268,20 +314,28 @@ class Model
             ['status', '=', 1],
         ];
         
-        $query = ContentModel::newTable($cate['model']['tablename'])
+        $data = ContentModel::newTable($cate['model']['tablename'])
+            ->field($field)
             ->where([
                 ['categoryid', '=', $cate['id']],
             ])
-            ->where($map);
-        $query2 = clone $query;
+            ->where($map)
+            ->order($order)
+            ->cache($cache)
+            ->paginate([
+                'list_rows' => $limit,
+                'page' => $page
+            ]);
         
-        $data = $query->order("id DESC")
-            ->field($field)
-            ->page($page, $limit)
-            ->select()
-            ->toArray();
-        $total = $query2->count();
+        // 列表
+        $dataList = $data->toArray();
+        $list = $list['data'];
         
+        // 总数
+        $total = $data->total();
+        
+        // 分页
+        $page = $data->render();
         
         // 格式化数据
         $modelField = ModelFieldModel::where([
@@ -291,11 +345,16 @@ class Model
             ->order('sort ASC, id ASC')
             ->select()
             ->toArray();
-        foreach ($data as $key => $value) {
-            $data[$key] = ContentModel::formatShowFields($modelField, $value);
+        foreach ($list as $key => $value) {
+            $list[$key] = ContentModel::formatShowFields($modelField, $value);
         }
         
-        return [$data, $total];
+        return [
+            'cate' => $cate, 
+            'list' => $list, 
+            'total' => $total,
+            'page' => $page,
+        ];
     }
     
     /**
@@ -622,6 +681,12 @@ class Model
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
+        // 缓存
+        $cache = !isset($params['cache']) ? false : (int) $params['cache'];
+        
+        // 分页
+        $page = isset($params['page']) ? true : false;
+        
         $map = [
             ['status', '=', 1],
         ];
@@ -630,14 +695,27 @@ class Model
             ->where($condition)
             ->field($field)
             ->order($order)
-            ->page($page, $limit)
-            ->select()
-            ->toArray();
-        $total = TagsModel::where($map)
-            ->where($condition)
-            ->count();
-            
-        return [$data, $total];
+            ->cache($cache)
+            ->paginate([
+                'list_rows' => $limit,
+                'page' => $page
+            ]);
+        
+        // 列表
+        $dataList = $data->toArray();
+        $list = $list['data'];
+        
+        // 总数
+        $total = $data->total();
+        
+        // 分页
+        $page = $data->render();
+        
+        return [
+            'list' => $list, 
+            'total' => $total,
+            'page' => $page,
+        ];
     }
     
     /**

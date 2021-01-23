@@ -138,6 +138,10 @@ class Lakecms extends Taglib
         $key = !empty($tag['key']) ? $tag['key'] : 'i';
         $mod = isset($tag['mod']) ? $tag['mod'] : '2';
         
+        // 分页
+        $paginate = isset($tag['paginate']) ? $tag['paginate'] : 'paginate';
+        $pagetotal = isset($tag['pagetotal']) ? $tag['pagetotal'] : 'pagetotal';
+        
         $params = [];
         foreach ($tag as $k => & $v) {
             if (in_array($k, ['condition'])) {
@@ -147,14 +151,16 @@ class Lakecms extends Taglib
             $params[] = '"' . $k . '"=>' . $v;
         }
         
-        $var = md5(microtime());
+        $var = md5(microtime().mt_rand(10000, 99999));
         $parse = '<?php ';
-        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getNavbarList([' . implode(',', $params) . ']);';
+        $parse .= 'list($__' . $var . '_list__, $__' . $var . '_total__, $__' . $var . '_page__) = \app\lakecms\template\Model::getNavbarList([' . implode(',', $params) . ']);';
         $parse .= ' ?>';
-        $parse .= '{volist name="$__' . $var . '__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= '{php}$__LAKECMS_NAVBARS_LIST__ = $__' . $var . '_list__;{/php}';
+        $parse .= '{php}$__LAKECMS_NAVBARS_PAGE__ = $paginate = $__' . $var . '_page__;{/php}';
+        $parse .= '{php}$__LAKECMS_NAVBARS_TOTAL__ = $pagetotal = $__' . $var . '_total__;{/php}';
+        $parse .= '{volist name="$__' . $var . '_list__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;
         $parse .= '{/volist}';
-        $parse .= '{php}$__LAKECMS_NAVBARS__=$__' . $var . '__;{/php}';
         
         return $parse;
     }
@@ -195,6 +201,10 @@ class Lakecms extends Taglib
         $key = !empty($tag['key']) ? $tag['key'] : 'i';
         $mod = isset($tag['mod']) ? $tag['mod'] : '2';
         
+        // 分页
+        $paginate = isset($tag['paginate']) ? $tag['paginate'] : 'paginate';
+        $pagetotal = isset($tag['pagetotal']) ? $tag['pagetotal'] : 'pagetotal';
+        
         $params = [];
         foreach ($tag as $k => & $v) {
             if (in_array($k, ['condition'])) {
@@ -204,14 +214,16 @@ class Lakecms extends Taglib
             $params[] = '"' . $k . '"=>' . $v;
         }
         
-        $var = md5(microtime());
+        $var = md5(microtime().mt_rand(10000, 99999));
         $parse = '<?php ';
-        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateList([' . implode(',', $params) . ']);';
+        $parse .= 'list($__' . $var . '_list__, $__' . $var . '_total__, $__' . $var . '_page__) = \app\lakecms\template\Model::getCateList([' . implode(',', $params) . ']);';
         $parse .= ' ?>';
-        $parse .= '{volist name="$__' . $var . '__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= '{php}$__LAKECMS_CATES_LIST__ = $__' . $var . '_list__;{/php}';
+        $parse .= '{php}$__LAKECMS_CATES_PAGE__ = $paginate = $__' . $var . '_page__;{/php}';
+        $parse .= '{php}$__LAKECMS_CATES_TOTAL__ = $pagetotal = $__' . $var . '_total__;{/php}';
+        $parse .= '{volist name="$__' . $var . '_list__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;
         $parse .= '{/volist}';
-        $parse .= '{php}$__LAKECMS_CATES__=$__' . $var . '__;{/php}';
         
         return $parse;
     }
@@ -252,6 +264,10 @@ class Lakecms extends Taglib
         $key = !empty($tag['key']) ? $tag['key'] : 'i';
         $mod = isset($tag['mod']) ? $tag['mod'] : '2';
         
+        // 分页
+        $paginate = isset($tag['paginate']) ? $tag['paginate'] : 'paginate';
+        $pagetotal = isset($tag['pagetotal']) ? $tag['pagetotal'] : 'pagetotal';
+        
         $params = [];
         foreach ($tag as $k => & $v) {
             if (in_array($k, ['condition'])) {
@@ -261,14 +277,16 @@ class Lakecms extends Taglib
             $params[] = '"' . $k . '"=>' . $v;
         }
         
-        $var = md5(microtime());
+        $var = md5(microtime().mt_rand(10000, 99999));
         $parse = '<?php ';
-        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateContentList([' . implode(',', $params) . ']);';
+        $parse .= 'list($__' . $var . '_list__, $__' . $var . '_total__, $__' . $var . '_page__) = \app\lakecms\template\Model::getCateContentList([' . implode(',', $params) . ']);';
         $parse .= ' ?>';
-        $parse .= '{volist name="$__' . $var . '__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= '{php}$__LAKECMS_CONTENTS_TOTAL__ = $pagetotal = $__' . $var . '_total__;{/php}';
+        $parse .= '{php}$__LAKECMS_CONTENTS_LIST__ = $__' . $var . '_list__;{/php}';
+        $parse .= '{php}$__LAKECMS_CONTENTS_PAGE__ = $paginate = $__' . $var . '_page__;{/php}';
+        $parse .= '{volist name="$__' . $var . '_list__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;
         $parse .= '{/volist}';
-        $parse .= '{php}$__LAKECMS_CONTENTS__=$__' . $var . '__;{/php}';
         
         return $parse;
     }
@@ -387,6 +405,10 @@ class Lakecms extends Taglib
         $key = !empty($tag['key']) ? $tag['key'] : 'i';
         $mod = isset($tag['mod']) ? $tag['mod'] : '2';
         
+        // 分页
+        $paginate = isset($tag['paginate']) ? $tag['paginate'] : 'paginate';
+        $pagetotal = isset($tag['pagetotal']) ? $tag['pagetotal'] : 'pagetotal';
+        
         $params = [];
         foreach ($tag as $k => & $v) {
             if (in_array($k, ['condition'])) {
@@ -396,14 +418,16 @@ class Lakecms extends Taglib
             $params[] = '"' . $k . '"=>' . $v;
         }
         
-        $var = md5(microtime());
+        $var = md5(microtime().mt_rand(10000, 99999));
         $parse = '<?php ';
-        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getTagList([' . implode(',', $params) . ']);';
+        $parse .= 'list($__' . $var . '_list__, $__' . $var . '_total__, $__' . $var . '_page__) = \app\lakecms\template\Model::getTagList([' . implode(',', $params) . ']);';
         $parse .= ' ?>';
-        $parse .= '{volist name="$__' . $var . '__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= '{php}$__LAKECMS_TAGS_LIST__ = $__' . $var . '_list__;{/php}';
+        $parse .= '{php}$__LAKECMS_TAGS_PAGE__ = $paginate = $__' . $var . '_page__;{/php}';
+        $parse .= '{php}$__LAKECMS_TAGS_TOTAL__ = $pagetotal = $__' . $var . '_total__;{/php}';
+        $parse .= '{volist name="$__' . $var . '_list__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;
         $parse .= '{/volist}';
-        $parse .= '{php}$__LAKECMS_CONTENTS__=$__' . $var . '__;{/php}';
         
         return $parse;
     }

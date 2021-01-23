@@ -68,7 +68,7 @@ class Model
         $dataList = $data->toArray();
         if ($tree !== false) {
             $Tree = new Tree();
-            $list = $Tree->withData($list['data'])->buildArray(0);
+            $list = $Tree->withData($dataList['data'])->buildArray(0);
         } else {
             $list = $list['data'];
         }
@@ -171,7 +171,7 @@ class Model
         $dataList = $data->toArray();
         if ($tree !== false) {
             $Tree = new Tree();
-            $list = $Tree->withData($list['data'])->buildArray(0);
+            $list = $Tree->withData($dataList['data'])->buildArray(0);
         } else {
             $list = $list['data'];
         }
@@ -329,7 +329,7 @@ class Model
         
         // 列表
         $dataList = $data->toArray();
-        $list = $list['data'];
+        $list = $dataList['data'];
         
         // 总数
         $total = $data->total();
@@ -703,7 +703,7 @@ class Model
         
         // 列表
         $dataList = $data->toArray();
-        $list = $list['data'];
+        $list = $dataList['data'];
         
         // 总数
         $total = $data->total();

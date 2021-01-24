@@ -19,10 +19,41 @@ class Content extends Base
      */
     public function index()
     {
-        // 栏目ID
-        $cateid = $this->request->param('cateid/d', 0);
-        $page = $this->request->param('page/d', 1);
+        // 栏目标识
+        $catename = $this->request->param('catename/d', 1);
         
-        return $this->fetch('/index');
+        // 内容ID
+        $contentid = $this->request->param('id/d', 0);
+        
+        // 内容
+        $data = TemplateModel::getCateContentInfo([
+            'catename' => $catename,
+            'contentid' => $contentid,
+        ]);
+        
+        // 栏目
+        $cate = Arr::only($data['cate'], [
+            'id', 'name', 'title', 
+            'keywords', 'description', 
+            'cover', 'template_detail'
+        ]);
+        
+        // 内容
+        $info = $data['info'];
+        
+        $this->assign([
+            'cate' => $cate,
+            'info' => $info,
+        ]);
+        
+        // SEO信息
+        $this->setMetaTitle($info['title'] . ' - ' . $cate['title']);
+        $this->setMetaKeywords($info['keywords']);
+        $this->setMetaDescription($info['description']);
+        
+        // 模版
+        $template = Template::themeViewPath($cate['template_list']);
+        
+        return $this->fetch($template);
     }
 }

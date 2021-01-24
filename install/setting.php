@@ -22,7 +22,7 @@ return [
     'site_name' => 'lake-cms',
     'site_title' => 'lake-cms',
     'site_keyword' => 'lake-cms,CMS,lake,内容管理系统,CMS系统',
-    'site_description' => 'lcms内容管理系统，基于lake-admin开发',
+    'site_description' => 'cms内容管理系统，基于lake-admin开发',
     
     'site_cache_time' => '3600',
 ];

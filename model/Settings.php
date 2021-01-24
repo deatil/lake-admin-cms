@@ -37,6 +37,10 @@ class Settings extends Model
                 }
             }
             
+            if (isset($setting['web_site_logo'])) {
+                $setting['web_site_logo'] = lake_get_file_path($setting['web_site_logo']);
+            }
+            
             Cache::set("lakecms_setting", $setting, 36000);
         }
         
@@ -50,11 +54,17 @@ class Settings extends Model
     {
         $data = static::getSettings();
         
-        if (! empty($key)) {
-            return Arr::get($data, $key, $default);
-        }
+        return Arr::get($data, $key, $default);
+    }
+    
+    /**
+     * 网站logo
+     */
+    public static function logo() 
+    {
+        $logo = static::config('web_site_logo');
         
-        return $data;
+        return $logo;
     }
 
 }

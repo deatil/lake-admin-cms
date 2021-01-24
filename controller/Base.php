@@ -21,11 +21,41 @@ abstract class Base extends HomeBase
     {
         parent::initialize();
         
+        // seo相关信息
+        $this->assign([
+            'meta' => config('lakecms'),
+        ]);
+        
+        // 重设模版目录
         $this->setViewPath();
     }
 
     /**
-     * 插件模板目录
+     * 设置标题
+     */
+    protected function setMetaTitle($title) 
+    {
+        $this->assign('meta_title', $title);
+    }
+
+    /**
+     * 设置关键字
+     */
+    protected function setMetaKeywords($keywords) 
+    {
+        $this->assign('meta_keywords', $keywords);
+    }
+
+    /**
+     * 设置描述
+     */
+    protected function setMetaDescription($description) 
+    {
+        $this->assign('meta_description', $description);
+    }
+
+    /**
+     * 模板目录
      */
     protected function setViewPath() 
     {        

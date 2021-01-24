@@ -7,7 +7,7 @@ use app\lakecms\support\Pinyin;
 use app\lakecms\service\Template;
 use app\lakecms\model\Settings as SettingsModel;
 
-// lcms配置信息
+// 配置信息
 app()->config->set(lakecms_config(), 'lakecms');
 
 /**

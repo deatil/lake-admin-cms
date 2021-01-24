@@ -25,14 +25,14 @@ return [
     'event' => [
         [
             'name' => 'HttpRun',
-            'class' => 'app\\lakecms\\behavior\\InitLcmsRoute',
+            'class' => 'app\\lakecms\\behavior\\InitRoute',
             'description' => 'cms路由设置',
             'listorder' => 100,
             'status' => 1,
         ],
         [
             'name' => 'HttpRun',
-            'class' => 'app\\lakecms\\behavior\\InitLcmsTemplate',
+            'class' => 'app\\lakecms\\behavior\\InitTemplate',
             'description' => 'cms模板配置',
             'listorder' => 100,
             'status' => 1,

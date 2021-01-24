@@ -35,56 +35,61 @@ class Lakecms extends Taglib
         ],
         
         'navbars' => [
-            'attr' => 'page,limit,order,condition', 
+            'attr' => 'return,empty,key,mod,paginate,pagetotal,page,limit,order,field,condition,cache,tree', 
             'close' => 1,
             'level' => 3,
         ],
         'navbar' => [
-            'attr' => 'id,condition', 
+            'attr' => 'return,navbarid,field,condition', 
             'attr' => '', 
             'close' => 1,
         ],
+        
         'cates' => [
-            'attr' => 'page,limit,order,condition', 
+            'attr' => 'return,empty,key,mod,paginate,pagetotal,page,limit,order,field,condition,cache,tree', 
             'close' => 1,
             'level' => 3,
         ],
         'cate' => [
-            'attr' => 'id,condition', 
+            'attr' => 'return,cateid,field,condition', 
             'close' => 1,
         ],
+        
         'contents' => [
-            'attr' => 'cateid,catename,page,limit,order,condition', 
+            'attr' => 'cateid,catename,return,empty,key,mod,paginate,pagetotal,page,limit,order,field,condition,cache,tree', 
             'close' => 1, 
             'level' => 3,
         ],
         'content' => [
-            'attr' => 'cateid,catename,id,condition', 
+            'attr' => 'return,cateid,catename,contentid,field,condition', 
             'close' => 1,
         ],
         'contentprev' => [
-            'attr' => 'cateid,catename,id,condition', 
+            'attr' => 'return,cateid,catename,contentid,field,condition', 
             'close' => 1, 
             'level' => 1,
         ],
         'contentnext' => [
-            'attr' => 'cateid,catename,id,condition', 
+            'attr' => 'return,cateid,catename,contentid,field,condition', 
             'close' => 1, 
             'level' => 1,
         ],
+        
         'page' => [
-            'attr' => 'cateid,catename,condition', 
+            'attr' => 'return,cateid,catename,field,condition', 
             'close' => 1,
         ],
+        
         'tags' => [
-            'attr' => 'cateid,catename,page,limit,order,condition', 
+            'attr' => 'return,empty,key,mod,paginate,pagetotal,page,limit,order,field,condition,cache,tree', 
             'close' => 1, 
             'level' => 3,
         ],
         'tag' => [
-            'attr' => 'name,condition', 
+            'attr' => 'return,name,title,field,condition', 
             'close' => 1, 
         ],
+        
         'setting' => [
             'attr' => 'name,default', 
             'close' => 1, 
@@ -133,7 +138,7 @@ class Lakecms extends Taglib
      */
     public function tagNavbars($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'item';
+        $return = isset($tag['return']) ? $tag['return'] : 'item';
         $empty = isset($tag['empty']) ? $tag['empty'] : '';
         $key = !empty($tag['key']) ? $tag['key'] : 'i';
         $mod = isset($tag['mod']) ? $tag['mod'] : '2';
@@ -170,7 +175,7 @@ class Lakecms extends Taglib
      */
     public function tagNavbar($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'navbar';
+        $return = isset($tag['return']) ? $tag['return'] : 'navbar';
         
         $params = [];
         foreach ($tag as $k => & $v) {
@@ -192,11 +197,11 @@ class Lakecms extends Taglib
     }
     
     /**
-     * 导航列表
+     * 分类列表
      */
     public function tagCates($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'item';
+        $return = isset($tag['return']) ? $tag['return'] : 'item';
         $empty = isset($tag['empty']) ? $tag['empty'] : '';
         $key = !empty($tag['key']) ? $tag['key'] : 'i';
         $mod = isset($tag['mod']) ? $tag['mod'] : '2';
@@ -216,12 +221,15 @@ class Lakecms extends Taglib
         
         $var = md5(microtime().mt_rand(10000, 99999));
         $parse = '<?php ';
-        $parse .= 'list($__' . $var . '_list__, $__' . $var . '_total__, $__' . $var . '_page__) = \app\lakecms\template\Model::getCateList([' . implode(',', $params) . ']);';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateList([' . implode(',', $params) . ']);';
+        $parse .= '$__' . $var . '_list__ = ' . '$__' . $var . '__["list"];';
+        $parse .= '$__' . $var . '_total__ = ' . '$__' . $var . '__["total"];';
+        $parse .= '$__' . $var . '_page__ = ' . '$__' . $var . '__["page"];';
         $parse .= ' ?>';
         $parse .= '{php}$__LAKECMS_CATES_LIST__ = $__' . $var . '_list__;{/php}';
         $parse .= '{php}$__LAKECMS_CATES_PAGE__ = $paginate = $__' . $var . '_page__;{/php}';
         $parse .= '{php}$__LAKECMS_CATES_TOTAL__ = $pagetotal = $__' . $var . '_total__;{/php}';
-        $parse .= '{volist name="$__' . $var . '_list__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= '{volist name="$__' . $var . '_list__" id="' . $return . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;
         $parse .= '{/volist}';
         
@@ -233,7 +241,7 @@ class Lakecms extends Taglib
      */
     public function tagCate($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'cate';
+        $return = isset($tag['return']) ? $tag['return'] : 'cate';
         
         $params = [];
         foreach ($tag as $k => & $v) {
@@ -245,8 +253,8 @@ class Lakecms extends Taglib
         }
         
         $parse = '<?php';
-        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getCateInfo([' . implode(',', $params) . ']);';
-        $parse .= 'if ($' . $id . '):';
+        $parse .= '$' . $return . ' = \app\lakecms\template\Model::getCateInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $return . '):';
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif; ?>';
@@ -259,7 +267,7 @@ class Lakecms extends Taglib
      */
     public function tagContents($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'item';
+        $return = isset($tag['return']) ? $tag['return'] : 'item';
         $empty = isset($tag['empty']) ? $tag['empty'] : '';
         $key = !empty($tag['key']) ? $tag['key'] : 'i';
         $mod = isset($tag['mod']) ? $tag['mod'] : '2';
@@ -279,12 +287,17 @@ class Lakecms extends Taglib
         
         $var = md5(microtime().mt_rand(10000, 99999));
         $parse = '<?php ';
-        $parse .= 'list($__' . $var . '_list__, $__' . $var . '_total__, $__' . $var . '_page__) = \app\lakecms\template\Model::getCateContentList([' . implode(',', $params) . ']);';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateContentList([' . implode(',', $params) . ']);';
+        $parse .= '$__' . $var . '_cate__ = ' . '$__' . $var . '__["cate"];';
+        $parse .= '$__' . $var . '_list__ = ' . '$__' . $var . '__["list"];';
+        $parse .= '$__' . $var . '_total__ = ' . '$__' . $var . '__["total"];';
+        $parse .= '$__' . $var . '_page__ = ' . '$__' . $var . '__["page"];';
         $parse .= ' ?>';
+        $parse .= '{php}$__LAKECMS_CONTENTS_CATE__ = $pagetotal = $__' . $var . '_cate__;{/php}';
         $parse .= '{php}$__LAKECMS_CONTENTS_TOTAL__ = $pagetotal = $__' . $var . '_total__;{/php}';
         $parse .= '{php}$__LAKECMS_CONTENTS_LIST__ = $__' . $var . '_list__;{/php}';
         $parse .= '{php}$__LAKECMS_CONTENTS_PAGE__ = $paginate = $__' . $var . '_page__;{/php}';
-        $parse .= '{volist name="$__' . $var . '_list__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= '{volist name="$__' . $var . '_list__" id="' . $return . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;
         $parse .= '{/volist}';
         
@@ -296,7 +309,7 @@ class Lakecms extends Taglib
      */
     public function tagContent($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'content';
+        $return = isset($tag['return']) ? $tag['return'] : 'content';
         
         $params = [];
         foreach ($tag as $k => & $v) {
@@ -307,9 +320,11 @@ class Lakecms extends Taglib
             $params[] = '"' . $k . '"=>' . $v;
         }
         
-        $parse = '<?php';
-        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getCateContentInfo([' . implode(',', $params) . ']);';
-        $parse .= 'if ($' . $id . '):';
+        $var = md5(microtime().mt_rand(10000, 99999));
+        $parse = '<?php ';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateContentInfo([' . implode(',', $params) . ']);';
+        $parse .= '$' . $return . ' = ' . '$__' . $var . '__["info"];';
+        $parse .= 'if ($' . $return . '):';
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif;?>';
@@ -322,7 +337,7 @@ class Lakecms extends Taglib
      */
     public function tagContentprev($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'contentprev';
+        $return = isset($tag['return']) ? $tag['return'] : 'contentprev';
         
         $params = [];
         foreach ($tag as $k => & $v) {
@@ -334,8 +349,9 @@ class Lakecms extends Taglib
         }
         
         $parse = '<?php';
-        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getCateContentPrevInfo([' . implode(',', $params) . ']);';
-        $parse .= 'if ($' . $id . '):';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateContentPrevInfo([' . implode(',', $params) . ']);';
+        $parse .= '$' . $return . ' = ' . '$__' . $var . '__["info"];';
+        $parse .= 'if ($' . $return . '):';
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif;?>';
@@ -348,7 +364,7 @@ class Lakecms extends Taglib
      */
     public function tagContentnext($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'contentnext';
+        $return = isset($tag['return']) ? $tag['return'] : 'contentnext';
         
         $params = [];
         foreach ($tag as $k => & $v) {
@@ -360,8 +376,9 @@ class Lakecms extends Taglib
         }
         
         $parse = '<?php';
-        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getCateContentNextInfo([' . implode(',', $params) . ']);';
-        $parse .= 'if ($' . $id . '):';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateContentNextInfo([' . implode(',', $params) . ']);';
+        $parse .= '$' . $return . ' = ' . '$__' . $var . '__["info"];';
+        $parse .= 'if ($' . $return . '):';
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif;?>';
@@ -374,7 +391,7 @@ class Lakecms extends Taglib
      */
     public function tagPage($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'contentnext';
+        $return = isset($tag['return']) ? $tag['return'] : 'contentnext';
         
         $params = [];
         foreach ($tag as $k => & $v) {
@@ -386,8 +403,8 @@ class Lakecms extends Taglib
         }
         
         $parse = '<?php ';
-        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getCatePageInfo([' . implode(',', $params) . ']);';
-        $parse .= 'if ($' . $id . '):';
+        $parse .= '$' . $return . ' = \app\lakecms\template\Model::getCatePageInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $return . '):';
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif; ?>';
@@ -400,7 +417,7 @@ class Lakecms extends Taglib
      */
     public function tagTags($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'item';
+        $return = isset($tag['return']) ? $tag['return'] : 'item';
         $empty = isset($tag['empty']) ? $tag['empty'] : '';
         $key = !empty($tag['key']) ? $tag['key'] : 'i';
         $mod = isset($tag['mod']) ? $tag['mod'] : '2';
@@ -425,7 +442,7 @@ class Lakecms extends Taglib
         $parse .= '{php}$__LAKECMS_TAGS_LIST__ = $__' . $var . '_list__;{/php}';
         $parse .= '{php}$__LAKECMS_TAGS_PAGE__ = $paginate = $__' . $var . '_page__;{/php}';
         $parse .= '{php}$__LAKECMS_TAGS_TOTAL__ = $pagetotal = $__' . $var . '_total__;{/php}';
-        $parse .= '{volist name="$__' . $var . '_list__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= '{volist name="$__' . $var . '_list__" id="' . $return . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;
         $parse .= '{/volist}';
         
@@ -437,7 +454,7 @@ class Lakecms extends Taglib
      */
     public function tagTag($tag, $content)
     {
-        $id = isset($tag['id']) ? $tag['id'] : 'tag';
+        $return = isset($tag['return']) ? $tag['return'] : 'tag';
         
         $params = [];
         foreach ($tag as $k => & $v) {
@@ -449,8 +466,8 @@ class Lakecms extends Taglib
         }
         
         $parse = '<?php';
-        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getTagInfo([' . implode(',', $params) . ']);';
-        $parse .= 'if ($' . $id . '):';
+        $parse .= '$' . $return . ' = \app\lakecms\template\Model::getTagInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $return . '):';
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif; ?>';
@@ -484,7 +501,7 @@ class Lakecms extends Taglib
         $parse .= 'if (! $__' . $var . '__) { ';
         $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getSetting([' . implode(',', $params) . ']);';
         $parse .= ' } ?>';
-        $parse .= '<?php echo isset($__' . $var . '__[$'.$name.']) ? $__' . $var . '__[$'.$name.'] : '.$default.'; ?>';
+        $parse .= '<?php echo $__' . $var . '__; ?>';
         
         return $parse;
     }

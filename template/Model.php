@@ -47,9 +47,6 @@ class Model
         // 是否使用树结构
         $tree = isset($tag['tree']) ? true : false;
         
-        // 分页
-        $page = isset($params['page']) ? true : false;
-        
         $map = [
             ['status', '=', 1],
         ];
@@ -91,11 +88,11 @@ class Model
      */
     public static function getNavbarInfo($tag = [])
     {
-        if (! isset($tag['id'])) {
+        if (! isset($tag['navbarid'])) {
             return [];
         }
         
-        $id = $tag['id'];
+        $id = $tag['navbarid'];
         
         // 查询字段
         $field = empty($tag['field']) ? '*' : $tag['field'];
@@ -149,9 +146,6 @@ class Model
         // 是否使用树结构
         $tree = isset($tag['tree']) ? true : false;
         
-        // 分页
-        $page = isset($params['page']) ? true : false;
-        
         $map = [
             ['status', '=', 1],
         ];
@@ -195,7 +189,7 @@ class Model
     public static function getCateInfo($tag = [])
     {
         // 栏目ID
-        $id = isset($tag['id']) ? $tag['id'] : '';
+        $cateid = isset($tag['cateid']) ? $tag['cateid'] : '';
         
         // 栏目唯一标识
         $name = isset($tag['name']) ? $tag['name'] : '';
@@ -218,10 +212,10 @@ class Model
         ];
         
         $info = CategoryModel::field($field)
-            ->where(function($query) use($id, $name, $title) {
+            ->where(function($query) use($cateid, $name, $title) {
                 $query
                     ->whereOr([
-                        'id' => $id,
+                        'id' => $cateid,
                     ])
                     ->whereOr([
                         'name' => $name,
@@ -279,9 +273,6 @@ class Model
         
         // 缓存
         $cache = !isset($params['cache']) ? false : (int) $params['cache'];
-        
-        // 分页
-        $page = isset($params['page']) ? true : false;
         
         $cate = CategoryModel::with(['model'])
             ->where(function($query) use($cateid, $catename) {
@@ -362,9 +353,8 @@ class Model
      */
     public static function getCateContentInfo($tag = [])
     {
-        if (! isset($tag['id'])) {
-            return [];
-        }
+        // 内容ID
+        $contentid = isset($tag['contentid']) ? $tag['contentid'] : '';
         
         // 栏目ID
         $cateid = isset($tag['cateid']) ? $tag['cateid'] : '';
@@ -378,8 +368,11 @@ class Model
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
-        if (empty($cateid) && empty($catename)) {
-            return [];
+        if (empty($contentid) || (empty($cateid) && empty($catename))) {
+            return [
+                'cate' => [], 
+                'info' => [], 
+            ];
         }
         
         $cate = CategoryModel::with(['model'])
@@ -398,10 +391,11 @@ class Model
             ])
             ->find();
         if (empty($cate)) {
-            return [];
+            return [
+                'cate' => [], 
+                'info' => [], 
+            ];
         }
-        
-        $id = $tag['id'];
         
         $map = [
             ['status', '=', 1],
@@ -410,14 +404,17 @@ class Model
         $info = ContentModel::newTable($cate['model']['tablename'])
             ->field($field)
             ->where([
-                'id' => $id,
+                'id' => $contentid,
                 'categoryid' => $cate['id'],
             ])
             ->where($condition)
             ->where($map)
             ->find();
         if (empty($info)) {
-            return [];
+            return [
+                'cate' => $cate, 
+                'info' => [], 
+            ];
         }
         
         $info = $info->toArray();
@@ -431,7 +428,10 @@ class Model
             ->select();
         $info = ContentModel::formatShowFields($modelField, $info);
         
-        return $info;
+        return [
+            'cate' => $cate, 
+            'info' => $info, 
+        ];
     }
     
     /**
@@ -439,9 +439,8 @@ class Model
      */
     public static function getCateContentPrevInfo($tag = [])
     {
-        if (! isset($tag['id'])) {
-            return [];
-        }
+        // 内容ID
+        $contentid = isset($tag['contentid']) ? $tag['contentid'] : '';
         
         // 栏目ID
         $cateid = isset($tag['cateid']) ? $tag['cateid'] : '';
@@ -455,8 +454,11 @@ class Model
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
-        if (empty($cateid) && empty($catename)) {
-            return [];
+        if (empty($contentid) || (empty($cateid) && empty($catename))) {
+            return [
+                'cate' => [], 
+                'info' => [], 
+            ];
         }
         
         $cate = CategoryModel::with(['model'])
@@ -475,10 +477,11 @@ class Model
             ])
             ->find();
         if (empty($cate)) {
-            return [];
+            return [
+                'cate' => [], 
+                'info' => [], 
+            ];
         }
-        
-        $id = $tag['id'];
         
         $map = [
             ['status', '=', 1],
@@ -487,7 +490,7 @@ class Model
         $info = ContentModel::newTable($cate['model']['tablename'])
             ->field($field)
             ->where([
-                ['id', '<', $id],
+                ['id', '<', $contentid],
                 ['categoryid', '=', $cate['id']],
             ])
             ->where($condition)
@@ -495,7 +498,10 @@ class Model
             ->order('id DESC')
             ->find();
         if (empty($info)) {
-            return [];
+            return [
+                'cate' => $cate, 
+                'info' => [], 
+            ];
         }
         
         $info = $info->toArray();
@@ -509,7 +515,10 @@ class Model
             ->select();
         $info = ContentModel::formatShowFields($modelField, $info);
         
-        return $info;
+        return [
+            'cate' => $cate, 
+            'info' => $info, 
+        ];
     }
     
     /**
@@ -517,9 +526,8 @@ class Model
      */
     public static function getCateContentNextInfo($tag = [])
     {
-        if (! isset($tag['id'])) {
-            return [];
-        }
+        // 内容ID
+        $contentid = isset($tag['contentid']) ? $tag['contentid'] : '';
         
         // 栏目ID
         $cateid = isset($tag['cateid']) ? $tag['cateid'] : '';
@@ -533,8 +541,11 @@ class Model
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
-        if (empty($cateid) && empty($catename)) {
-            return [];
+        if (empty($contentid) || (empty($cateid) && empty($catename))) {
+            return [
+                'cate' => [], 
+                'info' => [], 
+            ];
         }
         
         $cate = CategoryModel::with(['model'])
@@ -553,10 +564,11 @@ class Model
             ])
             ->find();
         if (empty($cate)) {
-            return [];
+            return [
+                'cate' => [], 
+                'info' => [], 
+            ];
         }
-        
-        $id = $tag['id'];
         
         $map = [
             ['status', '=', 1],
@@ -565,7 +577,7 @@ class Model
         $info = ContentModel::newTable($cate['model']['tablename'])
             ->field($field)
             ->where([
-                ['id', '>', $id],
+                ['id', '>', $contentid],
                 ['categoryid', '=', $cate['id']],
             ])
             ->where($condition)
@@ -573,7 +585,10 @@ class Model
             ->order('id ASC')
             ->find();
         if (empty($info)) {
-            return [];
+            return [
+                'cate' => $cate, 
+                'info' => [], 
+            ];
         }
         
         $info = $info->toArray();
@@ -587,7 +602,10 @@ class Model
             ->select();
         $info = ContentModel::formatShowFields($modelField, $info);
         
-        return $info;
+        return [
+            'cate' => $cate, 
+            'info' => $info, 
+        ];
     }
     
     /**
@@ -641,7 +659,7 @@ class Model
             ])
             ->where($condition)
             ->where($map)
-            ->order('id ASC')
+            ->order('id DESC')
             ->find();
         if (empty($info)) {
             return [];
@@ -683,9 +701,6 @@ class Model
         
         // 缓存
         $cache = !isset($params['cache']) ? false : (int) $params['cache'];
-        
-        // 分页
-        $page = isset($params['page']) ? true : false;
         
         $map = [
             ['status', '=', 1],

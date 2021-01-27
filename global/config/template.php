@@ -6,5 +6,5 @@
 
 return [
     // 标签库
-    'taglib_build_in' => 'cx,app\lcms\taglib\Lcms',
+    'taglib_build_in' => 'cx,app\lakecms\template\taglib\Lakecms',
 ];

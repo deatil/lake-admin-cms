@@ -24,7 +24,6 @@ class LakecmsSetting extends LakecmsBase
         // 默认配置
         $default_setting = [
             'web_site_status' => 0,
-            'web_site_recycle' => '0',
             // 'web_theme' => 'lake',
     
             'web_site_logo' => '', // 网站LOGO
@@ -42,6 +41,7 @@ class LakecmsSetting extends LakecmsBase
             'site_title' => '',
             'site_keyword' => '',
             'site_description' => '',
+            
             'site_cache_time' => 3600,
         ];
 
@@ -122,6 +122,9 @@ class LakecmsSetting extends LakecmsBase
                     'value' => $name,
                 ]);
             }
+            
+            // 清除缓存
+            SettingsModel::clearCache();
             
             return $this->success('启用模版('.$name.')成功！');
         } else {

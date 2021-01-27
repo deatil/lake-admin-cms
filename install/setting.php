@@ -5,9 +5,7 @@
  */
 return [
     'web_site_status' => '1',
-    'web_site_recycle' => '0',
-    'web_index' => '1', // 设置为首页
-    'web_theme' => 'lake',
+    'web_theme' => 'default',
     
     'web_site_logo' => 'b444db9b37d402162c13c61eec014b1c', // 网站LOGO
     'web_site_company' => '', // 公司名称

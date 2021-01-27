@@ -48,6 +48,14 @@ class Settings extends Model
     }
     
     /**
+     * 清除缓存
+     */
+    public static function clearCache()
+    {
+        return Cache::delete("lakecms_setting");
+    }
+    
+    /**
      * 获取配置
      */
     public static function config($key = null, $default = null) 

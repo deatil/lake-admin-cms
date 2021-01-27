@@ -119,14 +119,8 @@
                                 <input type="text" name="setting[web_site_icp]" placeholder="请输入备案信息"  class="layui-input" value="{$setting['web_site_icp']}">
                             </div>
                         </div>
-                        <div class="layui-form-item">
-                            <label class="">站点代码</label>
-                            <div class="layui-form-field-label">
-                                <textarea name="setting[web_site_statistics]" placeholder="请输入站点代码" class="layui-textarea">{$setting['web_site_statistics']}</textarea>
-                            </div>
-                        </div>
-                        
                     </div>
+                    
                     <div class="layui-tab-item">
                         <div class="layui-form-item">
                             <label class="">站点开关</label>
@@ -135,7 +129,7 @@
                             </div>
                             <div class="layui-form-mid layui-word-aux">站点关闭后前台将不能访问</div>
                         </div>
-
+                        
                         <div class="layui-form-item">
                             <label class="">缓存时间</label>
                             <div class="layui-form-field-label">
@@ -144,6 +138,13 @@
                             <div class="layui-form-mid layui-word-aux">单页和详情页有效</div>
                         </div>
                         
+                        <div class="layui-form-item">
+                            <label class="">站点代码</label>
+                            <div class="layui-form-field-label">
+                                <textarea name="setting[web_site_statistics]" placeholder="请输入站点代码" class="layui-textarea">{$setting['web_site_statistics']}</textarea>
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">站点代码通常放置一些网站统计代码、客服代码等等</div>
+                        </div>
                     </div>
                 </div>
             </div>

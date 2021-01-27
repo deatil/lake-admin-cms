@@ -7,7 +7,7 @@ return [
     'author' => 'deatil',
     'authorsite' => 'http://github.com/deatil',
     'authoremail' => 'deatil@github.com',
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'adaptation' => '2.0.2',
     
     'path' => '',
@@ -25,14 +25,14 @@ return [
     'event' => [
         [
             'name' => 'HttpRun',
-            'class' => 'app\\lakecms\\behavior\\InitRoute',
+            'class' => 'app\\lakecms\\event\\InitRoute',
             'description' => 'cms路由设置',
             'listorder' => 100,
             'status' => 1,
         ],
         [
             'name' => 'HttpRun',
-            'class' => 'app\\lakecms\\behavior\\InitTemplate',
+            'class' => 'app\\lakecms\\event\\InitTemplate',
             'description' => 'cms模板配置',
             'listorder' => 100,
             'status' => 1,

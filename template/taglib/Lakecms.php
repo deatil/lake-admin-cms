@@ -158,14 +158,16 @@ class Lakecms extends Taglib
         
         $var = md5(microtime().mt_rand(10000, 99999));
         $parse = '<?php ';
-        $parse .= 'list($__' . $var . '_list__, $__' . $var . '_total__, $__' . $var . '_page__) = \app\lakecms\template\Model::getNavbarList([' . implode(',', $params) . ']);';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getNavbarList([' . implode(',', $params) . ']);';
         $parse .= ' ?>';
-        $parse .= '{php}$__LAKECMS_NAVBARS_LIST__ = $__' . $var . '_list__;{/php}';
-        $parse .= '{php}$__LAKECMS_NAVBARS_PAGE__ = $paginate = $__' . $var . '_page__;{/php}';
-        $parse .= '{php}$__LAKECMS_NAVBARS_TOTAL__ = $pagetotal = $__' . $var . '_total__;{/php}';
-        $parse .= '{volist name="$__' . $var . '_list__" id="' . $id . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= '{php}$__LAKECMS_NAVBARS_LIST__ = $__' . $var . '_list__ = $__' . $var . '__["list"];{/php}';
+        $parse .= '{php}$__LAKECMS_NAVBARS_PAGE__ = $paginate = $__' . $var . '__["page"];{/php}';
+        $parse .= '{php}$__LAKECMS_NAVBARS_TOTAL__ = $pagetotal = $__' . $var . '__["total"];{/php}';
+        $parse .= '{volist name="$__' . $var . '_list__" id="' . $return . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;
         $parse .= '{/volist}';
+        
+        $this->tpl->parse($parse);
         
         return $parse;
     }
@@ -187,11 +189,13 @@ class Lakecms extends Taglib
         }
         
         $parse = '<?php';
-        $parse .= '$' . $id . ' = \app\lakecms\template\Model::getNavbarInfo([' . implode(',', $params) . ']);';
-        $parse .= 'if ($' . $id . '):';
+        $parse .= '$' . $return . ' = \app\lakecms\template\Model::getNavbarInfo([' . implode(',', $params) . ']);';
+        $parse .= 'if ($' . $return . '):';
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif; ?>';
+        
+        $this->tpl->parse($parse);
         
         return $parse;
     }
@@ -233,6 +237,8 @@ class Lakecms extends Taglib
         $parse .= $content;
         $parse .= '{/volist}';
         
+        $this->tpl->parse($parse);
+        
         return $parse;
     }
     
@@ -258,6 +264,8 @@ class Lakecms extends Taglib
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif; ?>';
+        
+        $this->tpl->parse($parse);
         
         return $parse;
     }
@@ -301,6 +309,8 @@ class Lakecms extends Taglib
         $parse .= $content;
         $parse .= '{/volist}';
         
+        $this->tpl->parse($parse);
+        
         return $parse;
     }
     
@@ -329,6 +339,8 @@ class Lakecms extends Taglib
         $parse .= $content;
         $parse .= '<?php endif;?>';
         
+        $this->tpl->parse($parse);
+        
         return $parse;
     }
     
@@ -355,6 +367,8 @@ class Lakecms extends Taglib
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif;?>';
+        
+        $this->tpl->parse($parse);
         
         return $parse;
     }
@@ -383,6 +397,8 @@ class Lakecms extends Taglib
         $parse .= $content;
         $parse .= '<?php endif;?>';
         
+        $this->tpl->parse($parse);
+        
         return $parse;
     }
     
@@ -408,6 +424,8 @@ class Lakecms extends Taglib
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif; ?>';
+        
+        $this->tpl->parse($parse);
         
         return $parse;
     }
@@ -446,6 +464,8 @@ class Lakecms extends Taglib
         $parse .= $content;
         $parse .= '{/volist}';
         
+        $this->tpl->parse($parse);
+        
         return $parse;
     }
     
@@ -471,6 +491,8 @@ class Lakecms extends Taglib
         $parse .= '?>';
         $parse .= $content;
         $parse .= '<?php endif; ?>';
+        
+        $this->tpl->parse($parse);
         
         return $parse;
     }
@@ -502,6 +524,8 @@ class Lakecms extends Taglib
         $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getSetting([' . implode(',', $params) . ']);';
         $parse .= ' } ?>';
         $parse .= '<?php echo $__' . $var . '__; ?>';
+        
+        $this->tpl->parse($parse);
         
         return $parse;
     }

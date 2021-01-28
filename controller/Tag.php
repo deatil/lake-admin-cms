@@ -64,6 +64,7 @@ class Tag extends Base
         // 内容
         $data = TemplateModel::getTagInfo([
             'title' => $title,
+            'viewinc' => 1,
         ]);
         if (empty($data)) {
             return $this->error($title . '标签不存在');

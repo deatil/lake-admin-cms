@@ -100,6 +100,9 @@ class Model
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
+        // 阅读量
+        $viewinc = isset($tag['viewinc']) ? $tag['viewinc'] : '';
+        
         $map = [
             ['status', '=', 1],
         ];
@@ -116,6 +119,15 @@ class Model
         }
         
         $info = $info->toArray();
+        
+        // 添加阅读量
+        if (! empty($viewinc)) {
+            NavbarModel::where([
+                    'id' => $info['id'],
+                ])
+                ->inc($viewinc, 1)
+                ->update();
+        }
         
         return $info;
     }
@@ -203,6 +215,9 @@ class Model
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
+        // 阅读量
+        $viewinc = isset($tag['viewinc']) ? $tag['viewinc'] : '';
+        
         if (empty($id) && empty($name) && empty($title)) {
             return [];
         }
@@ -232,6 +247,15 @@ class Model
         }
         
         $info = $info->toArray();
+        
+        // 添加阅读量
+        if (! empty($viewinc)) {
+            CategoryModel::where([
+                    'id' => $info['id'],
+                ])
+                ->inc($viewinc, 1)
+                ->update();
+        }
         
         return $info;
     }
@@ -368,6 +392,9 @@ class Model
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
+        // 阅读量
+        $viewinc = isset($tag['viewinc']) ? $tag['viewinc'] : '';
+        
         if (empty($contentid) || (empty($cateid) && empty($catename))) {
             return [
                 'cate' => [], 
@@ -397,9 +424,7 @@ class Model
             ];
         }
         
-        $map = [
-            ['status', '=', 1],
-        ];
+        $cate = $cate->toArray();
         
         $info = ContentModel::newTable($cate['model']['tablename'])
             ->field($field)
@@ -408,7 +433,9 @@ class Model
                 'categoryid' => $cate['id'],
             ])
             ->where($condition)
-            ->where($map)
+            ->where([
+                ['status', '=', 1],
+            ])
             ->find();
         if (empty($info)) {
             return [
@@ -427,6 +454,16 @@ class Model
             ->order('sort ASC, id ASC')
             ->select();
         $info = ContentModel::formatShowFields($modelField, $info);
+        
+        // 添加阅读量
+        if (! empty($viewinc)) {
+            ContentModel::newTable($cate['model']['tablename'])
+                ->where([
+                    'id' => $info['id'],
+                ])
+                ->inc($viewinc, 1)
+                ->update();
+        }
         
         return [
             'cate' => $cate, 
@@ -625,6 +662,9 @@ class Model
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
+        // 阅读量
+        $viewinc = isset($tag['viewinc']) ? $tag['viewinc'] : '';
+        
         if (empty($cateid) && empty($catename)) {
             return [];
         }
@@ -675,6 +715,134 @@ class Model
             ->order('sort ASC, id ASC')
             ->select();
         $info = ContentModel::formatShowFields($modelField, $info);
+        
+        // 添加阅读量
+        if (! empty($viewinc)) {
+            ContentModel::newTable($cate['model']['tablename'])
+                ->where([
+                    'id' => $info['id'],
+                ])
+                ->inc($viewinc, 1)
+                ->update();
+        }
+        
+        return $info;
+    }
+    
+    /**
+     * 模型内容列表
+     */
+    public static function getModelContentList($tag = [])
+    {
+        // 模型表
+        $table = isset($tag['table']) ? $tag['table'] : '';
+        
+        if (empty($table)) {
+            return [];
+        }
+        
+        // 当前页
+        $page = isset($tag['page']) && intval($tag['page']) > 0 ? intval($tag['page']) : 1;
+        
+        // 每页总数
+        $limit = isset($tag['limit']) && intval($tag['limit']) > 0 ? intval($tag['limit']) : 20;
+        
+        // 排序
+        $order = isset($tag['order']) ? $tag['order'] : "id DESC";
+        
+        // 查询字段
+        $field = empty($tag['field']) ? '*' : $tag['field'];
+        
+        // 附加条件
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
+        
+        // 缓存
+        $cache = !isset($params['cache']) ? false : (int) $params['cache'];
+        
+        $data = ContentModel::newTable($table)
+            ->field($field)
+            ->where([
+                ['status', '=', 1],
+            ])
+            ->order($order)
+            ->cache($cache)
+            ->paginate([
+                'list_rows' => $limit,
+                'page' => $page
+            ]);
+        
+        // 格式化数据
+        $modelField = ModelFieldModel::where([
+                'status' => 1,
+            ])
+            ->order('sort ASC, id ASC')
+            ->select()
+            ->toArray();
+        foreach ($data as $key => $value) {
+            $data->{$key} = ContentModel::formatShowFields($modelField, $value);
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * 模型内容详情
+     */
+    public static function getModelContentInfo($tag = [])
+    {
+        // 模型表
+        $table = isset($tag['table']) ? $tag['table'] : '';
+        
+        // 内容ID
+        $contentid = isset($tag['contentid']) ? $tag['contentid'] : '';
+        
+        // 查询字段
+        $field = empty($tag['field']) ? '*' : $tag['field'];
+        
+        // 附加条件
+        $condition = isset($tag['condition']) ? $tag['condition'] : '';
+        
+        // 阅读量
+        $viewinc = isset($tag['viewinc']) ? $tag['viewinc'] : '';
+        
+        if (empty($contentid) || empty($table)) {
+            return [];
+        }
+        
+        $info = ContentModel::newTable($table)
+            ->field($field)
+            ->where([
+                'id' => $contentid,
+            ])
+            ->where($condition)
+            ->where([
+                ['status', '=', 1],
+            ])
+            ->find();
+        if (empty($info)) {
+            return [];
+        }
+        
+        $info = $info->toArray();
+        
+        // 格式化数据
+        $modelField = ModelFieldModel::where([
+                'modelid' => $cate['model']['id'],
+                'status' => 1,
+            ])
+            ->order('sort ASC, id ASC')
+            ->select();
+        $info = ContentModel::formatShowFields($modelField, $info);
+        
+        // 添加阅读量
+        if (! empty($viewinc)) {
+            ContentModel::newTable($table)
+                ->where([
+                    'id' => $info['id'],
+                ])
+                ->inc($viewinc, 1)
+                ->update();
+        }
         
         return $info;
     }
@@ -750,6 +918,9 @@ class Model
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
+        // 阅读量字段，为空不启用
+        $viewinc = isset($tag['viewinc']) ? intval($tag['viewinc']) : '';
+        
         if (empty($name) && empty($title)) {
             return [];
         }
@@ -775,6 +946,19 @@ class Model
         }
         
         $info = $info->toArray();
+        
+        // 添加阅读量
+        if (! empty($viewinc)) {
+            TagsModel::where($map)
+                ->whereOr([
+                    'title' => $title,
+                ])
+                ->whereOr([
+                    'name' => $name,
+                ])
+                ->inc('views', 1)
+                ->update();
+        }
         
         return $info;
     }

@@ -2,9 +2,10 @@
 
 namespace app\lakecms\controller;
 
-use think\facade\Db;
+use think\helper\Arr;
 
-use app\lakecms\model\Category as CategoryModel;
+use app\lakecms\service\Template;
+use app\lakecms\template\Model as TemplateModel;
 
 /**
  * 内容详情
@@ -19,14 +20,18 @@ class Content extends Base
      */
     public function index()
     {
+        // 栏目ID
+        $cateid = $this->request->param('cateid/d', '');
+        
         // 栏目标识
-        $catename = $this->request->param('catename/d', 1);
+        $catename = $this->request->param('catename/s', '');
         
         // 内容ID
         $contentid = $this->request->param('id/d', 0);
         
         // 内容
         $data = TemplateModel::getCateContentInfo([
+            'cateid' => $cateid,
             'catename' => $catename,
             'contentid' => $contentid,
         ]);
@@ -45,12 +50,18 @@ class Content extends Base
             'cate' => $cate,
             'info' => $info,
         ]);
+        if (empty($info)) {
+            return $this->error(__('信息不存在'));
+        }
         
         // SEO信息
         $this->setMetaTitle($info['title'] . ' - ' . $cate['title']);
         $this->setMetaKeywords($info['keywords']);
         $this->setMetaDescription($info['description']);
         
-        return $this->fetch($cate['template_list']);
+        // 模版
+        $viewFile = Template::themeViewPath($cate['template_detail']);
+        
+        return $this->fetch($viewFile);
     }
 }

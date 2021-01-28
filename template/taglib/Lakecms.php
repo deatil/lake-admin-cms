@@ -64,12 +64,12 @@ class Lakecms extends Taglib
             'attr' => 'return,cateid,catename,contentid,field,condition', 
             'close' => 1,
         ],
-        'contentprev' => [
+        'content-prev' => [
             'attr' => 'return,cateid,catename,contentid,field,condition', 
             'close' => 1, 
             'level' => 1,
         ],
-        'contentnext' => [
+        'content-next' => [
             'attr' => 'return,cateid,catename,contentid,field,condition', 
             'close' => 1, 
             'level' => 1,
@@ -77,6 +77,16 @@ class Lakecms extends Taglib
         
         'page' => [
             'attr' => 'return,cateid,catename,field,condition', 
+            'close' => 1,
+        ],
+        
+        'modelcontents' => [
+            'attr' => 'return,table,empty,key,mod,page,limit,order,field,condition,cache', 
+            'close' => 1, 
+            'level' => 3,
+        ],
+        'modelcontent' => [
+            'attr' => 'return,table,contentid,field,condition', 
             'close' => 1,
         ],
         
@@ -424,6 +434,69 @@ class Lakecms extends Taglib
         $parse .= ' ?>';
         $parse .= $content;
         $parse .= '<?php endif; ?>';
+        
+        $this->tpl->parse($parse);
+        
+        return $parse;
+    }
+    
+    /**
+     * 模型信息列表
+     */
+    public function tagModelcontents($tag, $content)
+    {
+        $return = isset($tag['return']) ? $tag['return'] : 'item';
+        $empty = isset($tag['empty']) ? $tag['empty'] : '';
+        $key = !empty($tag['key']) ? $tag['key'] : 'i';
+        $mod = isset($tag['mod']) ? $tag['mod'] : '2';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $var = md5(microtime().mt_rand(10000, 99999));
+        $parse = '<?php ';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getModelContentList([' . implode(',', $params) . ']);';
+        $parse .= ' ?>';
+        $parse .= '{volist name="$__' . $var . '__" id="' . $return . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
+        $parse .= $content;
+        $parse .= '{/volist}';
+        $parse .= '{php}$__LAKECMS_MODELS_LIST__ = $__' . $var . '__;{/php}';
+        
+        $this->tpl->parse($parse);
+        
+        return $parse;
+    }
+    
+    /**
+     * 模型信息详情
+     */
+    public function tagModelcontent($tag, $content)
+    {
+        $return = isset($tag['return']) ? $tag['return'] : 'content';
+        
+        $params = [];
+        foreach ($tag as $k => & $v) {
+            if (in_array($k, ['condition'])) {
+                $v = $this->autoBuildVar($v);
+            }
+            $v = '"' . $v . '"';
+            $params[] = '"' . $k . '"=>' . $v;
+        }
+        
+        $var = md5(microtime().mt_rand(10000, 99999));
+        $parse = '<?php ';
+        $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getModelContentInfo([' . implode(',', $params) . ']);';
+        $parse .= '$' . $return . ' = ' . '$__' . $var . '__;';
+        $parse .= 'if ($' . $return . '):';
+        $parse .= ' ?>';
+        $parse .= $content;
+        $parse .= '<?php endif;?>';
         
         $this->tpl->parse($parse);
         

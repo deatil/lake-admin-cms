@@ -1,1 +1,19 @@
-tag
+标签：总共 {$total|default=0} 条
+
+<hr />
+
+<div class="tags">
+{volist name="$list" id="data"}
+    <div class="tag-item {$data.name}">
+        {$data.id} <br />
+        {$data.name}: 
+        <a href="{:url('lakecms/tag/detail', ['title' => $data['title']])}" target="_blank">
+            {$data.title}
+        </a>
+    </div>
+{/volist}
+</div>
+
+<ul class="tag-page">
+    {$page}
+</ul>

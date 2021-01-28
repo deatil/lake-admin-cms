@@ -20,14 +20,15 @@ class Search extends Base
      */
     public function index()
     {
-        $catid = $this->request->param('catid/d', 0);
-        
-        $page = $this->request->param('page/d', 1);
-        $limit = $this->request->param('limit/d', 20);
+        // 分类
+        $cateid = $this->request->param('cateid/d', 0);
         
         // 关键词
         $keywords = $this->request->param('keywords/s', '', 'trim,lake_safe_replace,strip_tags,htmlspecialchars');
         $keywords = str_replace('%', '', $keywords); 
+        
+        $page = $this->request->param('page/d', 1);
+        $limit = $this->request->param('limit/d', 20);
         
         // 时间范围
         $time = $this->request->param('time/s', '');
@@ -60,7 +61,7 @@ class Search extends Base
         }
 
         $cate = CategoryModel::where([
-            'id' => $catid,
+            'id' => $cateid,
         ])->find();
         if (empty($cate)) {
             $this->error('选择分类错误');
@@ -98,7 +99,6 @@ class Search extends Base
             ])
             ->where($where)
             ->order('add_time DESC')
-            ->cache($cache)
             ->paginate([
                 'list_rows' => $limit,
                 'page' => $page
@@ -110,8 +110,11 @@ class Search extends Base
         // 总数
         $total = $data->total();
         
+        // 数据
+        $data = $data->toArray();
+        
         $this->assign([
-            'data' => $data,
+            'data' => $data['data'],
             'page' => $page,
             'total' => $total,
         ]);

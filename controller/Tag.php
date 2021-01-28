@@ -24,7 +24,7 @@ class Tag extends Base
         $sort = $this->request->param('sort', 'hot');
         if ($sort == 'time') {
             $order = 'add_time DESC, id DESC';
-        } elseif () {
+        } elseif ($sort == 'hot') {
             $order = 'views DESC, id DESC';
         } else {
             $order = 'add_time DESC, id DESC';
@@ -62,7 +62,7 @@ class Tag extends Base
         $title = $this->request->param('title/s');
         
         // 内容
-        $data = TemplateModel::getTagList([
+        $data = TemplateModel::getTagInfo([
             'title' => $title,
         ]);
         if (empty($data)) {

@@ -1,0 +1,6 @@
+<IfModule mod_rewrite.c>
+  Options +FollowSymlinks -Multiviews
+  
+  RewriteEngine on
+  RewriteRule ^view|info.php|web.config - [F,L]
+</IfModule>

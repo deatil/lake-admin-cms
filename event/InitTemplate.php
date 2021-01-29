@@ -16,7 +16,7 @@ class InitTemplate
     /**
      * 设置信息
      */
-    public function handle($params)
+    public function handle()
     {
         $viewPath = Template::themeViewPath();
         

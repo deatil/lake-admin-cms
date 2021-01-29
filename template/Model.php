@@ -455,13 +455,21 @@ class Model
             ->select();
         $info = ContentModel::formatShowFields($modelField, $info);
         
+        $viewField = '';
+        foreach ($modelField as $field) {
+            if ($field['is_view'] == 1) {
+                $viewField = $field['name'];
+                break;
+            }
+        }
+        
         // 添加阅读量
-        if (! empty($viewinc)) {
+        if (! empty($viewinc) && ! empty($viewField)) {
             ContentModel::newTable($cate['model']['tablename'])
                 ->where([
                     'id' => $info['id'],
                 ])
-                ->inc($viewinc, 1)
+                ->inc($viewField, 1)
                 ->update();
         }
         

@@ -1,1 +1,70 @@
-index_cate
+{extend name="base"/}
+
+{block name="main"}
+
+<div class="list">
+
+资讯列表：
+{volist name="$list" id="data"}
+    <a href="{:url('lakecms/content/index', ['cateid' => $data['categoryid'], 'id' => $data['id']])}" target="_blank">
+        <div class="tag-item">
+            {$data.title} - {$data.views} 
+            <span>({:date('Y-m-d H:i:s', $data['add_time'])})</span>
+        </div>
+    </a>
+{/volist}
+
+<hr />
+
+资讯数量：{$total|default=0}
+
+<hr />
+
+资讯分页：
+{if !empty($page)}
+    <div>{$page|raw}</div>
+{/if}
+
+</div>
+
+<div class="sidebar">
+
+<hr />
+
+分类：
+{cates field="id,parentid,name,title,cover,template_list" limit="15" order="sort ASC" tree="tree" return="data"}
+    <a href="{:url('lakecms/cate/index', ['catename' => $data['name']])}" target="_blank">
+        <div class="cate-item">
+            {$data.title}
+        </div>
+    </a>
+    
+    {if isset($data['child'])}
+        {volist name="$data['child']" id="vo"}
+            <a href="{:url('lakecms/cate/index', ['catename' => $vo['name']])}" target="_blank">
+                <div class="cate-item">
+                    --{$vo.title}
+                </div>
+            </a>
+        {/volist}
+    {/if}
+{/cates}
+
+标签：
+<a href="{:url('lakecms/tag/index')}" target="_blank">
+    标签列表
+</a>
+
+<br />
+
+{tags field="id,name,title,views" limit="15" order="views DESC" return="data"}
+    <a href="{:url('lakecms/tag/detail', ['title' => $data['title']])}" target="_blank">
+        <div class="tag-item tag-{$data.name}">
+            {$data.title}
+        </div>
+    </a>
+{/tags}
+
+</div>
+
+{/block}

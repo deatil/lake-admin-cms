@@ -33,24 +33,38 @@ abstract class Base extends HomeBase
     /**
      * 设置标题
      */
-    protected function setMetaTitle($title) 
+    protected function setMetaTitle($title = '') 
     {
+        if (! empty($title)) {
+            $title = $title . ' - ' . config('lakecms.site_name');
+        } else {
+            $title = config('lakecms.site_name') . ' - ' . config('lakecms.site_slogan');
+        }
+        
         $this->assign('meta_title', $title);
     }
 
     /**
      * 设置关键字
      */
-    protected function setMetaKeywords($keywords) 
+    protected function setMetaKeywords($keywords = '') 
     {
+        if (empty($keywords)) {
+            $keywords = config('lakecms.site_keywords');
+        }
+        
         $this->assign('meta_keywords', $keywords);
     }
 
     /**
      * 设置描述
      */
-    protected function setMetaDescription($description) 
+    protected function setMetaDescription($description = '') 
     {
+        if (empty($description)) {
+            $description = config('lakecms.site_description');
+        }
+        
         $this->assign('meta_description', $description);
     }
 
@@ -64,5 +78,10 @@ abstract class Base extends HomeBase
         app('config')->set([
             'view_path' => $viewPath.'/',
         ], 'view');
-    }    
+        
+        // 设置视图公用参数
+        $this->assign([
+            'lakecms_view_path' => $viewPath,
+        ]);
+    }
 }

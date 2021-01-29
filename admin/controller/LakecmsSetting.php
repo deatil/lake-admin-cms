@@ -37,9 +37,8 @@ class LakecmsSetting extends LakecmsBase
             
             'site_url' => '', // 站点代码
             'site_name' => '',
-            'site_name' => '',
-            'site_title' => '',
-            'site_keyword' => '',
+            'site_slogan' => '', // 网站标语
+            'site_keywords' => '',
             'site_description' => '',
             
             'site_cache_time' => 3600,

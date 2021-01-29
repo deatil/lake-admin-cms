@@ -15,6 +15,11 @@ class Index extends Base
      */
     public function index()
     {
+        // SEO信息
+        $this->setMetaTitle();
+        $this->setMetaKeywords();
+        $this->setMetaDescription();
+
         return $this->fetch('/index');
     }
 }

@@ -34,6 +34,7 @@ class Content extends Base
             'cateid' => $cateid,
             'catename' => $catename,
             'contentid' => $contentid,
+            'viewinc' => 1,
         ]);
         
         // 栏目

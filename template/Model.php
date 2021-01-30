@@ -693,12 +693,11 @@ class Model
             ])
             ->find();
         if (empty($cate)) {
-            return [];
+            return [
+                'cate' => [], 
+                'info' => [], 
+            ];
         }
-        
-        $map = [
-            ['status', '=', 1],
-        ];
         
         $info = ContentModel::newTable($cate['model']['tablename'])
             ->field($field)
@@ -706,11 +705,16 @@ class Model
                 'categoryid' => $cate['id'],
             ])
             ->where($condition)
-            ->where($map)
+            ->where([
+                ['status', '=', 1],
+            ])
             ->order('id DESC')
             ->find();
         if (empty($info)) {
-            return [];
+            return [
+                'cate' => $cate, 
+                'info' => [], 
+            ];
         }
         
         $info = $info->toArray();
@@ -734,7 +738,10 @@ class Model
                 ->update();
         }
         
-        return $info;
+        return [
+            'cate' => $cate, 
+            'info' => $info, 
+        ];
     }
     
     /**

@@ -12,11 +12,86 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
         <meta name="generator" content="" data-variable="/,cn,10001,,10001,res032"/>
         <link rel="stylesheet" href="plugin/layui/css/layui.css">
+        <link rel="stylesheet" href="css/lake.css">
         <script src="plugin/layui/layui.js"></script>
+        {block name="head"}{/block}
     </head>
     
     <body>
+        {block name="header"}
+            <div class="layui-header header lakecms-navbar">
+                <div class="layui-main">
+                    <a class="logo" href="{:url('lakecms/index/index')}">
+                        <img src="img/logo.png" alt="lakecms">
+                    </a>
+                    
+                    <ul class="layui-nav">
+                        <li class="layui-nav-item">
+                            <a href="{:url('lakecms/index/index')}">
+                                首页
+                            </a>
+                        </li>
+                        
+                        {navbars order="sort ASC" tree="tree" return="data"}
+                            <li class="layui-nav-item">
+                                <a href="{:url($data['url'] ?? '')}" target="{$data.target}">
+                                    {$data.title}
+                                </a>
+                                
+                                {if isset($data['child'])}
+                                    <dl class="layui-nav-child layui-anim layui-anim-upbit">
+                                        {volist name="$data['child']" id="vo"}
+                                            <dd>
+                                                <a href="{:url($vo['url'] ?? '')}" target="{$vo.target}">
+                                                    {$vo.title}
+                                                </a>
+                                            </dd>
+                                        {/volist}
+                                    </dl>
+                                {/if}
+                            </li>
+                        {/navbars}
+                    </ul>
+                </div>
+            </div>
+        {/block}
+        
         {block name="main"}lakecms{/block}
+        
+        {block name="footer"}
+        <div class="layui-footer footer lakecms-footer">
+            <div class="layui-main">
+                <p>
+                    © {:date('Y')} 
+                    <a href="https://github.com/deatil/lake-admin-cms">{setting name="web_site_company" default="" /}</a> 
+                    Apache License
+                </p>
+                <p>
+                    <a href="{:url('lakecms/page/index', ['catename' => 'about'])}" target="_blank" rel="nofollow">关于我们</a>
+                    <a href="https://github.com/deatil/lake-admin-cms" target="_blank" rel="nofollow">项目主页</a>
+                    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow">京ICP备XXX号-X</a>
+                </p>
+            </div>
+        </div> 
+        {/block}
+        
+        {block name="layui"}
+        <script type="text/javascript">
+        ;(function(){
+            if (self != top) {
+                top.location.replace(location.href);
+            }
+        })();
+        
+        layui.config({
+            version: "{:config('lake.release')}",
+        }).use('element', function(){
+          var element = layui.element;
+        });
+        </script>
+        {/block}
+        
+        {block name="script"}{/block}
     </body>
     
 </html>

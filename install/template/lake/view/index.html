@@ -1,83 +1,89 @@
-导航：
-{navbars order="sort ASC" tree="tree" return="data"}
-    <a href="{:url($data['url'] ?? '')}" target="{$data.target}">
-        <div class="nav-item">
-            {$data.title}
+{extend name="base"/}
+
+{block name="main"}
+
+<div class="layui-main lakecms-banner mt-3">
+    <div class="layui-carousel" id="test1">
+        <div carousel-item>
+            <div>条目1</div>
+            <div>条目2</div>
+            <div>条目3</div>
+            <div>条目4</div>
+            <div>条目5</div>
         </div>
-    </a>
-    
-    {if isset($data['child'])}
-        {volist name="$data['child']" id="vo"}
-            <a href="{:url($vo['url'] ?? '')}" target="{$vo.target}">
-                <div class="nav-item">
-                    --{$vo.title}
+    </div>
+</div>
+
+<div class="layui-main lakecms-main lakecms-inline mt-3">
+    <div class="lakecms-content">
+
+        模型数据：
+        {modelcontents table="news" field="id,categoryid,title,views" limit="15" order="views DESC" return="data"}
+            <a href="{:url('lakecms/content/index', ['cateid' => $data['categoryid'], 'id' => $data['id']])}" target="_blank">
+                <div class="tag-item">
+                    {$data.title}
                 </div>
             </a>
-        {/volist}
-    {/if}
-{/navbars}
+        {/modelcontents}
+    </div>
 
-<hr />
+    <div class="lakecms-sidebar">
 
-分类：
-{cates field="id,parentid,name,title,cover,template_list" limit="15" order="sort ASC" tree="tree" return="data"}
-    <a href="{:url('lakecms/cate/index', ['catename' => $data['name']])}" target="_blank">
-        <div class="cate-item">
-            {$data.title}
-        </div>
-    </a>
-    
-    {if isset($data['child'])}
-        {volist name="$data['child']" id="vo"}
-            <a href="{:url('lakecms/cate/index', ['catename' => $vo['name']])}" target="_blank">
+        搜索: 
+        <a href="{:url('lakecms/search/index', ['cateid' => 6, 'keywords' => 'keywords'])}" target="_blank">搜索</a>
+        
+        分类：
+        {cates field="id,parentid,name,title,cover,template_list" limit="15" order="sort ASC" tree="tree" return="data"}
+            <a href="{:url('lakecms/cate/index', ['catename' => $data['name']])}" target="_blank">
                 <div class="cate-item">
-                    --{$vo.title}
+                    {$data.title}
                 </div>
             </a>
-        {/volist}
-    {/if}
-{/cates}
+            
+            {if isset($data['child'])}
+                {volist name="$data['child']" id="vo"}
+                    <a href="{:url('lakecms/cate/index', ['catename' => $vo['name']])}" target="_blank">
+                        <div class="cate-item">
+                            --{$vo.title}
+                        </div>
+                    </a>
+                {/volist}
+            {/if}
+        {/cates}
+        
+        <hr />
 
-<hr />
+        标签：
+        <a href="{:url('lakecms/tag/index')}" target="_blank">
+            标签列表
+        </a>
 
-标签：
-<a href="{:url('lakecms/tag/index')}" target="_blank">
-    标签列表
-</a>
+        <br />
 
-<br />
+        {tags field="id,name,title,views" limit="15" order="views DESC" return="data"}
+            <a href="{:url('lakecms/tag/detail', ['title' => $data['title']])}" target="_blank">
+                <div class="tag-item tag-{$data.name}">
+                    {$data.title}
+                </div>
+            </a>
+        {/tags}
 
-{tags field="id,name,title,views" limit="15" order="views DESC" return="data"}
-    <a href="{:url('lakecms/tag/detail', ['title' => $data['title']])}" target="_blank">
-        <div class="tag-item tag-{$data.name}">
-            {$data.title}
-        </div>
-    </a>
-{/tags}
+    </div>
+</div>
+{/block}
 
-<hr />
-
-模型数据：
-{modelcontents table="news" field="id,categoryid,title,views" limit="15" order="views DESC" return="data"}
-    <a href="{:url('lakecms/content/index', ['cateid' => $data['categoryid'], 'id' => $data['id']])}" target="_blank">
-        <div class="tag-item">
-            {$data.title}
-        </div>
-    </a>
-{/modelcontents}
-
-<hr />
-
-搜索: 
-<a href="{:url('lakecms/search/index', ['cateid' => 6, 'keywords' => 'keywords'])}" target="_blank">搜索</a>
-
-<hr />
-
-公司名称: 
-{setting name="web_site_company" default="" /}
-<br />
-公司地址: 
-{setting name="web_site_address" default="" /}
-<br />
-公司电话:  
-{setting name="web_site_telphone" default="" /}
+{block name="script"}
+<script>
+layui.use('carousel', function(){
+    var carousel = layui.carousel;
+    
+    carousel.render({
+        elem: '#test1',
+        width: '100%', //设置容器宽度
+        arrow: 'hover', //始终显示箭头
+        autoplay: true,
+        // anim: 'updown' //切换动画方式
+    });
+});
+</script>
+{/block}

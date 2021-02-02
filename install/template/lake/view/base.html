@@ -1,97 +1,86 @@
-<!DOCTYPE HTML>
-<html>
-    
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>{$meta_title}</title>
-        <meta name="keywords" content="{$meta_keywords}" />
-        <meta name="description" content="{$meta_description}" />
+        <meta name="renderer" content="webkit"/>
+        <meta name="force-rendering" content="webkit"/>
+        <title>{block name='meta_title'}{$meta_title}{/block}</title>
+        <meta name="keywords" content="{block name='meta_keywords'}{$meta_keywords}{/block}" />
+        <meta name="description" content="{block name='meta_description'}{$meta_description}{/block}" />
         <base href="/template/lake/static/" />
-        <meta name="renderer" content="webkit">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-        <meta name="generator" content="" data-variable="/,cn,10001,,10001,res032"/>
-        <link rel="stylesheet" href="plugin/layui/css/layui.css">
-        <link rel="stylesheet" href="css/lake.css">
-        <script src="plugin/layui/layui.js"></script>
+        {block name="head_link"}
+        <link type="text/css" rel="stylesheet" href="css/style.css" />
+        {/block}
+        {block name="head_script"}
+        <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="js/banner.js"></script>
+        {/block}
         {block name="head"}{/block}
     </head>
     
     <body>
         {block name="header"}
-            <div class="layui-header header lakecms-navbar">
-                <div class="layui-main">
-                    <a class="logo" href="{:url('lakecms/index/index')}">
-                        <img src="img/logo.png" alt="lakecms">
-                    </a>
-                    
-                    <ul class="layui-nav">
-                        <li class="layui-nav-item">
-                            <a href="{:url('lakecms/index/index')}">
-                                首页
-                            </a>
-                        </li>
-                        
-                        {navbars order="sort ASC" tree="tree" return="data"}
-                            <li class="layui-nav-item">
-                                <a href="{:url($data['url'] ?? '')}" target="{$data.target}">
-                                    {$data.title}
-                                </a>
-                                
-                                {if isset($data['child'])}
-                                    <dl class="layui-nav-child layui-anim layui-anim-upbit">
-                                        {volist name="$data['child']" id="vo"}
-                                            <dd>
-                                                <a href="{:url($vo['url'] ?? '')}" target="{$vo.target}">
-                                                    {$vo.title}
-                                                </a>
-                                            </dd>
-                                        {/volist}
-                                    </dl>
-                                {/if}
-                            </li>
-                        {/navbars}
-                    </ul>
-                </div>
-            </div>
+        <div class="header">
+          <a href="index.html"><img src="images/logo.jpg" /></a>
+        </div>
+        <div class="clear"></div>
+        <div class="nav">
+          <div class="main">
+            <ul>
+              <li><a href="index.html">首页</a></li>
+              <li><a href="about.html">关于我们</a></li>
+              <li><a href="product.html">产品中心</a></li>
+              <li><a href="list.html">公司动态</a></li>
+              <li><a href="case.html">精品案例</a></li>
+              <li><a href="list.html">行业动态</a></li>
+              <li><a href="contact.html">联系我们</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="clear"></div>
         {/block}
         
-        {block name="main"}lakecms{/block}
+        {block name="banner"}
+        <div class="banner">
+          <div class="b-img">
+              <img src="images/banner.jpg" width="100%"/>
+              <img src="images/banner.jpg" width="100%" />
+          </div>
+          <div class="clear"></div>
+          <div class="b-list"> </div>
+        </div>
+        <div class="clear"></div>
+        <div class="part1">
+          <div class="main">
+            <p class="ccsl">欢迎访问本站，欢迎来电咨询：000-000-0000</p>
+          </div>
+        </div>
+        <div class="clear"></div>
+        {/block}
+        
+        {block name="content"}lakecms{/block}
         
         {block name="footer"}
-        <div class="layui-footer footer lakecms-footer">
-            <div class="layui-main">
-                <p>
-                    © {:date('Y')} 
-                    <a href="https://github.com/deatil/lake-admin-cms">{setting name="web_site_company" default="" /}</a> 
-                    Apache License
-                </p>
-                <p>
-                    <a href="{:url('lakecms/page/index', ['catename' => 'about'])}" target="_blank" rel="nofollow">关于我们</a>
-                    <a href="https://github.com/deatil/lake-admin-cms" target="_blank" rel="nofollow">项目主页</a>
-                    <a href="http://beian.miit.gov.cn/" target="_blank" rel="nofollow">京ICP备XXX号-X</a>
-                </p>
+        <div class="footer">
+          <div class="main">
+            <div class="footL">
+              <img src="images/4.jpg" />
             </div>
-        </div> 
+            <div class="footR">
+                联系QQ：123456789<br />
+                手机号码：0000000000<br />
+                联系邮箱：123*****@qq.com<br />
+                联系电话：000-000000    000-000000<br />
+                联系地址：XXX省XXX市XXX县XXX路XXX号
+            </div>
+            <div class="clear"></div>
+            <div class="footbox">
+              <div class="con">©2019 更多模板：<a href="http://www.mycodes.net/" target="_blank">源码之家</a></div>
+            </div>
+          </div>
+        </div>
         {/block}
         
-        {block name="layui"}
-        <script type="text/javascript">
-        ;(function(){
-            if (self != top) {
-                top.location.replace(location.href);
-            }
-        })();
-        
-        layui.config({
-            version: "{:config('lake.release')}",
-        }).use('element', function(){
-          var element = layui.element;
-        });
-        </script>
-        {/block}
-        
-        {block name="script"}{/block}
+        {block name="footer_script"}{/block}
     </body>
-    
 </html>

@@ -1,89 +1,236 @@
 {extend name="base"/}
 
-{block name="main"}
+{block name="content"}
 
-<div class="layui-main lakecms-banner mt-3">
-    <div class="layui-carousel" id="test1">
-        <div carousel-item>
-            <div>条目1</div>
-            <div>条目2</div>
-            <div>条目3</div>
-            <div>条目4</div>
-            <div>条目5</div>
-        </div>
-    </div>
+<div class="part2">
+  <div class="contitbox">
+    <div class="tit ccsl">4大领先优势<span>· 放心使用</span></div>
+    <div class="line"></div>
+    <div class="sub">专注为客户提供优质产品，贴心服务</div>
+  </div>
+  <ul>
+    <li>
+      <a href="product_xq.html">
+      <img src="images/1.png" width="270" height="290"/>
+      <div class="item">
+        <div class="tit ccsl">新材料产品</div>
+        <div class="sub ccsl">New Material Product</div>
+      </div>
+      </a>
+    </li>
+    <li>
+      <a href="product_xq.html">
+      <img src="images/1.png" width="270" height="290"/>
+      <div class="item">
+        <div class="tit ccsl">新材料产品</div>
+        <div class="sub ccsl">New Material Product</div>
+      </div>
+      </a>
+    </li>
+    <li>
+      <a href="product_xq.html">
+      <img src="images/1.png" width="270" height="290"/>
+      <div class="item">
+        <div class="tit ccsl">新材料产品</div>
+        <div class="sub ccsl">New Material Product</div>
+      </div>
+      </a>
+    </li>
+    <li>
+      <a href="product_xq.html">
+      <img src="images/1.png" width="270" height="290"/>
+      <div class="item">
+        <div class="tit ccsl">新材料产品</div>
+        <div class="sub ccsl">New Material Product</div>
+      </div>
+      </a>
+    </li>
+  </ul>
 </div>
-
-<div class="layui-main lakecms-main lakecms-inline mt-3">
-    <div class="lakecms-content">
-
-        模型数据：
-        {modelcontents table="news" field="id,categoryid,title,views" limit="15" order="views DESC" return="data"}
-            <a href="{:url('lakecms/content/index', ['cateid' => $data['categoryid'], 'id' => $data['id']])}" target="_blank">
-                <div class="tag-item">
-                    {$data.title}
-                </div>
-            </a>
-        {/modelcontents}
+<div class="clear"></div>
+<div class="linebox"></div>
+<div class="clear"></div>
+<div class="part3">
+  <div class="contitbox">
+    <div class="tit ccsl">产品分类 <span>· Product classification</span></div>
+    <div class="line"></div>
+    <div class="sub">专注为客户提供优质产品，贴心服务</div>
+  </div>
+  <div class="part3L">
+    <div class="titbox">
+      <p class="ccsl">产品中心</p>
     </div>
-
-    <div class="lakecms-sidebar">
-
-        搜索: 
-        <a href="{:url('lakecms/search/index', ['cateid' => 6, 'keywords' => 'keywords'])}" target="_blank">搜索</a>
-        
-        分类：
-        {cates field="id,parentid,name,title,cover,template_list" limit="15" order="sort ASC" tree="tree" return="data"}
-            <a href="{:url('lakecms/cate/index', ['catename' => $data['name']])}" target="_blank">
-                <div class="cate-item">
-                    {$data.title}
-                </div>
-            </a>
-            
-            {if isset($data['child'])}
-                {volist name="$data['child']" id="vo"}
-                    <a href="{:url('lakecms/cate/index', ['catename' => $vo['name']])}" target="_blank">
-                        <div class="cate-item">
-                            --{$vo.title}
-                        </div>
-                    </a>
-                {/volist}
-            {/if}
-        {/cates}
-        
-        <hr />
-
-        标签：
-        <a href="{:url('lakecms/tag/index')}" target="_blank">
-            标签列表
-        </a>
-
-        <br />
-
-        {tags field="id,name,title,views" limit="15" order="views DESC" return="data"}
-            <a href="{:url('lakecms/tag/detail', ['title' => $data['title']])}" target="_blank">
-                <div class="tag-item tag-{$data.name}">
-                    {$data.title}
-                </div>
-            </a>
-        {/tags}
-
+    <ul style="height:291px">
+      <li><a href="product.html" class="ccsl">浴室镜系列</a></li>
+      <li><a href="product.html" class="ccsl">洗衣机系列</a></li>
+      <li><a href="product.html" class="ccsl">空调系列</a></li>
+      <li><a href="product.html" class="ccsl">冰箱系列</a></li>
+      <li><a href="product.html" class="ccsl">推拉门系列</a></li>
+      <li><a href="product.html" class="ccsl">防盗门系列</a></li>
+    </ul>
+    <div class="lxwm">
+      <div class="tel1">全国服务热线：</div>
+      <div class="tel2">000-000-0000 </div>
     </div>
+  </div>
+  <div class="part3R">
+    <ul id="tab">
+       <li class="current"><a>热销推荐</a></li>
+       <li><a>新品推荐</a></li>
+    </ul>
+    <div id="content">
+      <ul style="display:block">
+        <li>
+          <a href="product_xq.html">
+          <img src="images/1.jpg" width="280" height="280"/>
+          <p class="ccsl">浴室镜系列</p>
+          </a>
+        </li>
+        <li>
+          <a href="product_xq.html">
+          <img src="images/1.jpg" width="280" height="280"/>
+          <p class="ccsl">浴室镜系列</p>
+          </a>
+        </li>
+        <li>
+          <a href="product_xq.html">
+          <img src="images/1.jpg" width="280" height="280"/>
+          <p class="ccsl">浴室镜系列</p>
+          </a>
+        </li>
+      </ul>
+      <ul>
+        <li>
+          <a href="product_xq.html">
+          <img src="images/1.png" width="280" height="280"/>
+          <p class="ccsl">洗衣机系列</p>
+          </a>
+        </li>
+        <li>
+          <a href="product_xq.html">
+          <img src="images/1.png" width="280" height="280"/>
+          <p class="ccsl">洗衣机系列</p>
+          </a>
+        </li>
+        <li>
+          <a href="product_xq.html">
+          <img src="images/1.png" width="280" height="280"/>
+          <p class="ccsl">洗衣机系列</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="clear"></div>
 </div>
+<div class="clear"></div>
+<div class="part4">
+  <div class="contitbox">
+    <div class="tit ccsl">新闻 <span>· 资讯</span></div>
+    <div class="line"></div>
+    <div class="sub">您身边的新材料知识百科全书</div>
+  </div>
+  <div class="part4L">
+    <div class="titbox">
+      <p class="ccsl">行业新闻</p>
+    </div>
+    <div class="part4One">
+      <div class="p4l">
+        <a href="detail.html"><img src="images/2.png" width="240" height="130" /></a>
+      </div>
+      <div class="p4r">
+        <a href="detail.html" class="ccsl">如何清除洗衣机里面的杂物?</a>
+        <span>2018-03-13</span>
+        <div class="clear"></div>
+        <div class="sub">首先，将洗衣机排水管拿下放在一个空水桶上（要有一定高度），关闭进水阀门和前门。第二，将3水壶的水用除垢剂（市场有售）倒在一个空容器中，按除垢剂/水＝l/2的比例配制并搅拌均匀。第三，打开"洗涤剂添加盒"，把混合好的除垢剂溶液从洗涤剂添加盒倒入，注意不要溅到皮肤上。
+第四，按下洗衣机电源开关，将程序设定至"洗衣程序"（时间选择最长），使洗衣筒旋转；待除垢液从排水管排到桶里后，再将排出的除垢液从洗涤剂添加盒加入，如此反复多次，直至程序运行完毕，打开过滤器清...</div>
+      </div>
+    </div>
+    <ul>
+      <li>
+        <a href="detail.html" class="ccsl">如何清除洗衣机里面的杂物?</a>
+        <span>2018-03-13</span>
+      </li>
+      <li>
+        <a href="detail.html" class="ccsl">洗衣机的维修和保养</a>
+        <span>2018-03-13</span>
+      </li>
+      <li>
+        <a href="detail.html" class="ccsl">洗衣机使用过程中的基本注意事项</a>
+        <span>2018-03-13</span>
+      </li>
+      <li>
+        <a href="detail.html" class="ccsl">如何清除洗衣机里面的杂物</a>
+        <span>2018-03-13</span>
+      </li>
+      <li>
+        <a href="detail.html" class="ccsl">洗衣机使用过程中的基本注意事项</a>
+        <span>2018-03-13</span>
+      </li>
+    </ul>
+  </div>
+  <div class="part4R">
+    <div class="titbox">
+      <p class="ccsl">公司新闻</p>
+    </div>
+    <div class="part4two">
+      <a href="detail.html"><img src="images/3.jpg" width="570" height="130" /></a>
+    </div>
+    <ul>
+      <li>
+        <a href="detail.html" class="ccsl">洗衣机使用过程中的基本注意事项</a>
+        <span>2018-03-13</span>
+      </li>
+      <li>
+        <a href="detail.html" class="ccsl">如何清除洗衣机里面的杂物</a>
+        <span>2018-03-13</span>
+      </li>
+      <li>
+        <a href="detail.html" class="ccsl">如何清除洗衣机里面的杂物</a>
+        <span>2018-03-13</span>
+      </li>
+      <li>
+        <a href="detail.html" class="ccsl">洗衣机使用过程中的基本注意事项</a>
+        <span>2018-03-13</span>
+      </li>
+      <li>
+        <a href="detail.html" class="ccsl">如何清除洗衣机里面的杂物</a>
+        <span>2018-03-13</span>
+      </li>
+    </ul>
+  </div>
+  <div class="clear"></div>
+</div>
+<div class="clear"></div>
 {/block}
 
-{block name="script"}
-<script>
-layui.use('carousel', function(){
-    var carousel = layui.carousel;
-    
-    carousel.render({
-        elem: '#test1',
-        width: '100%', //设置容器宽度
-        arrow: 'hover', //始终显示箭头
-        autoplay: true,
-        // anim: 'updown' //切换动画方式
-    });
-});
+{block name="footer_script"}
+<script type="text/javascript">
+$(document).ready(function () {
+  var oLi = document.getElementById("tab").getElementsByTagName("li");
+    var oUl = document.getElementById("content").getElementsByTagName("ul");
+        
+    for(var i = 0; i < oLi.length; i++)
+    {
+        oLi[i].index = i;
+        oLi[i].onmouseover = function ()
+        {
+            
+            for(var n = 0; n < oLi.length; n++)
+                oLi[n].className="";
+                
+            this.className = "current";
+            
+            for(var n = 0; n < oUl.length; n++) 
+                oUl[n].style.display = "none";
+                
+            oUl[this.index].style.display = "block";
+            if(oUl[this.index].title == ""){
+                $.parser.parse(oUl[this.index]);
+                oUl[this.index].title = "parsed";
+            }
+        }
+    }
+})
 </script>
 {/block}

@@ -1,0 +1,37 @@
+{
+    "name": "lake/lake-admin-cms",
+    "description": "The lake-admin-cms is an addon package for lake-admin.",
+    "license": "Apache-2.0",
+    "type": "library",
+    "keywords": [
+        "lake",
+        "admin",
+        "lake-admin",
+        "addon",
+        "database"
+    ],
+    "homepage": "https://github.com/deatil/lake-admin-cms",
+    "authors": [
+        {
+            "name": "deatil",
+            "email": "deatil@github.com",
+            "homepage": "https://github.com/deatil"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "lake/lake-admin": "2.3.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\lakecms\\": ""
+        }
+    },
+    "extra": {
+        "think":{
+            "services":[
+                "app\\lakecms\\Service"
+            ]
+        }
+    }
+}

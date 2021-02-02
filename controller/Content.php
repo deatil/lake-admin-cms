@@ -34,8 +34,11 @@ class Content extends Base
             'cateid' => $cateid,
             'catename' => $catename,
             'contentid' => $contentid,
-            'viewinc' => 1,
+            'viewinc' => true,
         ]);
+        if (empty($data)) {
+            return $this->error(__('信息不存在'));
+        }
         
         // 栏目
         $cate = Arr::only($data['cate'], [

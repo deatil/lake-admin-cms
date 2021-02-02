@@ -27,7 +27,7 @@ class LakecmsModel extends LakecmsBase
             $map = $this->buildparams();
             
             $data = ModelModel::where($map)
-                ->order("id DESC")
+                ->order("sort ASC, id DESC")
                 ->page($page, $limit)
                 ->select()
                 ->toArray();

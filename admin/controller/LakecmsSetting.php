@@ -29,6 +29,7 @@ class LakecmsSetting extends LakecmsBase
             'web_site_logo' => '', // 网站LOGO
             'web_site_company' => '', // 公司名称
             'web_site_address' => '', // 地址
+            'web_site_qq' => '', // QQ
             'web_site_telphone' => '', // 电话
             'web_site_phone' => '', // 手机
             'web_site_email' => '', // 邮箱

@@ -9,7 +9,8 @@ return [
     
     'web_site_logo' => 'b444db9b37d402162c13c61eec014b1c', // 网站LOGO
     'web_site_company' => '', // 公司名称
-    'web_site_address' => '中国广西南宁市yy新区yy大道y号yy金融中心yyF', // 地址
+    'web_site_address' => 'XXX省XXX市XXX县XXX路XXX号', // 地址
+    'web_site_qq' => '123456789', // QQ
     'web_site_telphone' => '400-888-8888', // 电话
     'web_site_phone' => '', // 手机
     'web_site_email' => 'contact@yyy.com', // 邮箱

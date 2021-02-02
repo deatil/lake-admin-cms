@@ -17,6 +17,9 @@ class Page extends Base
 {
     /**
      * 详情
+     *
+     * eg:
+     * /lakecms/page.html?catename=[name]
      */
     public function index()
     {
@@ -30,8 +33,11 @@ class Page extends Base
         $data = TemplateModel::getCatePageInfo([
             'cateid' => $cateid,
             'catename' => $catename,
-            'viewinc' => 1,
+            'viewinc' => 'views',
         ]);
+        if (empty($data)) {
+            return $this->error(__('信息不存在'));
+        }
         
         // 分类
         $cate = $data['cate'];

@@ -22,6 +22,7 @@ class Cate extends Base
     {
         // 栏目唯一标识
         $catename = $this->request->param('catename');
+        $cateid = $this->request->param('cateid');
         
         $page = $this->request->param('page/d', 1);
         $limit = $this->request->param('limit/d', 20);
@@ -32,11 +33,15 @@ class Cate extends Base
         
         // 内容
         $data = TemplateModel::getCateContentList([
+            'cateid' => $cateid,
             'catename' => $catename,
             'page' => $page,
             'limit' => $limit,
             'order' => 'id ' . $sort,
         ]);
+        if (empty($data)) {
+            return $this->error(__('信息不存在'));
+        }
         
         // 栏目
         $cate = Arr::only($data['cate'], [
@@ -44,6 +49,9 @@ class Cate extends Base
             'keywords', 'description', 
             'cover', 'template_list'
         ]);
+        if (empty($cate)) {
+            return $this->error(__('信息不存在'));
+        }
         
         $this->assign([
             'cate' => $cate,

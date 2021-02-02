@@ -47,7 +47,7 @@ CREATE TABLE `pre__lakecms_model_field` (
   `modelid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '模型ID',
   `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '字段名',
   `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '字段注释',
-  `length` varchar(100) CHARACTER SET utf8mb4 NOT NULL DEFAULT '' COMMENT '字段长度',
+  `length` varchar(100) CHARACTER SET utf8mb4 DEFAULT '' COMMENT '字段长度',
   `type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '数据类型',
   `options` varchar(255) CHARACTER SET utf8mb4 DEFAULT '' COMMENT '参数',
   `value` varchar(100) CHARACTER SET utf8mb4 DEFAULT '' COMMENT '字段默认值',

@@ -12,6 +12,7 @@ use app\lakecms\model\Tags as TagsModel;
 use app\lakecms\model\Content as ContentModel;
 use app\lakecms\model\Settings as SettingsModel;
 use app\lakecms\model\ModelField as ModelFieldModel;
+use app\lakecms\paginator\Page as PaginatorPage;
 
 /**
  * 模版数据
@@ -42,10 +43,10 @@ class Model
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         // 缓存
-        $cache = !isset($params['cache']) ? false : (int) $params['cache'];
+        $cache = !isset($tag['cache']) ? false : (int) $tag['cache'];
         
         // 是否使用树结构
-        $tree = isset($tag['tree']) ? true : false;
+        $tree = isset($tag['tree']) ? intval($tag['tree']) : '';
         
         $map = [
             ['status', '=', 1],
@@ -63,11 +64,11 @@ class Model
         
         // 列表
         $dataList = $data->toArray();
-        if ($tree !== false) {
+        if (! empty($tree)) {
             $Tree = new Tree();
-            $list = $Tree->withData($dataList['data'])->buildArray(0);
+            $list = $Tree->withData($dataList['data'])->buildArray($tree);
         } else {
-            $list = $list['data'];
+            $list = $dataList['data'];
         }
         
         // 总数
@@ -153,10 +154,10 @@ class Model
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         // 缓存
-        $cache = !isset($params['cache']) ? false : (int) $params['cache'];
+        $cache = !isset($tag['cache']) ? false : (int) $tag['cache'];
         
         // 是否使用树结构
-        $tree = isset($tag['tree']) ? true : false;
+        $tree = isset($tag['tree']) ? intval($tag['tree']) : '';
         
         $map = [
             ['status', '=', 1],
@@ -175,11 +176,11 @@ class Model
         
         // 列表
         $dataList = $data->toArray();
-        if ($tree !== false) {
+        if (! empty($tree)) {
             $Tree = new Tree();
-            $list = $Tree->withData($dataList['data'])->buildArray(0);
+            $list = $Tree->withData($dataList['data'])->buildArray($tree);
         } else {
-            $list = $list['data'];
+            $list = $dataList['data'];
         }
         
         // 总数
@@ -292,6 +293,9 @@ class Model
         // 查询字段
         $field = empty($tag['field']) ? '*' : $tag['field'];
         
+        // flag：key:value/key2:value2
+        $flag = empty($tag['flag']) ? '' : $tag['flag'];
+        
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
@@ -299,7 +303,10 @@ class Model
         $inchildren = isset($tag['inchildren']) ? $tag['inchildren'] : '';
         
         // 缓存
-        $cache = !isset($params['cache']) ? false : (int) $params['cache'];
+        $cache = !isset($tag['cache']) ? false : (int) $tag['cache'];
+        
+        // 格式化条件
+        $condition = static::formatFlag(explode('/', $flag), $condition);
         
         $cate = CategoryModel::with(['model'])
             ->where(function($query) use($cateid, $catename) {
@@ -332,20 +339,35 @@ class Model
         ];
         
         // 设置子级条件
+        $whereOr = [];
         if (! empty($inchildren)) {
-            if ($inchildren == '1' 
-                || $cate['is_inchildren'] == 1
+            if ($inchildren == 'inchildren' 
+                && $cate['is_inchildren'] == 1
             ) {
                 $childrenIds = CategoryModel::getChildrenIds($cate['id']);
-                $map[] = ['categoryid', 'in', $childrenIds];
+                if (! empty($childrenIds)) {
+                    $whereOr[] = ['categoryid', 'in', implode(',', $childrenIds)];
+                }
+            } else {
+                if (! empty($childrenIds)) {
+                    $whereOr[] = ['categoryid', 'in', $inchildren];
+                }
             }
+        }
+        
+        // 分页数量重置
+        if ($limit == 'auto') {
+            $limit = $cate['pagesize'];
         }
         
         $data = ContentModel::newTable($cate['model']['tablename'])
             ->field($field)
-            ->where([
-                ['categoryid', '=', $cate['id']],
-            ])
+            ->where(function($query) use($cate, $whereOr) {
+                $query->where([
+                        ['categoryid', '=', $cate['id']],
+                    ])
+                    ->whereOr($whereOr);
+            })
             ->where($map)
             ->where($condition)
             ->order($order)
@@ -781,17 +803,24 @@ class Model
         // 查询字段
         $field = empty($tag['field']) ? '*' : $tag['field'];
         
+        // flag：key:value/key2:value2
+        $flag = empty($tag['flag']) ? '' : $tag['flag'];
+        
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         // 缓存
-        $cache = !isset($params['cache']) ? false : (int) $params['cache'];
+        $cache = !isset($tag['cache']) ? false : (int) $tag['cache'];
+        
+        // 格式化条件
+        $condition = static::formatFlag(explode('/', $flag), $condition);
         
         $data = ContentModel::newTable($table)
             ->field($field)
             ->where([
                 ['status', '=', 1],
             ])
+            ->where($condition)
             ->order($order)
             ->cache($cache)
             ->paginate([
@@ -896,7 +925,7 @@ class Model
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
         // 缓存
-        $cache = !isset($params['cache']) ? false : (int) $params['cache'];
+        $cache = !isset($tag['cache']) ? false : (int) $tag['cache'];
         
         $map = [
             ['status', '=', 1],
@@ -1005,6 +1034,83 @@ class Model
         }
         
         return SettingsModel::config($tag['name'], $tag['default']);
+    }
+
+    /**
+     * 内容页分页HTML
+     */
+    public static function getPagerHtml($tag)
+    {
+        // 链接
+        $url = isset($tag['url']) ? $tag['url'] : '';
+        
+        // 当前页
+        $page = isset($tag['page']) ? intval($tag['page']) : '';
+        
+        // 总数
+        $total = isset($tag['total']) ? intval($tag['total']) : '';
+        
+        // 简单列表
+        $simple = isset($tag['simple']) ? true : false;
+        
+        if ($total <= 1) {
+            return '';
+        }
+        
+        $result = new PaginatorPage([], 1, $page, $total, $simple, [
+            'path' => $url, 
+            'simple' => $simple,
+        ]);
+        
+        return "<div class='pager lakecms-page'>" . $result->render() . "</div>";
+    }
+    
+    /**
+     * 格式化flag
+     */
+    protected static function formatFlag($flag = '', $condition = '')
+    {
+        // flag：key:value,valuee
+        
+        if (empty($flag)) {
+            return $condition;
+        }
+        
+        if (is_array($flag)) {
+            $result = '';
+            foreach ($flag as $v) {
+                $result .= static::formatFlag($v, $condition);
+            }
+            
+            return $result;
+        }
+        
+        list ($key, $flag) = explode(':', $flag, 2);
+        
+        if (empty($key) || empty($flag)) {
+            return $condition;
+        }
+        
+        if (stripos($flag, '&') !== false) {
+            $arr = [];
+            foreach (explode('&', $flag) as $k => $v) {
+                $arr[] = "FIND_IN_SET('{$v}', {$key})";
+            }
+            if ($arr) {
+                $condition .= "(" . implode(' AND ', $arr) . ")";
+            }
+        } else {
+            $condition .= ($condition ? ' AND ' : '');
+            $arr = [];
+            foreach (explode(',', str_replace('|', ',', $flag)) as $k => $v) {
+                $arr[] = "FIND_IN_SET('{$v}', {$key})";
+            }
+            if ($arr) {
+                $condition .= "(" . implode(' OR ', $arr) . ")";
+            }
+        }
+        
+        return $condition;
     }
 
 }

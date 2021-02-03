@@ -25,7 +25,7 @@ class Cate extends Base
         $cateid = $this->request->param('cateid');
         
         $page = $this->request->param('page/d', 1);
-        $limit = $this->request->param('limit/d', 20);
+        $limit = $this->request->param('limit/d', 6);
         $sort = $this->request->param('sort', 'asc');
         if (! in_array($sort, ['asc', 'desc'])) {
             $sort = 'asc';

@@ -124,11 +124,13 @@ class Category extends BaseModel
                 ['status', '=', 1],
             ])
             ->order('sort ASC')
-            ->select();
+            ->select()
+            ->toArray();
         
         $Tree = new Tree();
         $resultTree = $Tree->withData($result)->buildArray($id);
         $list = $Tree->buildFormatList($resultTree, 'title');
+        
         return $list;
     }
     
@@ -157,7 +159,7 @@ class Category extends BaseModel
         
         $ids = collect($list)->map(function($item) {
             return $item['id'];
-        });
+        })->toArray();
         
         return $ids;
     }

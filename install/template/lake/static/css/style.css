@@ -165,10 +165,12 @@ ul.listul li .liR a:hover{color:#02B2B5}
 .aboutbox .xq .con{ line-height:30px; font-size:14px; color:#666; padding-top:45px}
 
 
-
-.pagebox{ text-align:center; padding-top:10px; padding-bottom:50px}
-.pagebox a{ border:1px solid #ccc; padding:5px 10px; display:inline-block; color:#333; margin:3px}
-.pagebox a:hover{ border:1px solid #02b2b5; color:#02b2b5}
+.pagebox { text-align:center; padding-top:10px; padding-bottom:50px}
+.pagebox ul li { 
+    display: inline-block;
+}
+.pagebox ul li a, .pagebox ul li span { border:1px solid #ccc; padding:5px 10px; display:inline-block; color:#333; margin:3px}
+.pagebox ul li a:hover{ border:1px solid #02b2b5; color:#02b2b5}
 
 
 

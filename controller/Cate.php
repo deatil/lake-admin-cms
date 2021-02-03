@@ -38,6 +38,7 @@ class Cate extends Base
             'page' => $page,
             'limit' => $limit,
             'order' => 'id ' . $sort,
+            'inchildren' => 1,
         ]);
         if (empty($data)) {
             return $this->error(__('信息不存在'));

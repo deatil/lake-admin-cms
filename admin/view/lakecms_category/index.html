@@ -23,11 +23,20 @@
 </script>
 
 <script type="text/html" id="statusTpl">
-    <input type="checkbox" name="status" data-href="{:url('state')}?id={{d.id}}" value="{{d.id}}" lay-skin="switch" lay-text="开启|关闭" lay-filter="switchStatus" {{ d.status==1 ? 'checked' : '' }}>
+    <input type="checkbox" 
+        name="status" 
+        data-href="{:url('state')}?id={{d.id}}" 
+        value="{{d.id}}" 
+        lay-skin="switch" 
+        lay-text="开启|关闭" 
+        lay-filter="switchStatus" {{ d.status==1 ? 'checked' : '' }}
+        >
 </script>
 
 <script type="text/html" id="modelTpl">
-    {{ d.model.title }}
+    <span class="layui-badge layui-bg-gray">
+        {{ d.model.title }}
+    </span>
 </script>
 
 <script type="text/html" id="urlTpl">
@@ -69,7 +78,7 @@ layui.use(['treeGrid', 'notice'], function() {
                 { field: 'id', width: 80, title: '#', align: "center" },
                 { field: 'name', width:130, title: '标识' },
                 { field: 'title', title: '栏目名称' },
-                { width:130, title: '所属模型', templet: '#modelTpl' },
+                { width: 100, title: '所属模型', align: "center", templet: '#modelTpl' },
                 { field: 'url', width: 60,align:"center", title: 'URL', templet:'#urlTpl'},
                 { field: 'sort', width:80, title: '排序', align: "center", edit: 'text' },
                 { field: 'create_time', width:160, title: '创建时间', templet: '#createTimeTpl' },

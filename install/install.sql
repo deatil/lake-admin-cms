@@ -9,6 +9,7 @@ CREATE TABLE `pre__lakecms_category` (
   `description` mediumtext CHARACTER SET utf8mb4 COMMENT '栏目描述',
   `cover` char(32) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '栏目图片',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1-列表，2-单页',
+  `is_inchildren` tinyint(1) DEFAULT '0' COMMENT '0-不包含，1-包含子级数据',
   `template_list` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '列表模板',
   `template_detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '详情模板',
   `template_page` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '编辑模板',

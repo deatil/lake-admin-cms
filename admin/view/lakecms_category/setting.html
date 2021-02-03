@@ -181,6 +181,19 @@
                 </div>
             </div>
             
+            <div class="layui-form-item">
+                <label class="layui-form-label">包含子级</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="is_inchildren" value="1" title="包含" {if $info.is_inchildren==1}checked{/if}>
+                    <input type="radio" name="is_inchildren" value="0" title="禁止" {if $info.is_inchildren==0}checked{/if}>
+                </div>
+                <div class="layui-input-block">
+                    <div class="layui-form-mid layui-word-aux">
+                        是否在列表显示时包含子级的数据
+                    </div>
+                </div>
+            </div>
+            
             <input type="hidden" value="{$info.id}" name="id" />
             <div class="layui-form-item">
                 <div class="layui-input-block">

@@ -295,6 +295,9 @@ class Model
         // 附加条件
         $condition = isset($tag['condition']) ? $tag['condition'] : '';
         
+        // 包含子级
+        $inchildren = isset($tag['inchildren']) ? $tag['inchildren'] : '';
+        
         // 缓存
         $cache = !isset($params['cache']) ? false : (int) $params['cache'];
         
@@ -312,7 +315,6 @@ class Model
                 'type' => 1,
                 'status' => 1,
             ])
-            ->where($condition)
             ->find();
         if (empty($cate)) {
             return [
@@ -329,12 +331,23 @@ class Model
             ['status', '=', 1],
         ];
         
+        // 设置子级条件
+        if (! empty($inchildren)) {
+            if ($inchildren == '1' 
+                || $cate['is_inchildren'] == 1
+            ) {
+                $childrenIds = CategoryModel::getChildrenIds($cate['id']);
+                $map[] = ['categoryid', 'in', $childrenIds];
+            }
+        }
+        
         $data = ContentModel::newTable($cate['model']['tablename'])
             ->field($field)
             ->where([
                 ['categoryid', '=', $cate['id']],
             ])
             ->where($map)
+            ->where($condition)
             ->order($order)
             ->cache($cache)
             ->paginate([

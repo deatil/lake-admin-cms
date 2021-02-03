@@ -253,7 +253,7 @@ class LakecmsContent extends LakecmsBase
             
             foreach ($data as $key => $item) {
                 $data[$key]['url'] = (string) url('lakecms/content/index', [
-                    'cateid' => $cate['id'],
+                    'catename' => $cate['name'],
                     'id' => $item['id'],
                 ]);
             }

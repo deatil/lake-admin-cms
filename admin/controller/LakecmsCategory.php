@@ -32,15 +32,15 @@ class LakecmsCategory extends LakecmsBase
                 ->toArray();
             foreach ($result as $key => $item) {
                 if ($item['type'] == 1) {
-                    $result[$key]['url'] = (string) url('lakecms/cate/index', ['cateid' => $item['id']]);
+                    $result[$key]['url'] = (string) url('lakecms/cate/index', ['catename' => $item['name']]);
                 } else {
-                    $result[$key]['url'] = (string) url('lakecms/page/index', ['cateid' => $item['id']]);
+                    $result[$key]['url'] = (string) url('lakecms/page/index', ['catename' => $item['name']]);
                 }
             }
             
             $Tree = new Tree();
-            $menuTree = $Tree->withData($result)->buildArray(0);
-            $list = $Tree->buildFormatList($menuTree, 'title');
+            $resultTree = $Tree->withData($result)->buildArray(0);
+            $list = $Tree->buildFormatList($resultTree, 'title');
             $total = count($list);
             
             $result = [

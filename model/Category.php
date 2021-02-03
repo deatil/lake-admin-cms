@@ -4,6 +4,8 @@ namespace app\lakecms\model;
 
 use think\Model as BaseModel;
 
+use Lake\TTree as Tree;
+
 use app\lakecms\support\Field as SupportField;
 
 /**
@@ -87,20 +89,6 @@ class Category extends BaseModel
     }
     
     /**
-     * 格式化内容链接
-     */
-    public function formatInfoUrl($id)
-    {
-        $url = str_replace([
-            '{id}',
-        ], [
-            $id,
-        ], $this->info_url);
-        
-        return $url;
-    }
-    
-    /**
      * 模型
      */
     public function model()
@@ -111,7 +99,7 @@ class Category extends BaseModel
     /**
      * 格式化内容链接
      */
-    public static function formatInfoUri($cateid, $id)
+    public static function formatInfoUrl($cateid, $id)
     {
         $data = static::where([
             ['id', '=', $cateid],
@@ -125,6 +113,53 @@ class Category extends BaseModel
         ], $data['info_url']);
         
         return $url;
+    }
+    
+    /**
+     * 获取子级列表
+     */
+    public static function getChildren($id)
+    {
+        $result = static::where([
+                ['status', '=', 1],
+            ])
+            ->order('sort ASC')
+            ->select();
+        
+        $Tree = new Tree();
+        $resultTree = $Tree->withData($result)->buildArray($id);
+        $list = $Tree->buildFormatList($resultTree, 'title');
+        return $list;
+    }
+    
+    /**
+     * 获取子级列表树
+     */
+    public static function getChildrenTree($id)
+    {
+        $result = static::where([
+                ['status', '=', 1],
+            ])
+            ->order('sort ASC')
+            ->select();
+        
+        $Tree = new Tree();
+        $list = $Tree->withData($result)->buildArray($id);
+        return $list;
+    }
+    
+    /**
+     * 获取子级id列表
+     */
+    public static function getChildrenIds($id)
+    {
+        $list = static::getChildren($id);
+        
+        $ids = collect($list)->map(function($item) {
+            return $item['id'];
+        });
+        
+        return $ids;
     }
 
 }

@@ -29,8 +29,8 @@ class LakecmsNavbar extends LakecmsBase
                 ->toArray();
 
             $Tree = new Tree();
-            $menuTree = $Tree->withData($result)->buildArray(0);
-            $list = $Tree->buildFormatList($menuTree, 'title');
+            $resultTree = $Tree->withData($result)->buildArray(0);
+            $list = $Tree->buildFormatList($resultTree, 'title');
             $total = count($list);
             
             $result = [

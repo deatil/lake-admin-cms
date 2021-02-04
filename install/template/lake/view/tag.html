@@ -1,3 +1,7 @@
+{extend name="common/base"/}
+
+{block name="content"}
+
 标签：总共 {$total|default=0} 条
 
 <hr />
@@ -17,3 +21,5 @@
 <ul class="tag-page">
     {$page}
 </ul>
+
+{/block}

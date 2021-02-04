@@ -41,6 +41,14 @@ class Content extends BaseModel
     }
     
     /**
+     * 分组
+     */
+    public function cate()
+    {
+        return $this->hasOne(Category::class, 'id', 'categoryid');
+    }
+    
+    /**
      * 新建模型表
      */
     public static function newTable($table)
@@ -281,6 +289,8 @@ class Content extends BaseModel
                         } else {
                             $userData[$key] = [];
                         }
+                    } else {
+                        $userData[$key] = [];
                     }
                     break;
                 case 'image':

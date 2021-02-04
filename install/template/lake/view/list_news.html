@@ -31,7 +31,6 @@
     <div class="pagebox">
         {php}
         $url = url('lakecms/cate/index', ['catename' => $cate['name'], 'page' => '[PAGE]']);
-        $url = urldecode($url);
         {/php}
         {pager url="$url" page="$page" total="$total"/}
     </div>

@@ -64,12 +64,12 @@ class Lakecms extends Taglib
             'attr' => 'return,cateid,catename,contentid,field,condition,var', 
             'close' => 1,
         ],
-        'content-prev' => [
+        'contentprev' => [
             'attr' => 'return,cateid,catename,contentid,field,condition,var', 
             'close' => 1, 
             'level' => 1,
         ],
-        'content-next' => [
+        'contentnext' => [
             'attr' => 'return,cateid,catename,contentid,field,condition,var', 
             'close' => 1, 
             'level' => 1,
@@ -398,6 +398,7 @@ class Lakecms extends Taglib
             $params[] = '"' . $k . '"=>' . $v;
         }
         
+        $var = md5(microtime().mt_rand(10000, 99999));
         $parse = '{php}';
         $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateContentPrevInfo([' . implode(',', $params) . ']);';
         $parse .= '$' . $return . ' = ' . '$__' . $var . '__["info"];';
@@ -430,6 +431,7 @@ class Lakecms extends Taglib
             $params[] = '"' . $k . '"=>' . $v;
         }
         
+        $var = md5(microtime().mt_rand(10000, 99999));
         $parse = '{php}';
         $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateContentNextInfo([' . implode(',', $params) . ']);';
         $parse .= '$' . $return . ' = ' . '$__' . $var . '__["info"];';

@@ -361,6 +361,7 @@ class Model
         }
         
         $data = ContentModel::newTable($cate['model']['tablename'])
+            ->with(['cate'])
             ->field($field)
             ->where(function($query) use($cate, $whereOr) {
                 $query->where([
@@ -1056,6 +1057,8 @@ class Model
         if ($total <= 1) {
             return '';
         }
+        
+        $url = urldecode($url);
         
         $result = new PaginatorPage([], 1, $page, $total, $simple, [
             'path' => $url, 

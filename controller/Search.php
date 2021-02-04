@@ -6,6 +6,7 @@ use app\lakecms\model\Category as CategoryModel;
 use app\lakecms\model\Model as ModelModel;
 use app\lakecms\model\ModelField as ModelFieldModel;
 use app\lakecms\model\Content as ContentModel;
+use app\lakecms\model\Settings as SettingsModel;
 
 /**
  * 搜索
@@ -20,6 +21,12 @@ class Search extends Base
      */
     public function index()
     {
+        // 功能开启检测
+        $openSearch = SettingsModel::config('web_site_search', 0);
+        if ($openSearch != 1) {
+            $this->error('页面不能存在！');
+        }
+        
         // 分类
         $cateid = $this->request->param('cateid/d', 0);
         

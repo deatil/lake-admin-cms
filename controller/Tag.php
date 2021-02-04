@@ -3,6 +3,7 @@
 namespace app\lakecms\controller;
 
 use app\lakecms\template\Model as TemplateModel;
+use app\lakecms\model\Settings as SettingsModel;
 
 /**
  * 标签
@@ -12,6 +13,20 @@ use app\lakecms\template\Model as TemplateModel;
  */
 class Tag extends Base
 {
+    /**
+     * 框架构造函数
+     */
+    protected function initialize()
+    {
+        parent::initialize();
+        
+        // 功能开启检测
+        $openTag = SettingsModel::config('web_site_tag', 0);
+        if ($openTag != 1) {
+            $this->error('页面不能存在！');
+        }
+    }
+
     /**
      * 列表
      */

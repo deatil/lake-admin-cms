@@ -24,6 +24,8 @@ class LakecmsSetting extends LakecmsBase
         // 默认配置
         $default_setting = [
             'web_site_status' => 0,
+            'web_site_tag' => 0,
+            'web_site_search' => 0,
             // 'web_theme' => 'lake',
     
             'web_site_logo' => '', // 网站LOGO

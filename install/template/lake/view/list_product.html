@@ -8,51 +8,28 @@
 
   <div class="mainR">
     <ul class="piclistul">
-      <li>
-        <a href="product_xq.html">
-        <img src="images/1.jpg" />
-        <p class="ccsl">浴室镜系列</p>
-        </a>
-      </li>
-      <li>
-        <a href="product_xq.html">
-        <img src="images/1.jpg" />
-        <p class="ccsl">浴室镜系列</p>
-        </a>
-      </li>
-      <li>
-        <a href="product_xq.html">
-        <img src="images/1.jpg" />
-        <p class="ccsl">浴室镜系列</p>
-        </a>
-      </li>
-      <li>
-        <a href="product_xq.html">
-        <img src="images/1.jpg" />
-        <p class="ccsl">浴室镜系列</p>
-        </a>
-      </li>
-      <li>
-        <a href="product_xq.html">
-        <img src="images/1.jpg" />
-        <p class="ccsl">浴室镜系列</p>
-        </a>
-      </li>
-      <li>
-        <a href="product_xq.html">
-        <img src="images/1.jpg" />
-        <p class="ccsl">浴室镜系列</p>
-        </a>
-      </li>
+        
+        {volist name="$list" id="data"}
+        <li>
+            <a href="{:lakecms_content_url($data['cate']['name'], $data['id'])}">
+                <img src="{$data.cover}" />
+                <p class="ccsl">{$data.title}</p>
+            </a>
+        </li>
+        {/volist}
+      
     </ul> 
+    
+    {if !empty($page)}
     <div class="clear"></div>
     <div class="pagebox">
-        <a href="">上一页</a>
-        <a href="">1</a>
-        <a href="">2</a>
-        <a href="">3</a>
-        <a href="">下一页</a>
-    </div>      
+        {php}
+        $url = url('lakecms/cate/index', ['catename' => $cate['name'], 'page' => '[PAGE]']);
+        {/php}
+        {pager url="$url" page="$page" total="$total"/}
+    </div>
+    {/if} 
+    
   </div>
   <div class="clear"></div>
 </div>

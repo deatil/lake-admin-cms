@@ -16,4 +16,59 @@
   </div>
 </div>
 <div class="clear"></div>
+
+<section class="main animsition lakecms-message-main">
+    <div class="xq">
+        <div class="tit">提交你的需求</div>
+        <div class="sub"><span class="span1"></span><span class="span2">Submit your message</span><span class="span1"></span></div>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="lakecms-message-submit">
+                    <form action="{:url('lform/index/post')}" class="lakecms-form lakecms-form-validation" enctype="multipart/form-data"
+                    method="post">
+                        <input type="hidden" name="form" value="contact" />
+                        <div class="form-group">
+                            <div>
+                                <input name='name' class='form-control' type='text' placeholder='姓名* '/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div>
+                                <input name='tel' class='form-control' type='text' placeholder='电话* '/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div>
+                                <input name='email' class='form-control' type='text' placeholder='邮箱 '/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div>
+                                <input name='adr' class='form-control' type='text' placeholder='联系地址 '/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div>
+                                <textarea name='content' class='form-control' placeholder='留言内容 ' rows='5'></textarea>
+                            </div>
+                        </div>
+                        
+                        {:lform_token('contact')}
+                        
+                        <div class="form-group margin-bottom-0">
+                            <button type="submit" class="btn btn-primary btn-block btn-squared js-submit-btn">
+                                提交
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="clear"></div>
+
 {/block}

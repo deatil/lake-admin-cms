@@ -138,6 +138,22 @@
                         </div>
                         
                         <div class="layui-form-item">
+                            <label class="">启用标签</label>
+                            <div class="layui-form-field-label">
+                                <input type="checkbox" name="setting[web_site_tag]" lay-skin="switch" lay-text="ON|OFF" value="1" {if 1 == $setting['web_site_tag']}checked='' {/if}>
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">启用标签需要自定义标签页面</div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="">启用搜索</label>
+                            <div class="layui-form-field-label">
+                                <input type="checkbox" name="setting[web_site_search]" lay-skin="switch" lay-text="ON|OFF" value="1" {if 1 == $setting['web_site_search']}checked='' {/if}>
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">启用搜索需要自定义搜索页面</div>
+                        </div>
+                        
+                        <div class="layui-form-item">
                             <label class="">缓存时间</label>
                             <div class="layui-form-field-label">
                                 <input type="text" name="setting[site_cache_time]" placeholder="请输入缓存时间"  class="layui-input" value="{$setting['site_cache_time']}">

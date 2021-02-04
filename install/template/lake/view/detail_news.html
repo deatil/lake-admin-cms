@@ -1,29 +1,61 @@
 {extend name="common/base"/}
 
+{block name="banner_wellcome"}{/block}
+
 {block name="content"}
-<div class="clear"></div>
-<div class="banner">
-  <div class="b-img">
-      <img src="images/banner.jpg" width="100%"/>
-      <img src="images/banner.jpg" width="100%" />
-  </div>
-  <div class="clear"></div>
-  <div class="b-list"> </div>
-</div>
+
 <div class="clear"></div>
 <div class="detailbox">
   <div class="xq">
-    <div class="tit">如何清除洗衣机里面的杂物?</div>
-    <div class="date">发表时间：2017-09-16 11:55</div>
-    <div class="con">
-      <p style="text-indent:2em">清除洗衣机里面的杂物要点：</p>
-      <p style="text-indent:2em">◇ 首先，将洗衣机排水管拿下放在一个空水桶上（要有一定高度），关闭进水阀门和前门。</p>
-      <p style="text-indent:2em">◇ 第二，将3水壶的水用除垢剂（市场有售）倒在一个空容器中，按除垢剂/水＝l/2的比例配制并搅拌均匀。</p>
-      <p style="text-indent:2em">◇ 第三，打开"洗涤剂添加盒"，把混合好的除垢剂溶液从洗涤剂添加盒倒入，注意不要溅到皮肤上。</p>
-      <p style="text-indent:2em">◇ 第四，按下洗衣机电源开关，将程序设定至"洗衣程序"（时间选择最长），使洗衣筒旋转；待除垢液从排水管排到桶里后，再将排出的除垢液从洗涤剂添加盒加入，如此反复多次，直至程序运行完毕，打开过滤器清洗过滤网。</p>
-      <p style="text-indent:2em">◇ 第五，机器运行完毕后，将进水阀打开，排水管恢复至原位。重新选择洗衣程序，使洗衣机再次运转，待程序运行完毕，再次清洗过滤网。至此，除垢清理完毕。</p>
-      <p style="text-indent:2em">除垢完毕后，洗衣机滚筒可能会因除垢液的作用，表面略呈暗黑色，但不会影响正常使用，洗几次衣服后即可恢复原状。</p>
+    <div class="tit">{$info.title}</div>
+    <div class="date">
+        发表时间：{:date('Y-m-d H:i', $info['add_time'])}
+        
+        &nbsp;&nbsp;&nbsp;
+        栏目：
+        <a href="{:url('lakecms/cate/index', ['catename' => $cate['name']])}" target="_blank">
+            <span class="news-cate">
+                {$cate.title}
+            </span>
+        </a>
+        
+        &nbsp;&nbsp;&nbsp;
+        标签: 
+        <span class="news-tags">
+            {:implode(',', $info['tags'])}
+        </span>
+        
+        &nbsp;&nbsp;&nbsp;
+        类型: 
+        <span class="news-types">
+            {if $info['type']}
+                {:implode(',', $info['type'])}
+            {/if}
+        </span>
+    </div>
+    
+    <div class="con">{$info.content|raw}</div>
+    
+    <div class="con-prev-next">
+        {php}
+        $catename = $cate['name'];
+        $contentid = $info['id'];
+        {/php}
+        {contentprev catename="$catename" field="id,title" contentid="$contentid" return="data"}
+            <div class="con-prev">
+                上一篇：
+                <a href="{:url('lakecms/content/index', ['catename' => $cate['name'], 'id' => $data['id']])}" title="{$data['title']}">{$data['title']}</a>
+            </div>
+        {/contentprev}
+        
+        {contentnext catename="$catename" field="id,title" contentid="$contentid" return="data"}
+            <div class="con-next">
+                下一篇：
+                <a href="{:url('lakecms/content/index', ['catename' => $cate['name'], 'id' => $data['id']])}" title="{$data['title']}">{$data['title']}</a>
+            </div>
+        {/contentnext}
     </div>
   </div>
 </div>
+
 {/block}

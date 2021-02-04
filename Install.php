@@ -23,6 +23,19 @@ class Install
     {    
         $Module = new Module();
         
+        // 清除旧数据
+        if (request()->param('clear') == 1) {
+            // 
+        }
+        
+        // 安装数据库
+        $Module->runSQL(__DIR__ . "/install/install.sql");
+        
+        // 演示数据
+        if (request()->param('demo') == 1) {
+            $Module->runSQL(__DIR__ . "/install/demo.sql");
+        }
+        
         // 填充默认配置
         $setting = include __DIR__ . '/install/setting.php';
         if (! empty($setting) && is_array($setting)) {
@@ -42,17 +55,6 @@ class Install
             . 'public' . DIRECTORY_SEPARATOR 
             . 'template' . DIRECTORY_SEPARATOR;
         File::copyDir($fromPath, $toPath);
-        
-        // 清除旧数据
-        if (request()->param('clear') == 1) {
-            // 
-        }
-        
-        // 安装数据库
-        $runSqlStatus = $Module->runSQL(__DIR__ . "/install/install.sql");
-        if (!$runSqlStatus) {
-            return false;
-        }
         
         return true;
     }

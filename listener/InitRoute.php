@@ -1,6 +1,6 @@
 <?php
 
-namespace app\lakecms\event;
+namespace app\lakecms\listener;
 
 use think\facade\Db;
 use think\facade\Route;
@@ -13,7 +13,6 @@ use think\facade\Route;
  */
 class InitRoute
 {
-
     /**
      * 设置路由
      */

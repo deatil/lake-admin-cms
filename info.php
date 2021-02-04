@@ -7,38 +7,41 @@ return [
     'author' => 'deatil',
     'authorsite' => 'http://github.com/deatil',
     'authoremail' => 'deatil@github.com',
-    'version' => '1.0.1',
-    'adaptation' => '2.0.2',
+    'version' => '1.0.2',
+    'adaptation' => '2.3.27',
     
-    'path' => '',
+    // 模块地址
+    'path' => __DIR__,
     
     // 依赖模块
     'need_module' => [
-        ['lform', '2.0.2', '>=']
+        ['lakead', '1.0.0', '>='],
+        ['lform', '2.0.2', '>='],
+        ['lfriendlink', '2.0.2', '>='],
     ],
     
     // 设置
     'setting' => [],
     
     // 事件
-    /*
     'event' => [
+        /*
         [
             'name' => 'HttpRun',
-            'class' => 'app\\lakecms\\event\\InitRoute',
-            'description' => 'cms路由设置',
+            'class' => 'app\\lakecms\\listener\\InitRoute',
+            'description' => 'cms路由初始化',
             'listorder' => 100,
-            'status' => 1,
+            'status' => 0,
         ],
+        */
         [
             'name' => 'HttpRun',
-            'class' => 'app\\lakecms\\event\\InitTemplate',
-            'description' => 'cms模板配置',
+            'class' => 'app\\lakecms\\listener\\InitTemplate',
+            'description' => 'cms模板配置初始化',
             'listorder' => 100,
-            'status' => 1,
+            'status' => 0,
         ],
     ],
-    */
     
     // 菜单
     'menus' => include __DIR__ . '/menu.php',

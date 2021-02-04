@@ -9,8 +9,7 @@ CREATE TABLE `pre__lakecms_category` (
   `description` mediumtext CHARACTER SET utf8mb4 COMMENT '栏目描述',
   `cover` char(32) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '栏目图片',
   `type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1-列表，2-单页',
-  `is_inchildren` tinyint(1) DEFAULT '0' COMMENT '0-不包含，1-包含子级数据',
-  `template_list` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '列表模板',
+  `template_list` varchar(255) CHARACTER SET utf8mb4 DEFAULT '' COMMENT '列表模板',
   `template_detail` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '详情模板',
   `template_page` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '编辑模板',
   `index_url` text CHARACTER SET utf8mb4 COMMENT '栏目链接地址',
@@ -24,8 +23,9 @@ CREATE TABLE `pre__lakecms_category` (
   `edit_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '更新IP',
   `add_time` int(10) DEFAULT '0' COMMENT '添加时间',
   `add_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '添加IP',
+  `is_inchildren` tinyint(1) DEFAULT '0' COMMENT '状态，1-启用',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='栏目表';
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='栏目表';
 
 DROP TABLE IF EXISTS `pre__lakecms_model`;
 CREATE TABLE `pre__lakecms_model` (
@@ -40,7 +40,7 @@ CREATE TABLE `pre__lakecms_model` (
   `add_time` int(10) DEFAULT '0' COMMENT '添加时间',
   `add_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '添加IP',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='模型列表';
+) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='模型列表';
 
 DROP TABLE IF EXISTS `pre__lakecms_model_field`;
 CREATE TABLE `pre__lakecms_model_field` (
@@ -71,7 +71,7 @@ CREATE TABLE `pre__lakecms_model_field` (
   `add_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '添加IP',
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='模型字段列表';
+) ENGINE=MyISAM AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='模型字段列表';
 
 DROP TABLE IF EXISTS `pre__lakecms_navbar`;
 CREATE TABLE `pre__lakecms_navbar` (
@@ -88,7 +88,7 @@ CREATE TABLE `pre__lakecms_navbar` (
   `add_time` int(10) DEFAULT '0' COMMENT '添加时间',
   `add_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '添加IP',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='tags主表';
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='tags主表';
 
 DROP TABLE IF EXISTS `pre__lakecms_settings`;
 CREATE TABLE `pre__lakecms_settings` (
@@ -115,18 +115,16 @@ CREATE TABLE `pre__lakecms_tags` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `views` (`views`,`sort`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='tags主表';
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='tags主表';
 
 DROP TABLE IF EXISTS `pre__lakecms_tags_content`;
 CREATE TABLE `pre__lakecms_tags_content` (
-  `tagid` int(10) NOT NULL DEFAULT '0' COMMENT '标签ID',
+  `tagid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '标签ID',
   `modelid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '模型ID',
   `cateid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '栏目ID',
   `contentid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '信息ID',
   `add_time` int(10) DEFAULT '0' COMMENT '添加时间',
   `add_ip` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT '' COMMENT '添加IP',
   KEY `tag` (`tagid`),
-  KEY `modelid` (`contentid`),
-  KEY `cateid` (`cateid`),
-  KEY `cate_content_index` (`modelid`, `cateid`, `contentid`)
+  KEY `modelid` (`contentid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='tags数据表';

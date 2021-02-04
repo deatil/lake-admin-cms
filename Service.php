@@ -15,7 +15,7 @@ class Service extends BaseService
     public function boot()
     {
         $this->app->event->listen('lake_admin_module', function () {
-            $infoFile = __DIR__. DIRECTORY_SEPARATOR . 'info.php';
+            $infoFile = __DIR__ . DIRECTORY_SEPARATOR . 'info.php';
             if (file_exists($infoFile)) {
                 $info = include $infoFile;
             } else {

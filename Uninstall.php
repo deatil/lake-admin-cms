@@ -2,8 +2,6 @@
 
 namespace app\lakecms;
 
-use think\facade\Db;
-
 use Lake\Module;
 
 use app\lakecms\service\Model as ModelService;
@@ -35,10 +33,7 @@ class Uninstall
             }
             
             // 删除数据库
-            $runSqlStatus = $Module->runSQL(__DIR__ . "/install/uninstall.sql");
-            if (!$runSqlStatus) {
-                return false;
-            }
+            $Module->runSQL(__DIR__ . "/install/uninstall.sql");
         }
 
         return true;

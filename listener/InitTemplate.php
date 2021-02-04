@@ -1,6 +1,6 @@
 <?php
 
-namespace app\lakecms\event;
+namespace app\lakecms\listener;
 
 use think\facade\Env;
 use think\facade\View;

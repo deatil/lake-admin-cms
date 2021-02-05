@@ -24,8 +24,7 @@
 
 ![LakeAdmin2](https://user-images.githubusercontent.com/24578855/106987335-2e118980-67a8-11eb-8cfb-84c52bfe73ce.png)
 
-![LakeAdmin3](https://user-images.githubusercontent.com/24578855/106987341-310c7a00-67a8-11eb-8a44-0697a7630bab.png)
-
+![LakeAdmin3](https://user-images.githubusercontent.com/24578855/106987717-08d14b00-67a9-11eb-85f7-59d0259f6517.png)
 
 ### 模块推荐
 

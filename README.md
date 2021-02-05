@@ -18,6 +18,15 @@
 *  前台访问：`http://yourdomain/lakecms`
 
 
+截图预览
+
+![LakeAdmin](https://user-images.githubusercontent.com/24578855/106987325-294cd580-67a8-11eb-8ca5-b4bd8323847b.png)
+
+![LakeAdmin2](https://user-images.githubusercontent.com/24578855/106987335-2e118980-67a8-11eb-8cfb-84c52bfe73ce.png)
+
+![LakeAdmin3](https://user-images.githubusercontent.com/24578855/106987341-310c7a00-67a8-11eb-8a44-0697a7630bab.png)
+
+
 ### 模块推荐
 
 | 名称 | 描述 |

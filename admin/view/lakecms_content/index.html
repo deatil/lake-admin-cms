@@ -7,10 +7,9 @@
             <div class="layui-card-header layui-bg-cyan">栏目</div>
             <div class="layui-card-body">
                 <div class="content-category" id="content_categorys">
-                    <div style="margin: 5px;padding: 0;">
-                        <a href="javascript:;" title="全部展开、折叠 ">
-                            <span class="button ico_open"></span>
-                            <span id="expand_all" data-open="true">展开/折叠 </span>
+                    <div class="lake-admin-cate-open-btn">
+                        <a href="javascript:;" id="expand_all" data-open="true" title="全部展开、折叠 ">
+                            展开/折叠
                         </a> 
                     </div>
                     <div id="category_tree"></div>
@@ -47,6 +46,14 @@
 
 {block name="script"}
 <style>
+.lake-admin-cate-open-btn {
+    margin: 0;
+    padding: 3px 8px;
+    background: #f2f2f2;
+}
+.lake-admin-cate-open-btn a {
+    display: block;
+}
 .lake-admin-cate-reload {
     float: right;
     margin-top: 5px;

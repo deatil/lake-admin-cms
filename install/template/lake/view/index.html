@@ -59,9 +59,9 @@
     </ul>
     <div id="content">
       <ul style="display:block">
-        {contents field="id,title,cover,views" catename="product" limit="4" order="views DESC" inchildren='inchildren' return="data"}
+        {contents field="id,title,cover,views,categoryid" catename="product" limit="4" order="views DESC" inchildren='inchildren' return="data"}
         <li>
-            <a href="{:url('lakecms/content/index', ['catename' => 'product', 'id' => $data['id']])}">
+            <a href="{:lakecms_content_url($data['cate']['name'], $data['id'])}">
               <img src="{$data.cover}" width="280" height="280"/>
               <p class="ccsl">{$data.title}</p>
           </a>
@@ -70,9 +70,9 @@
       </ul>
       
       <ul>
-        {contents field="id,title,cover,views" catename="product" limit="4" order="add_time DESC" inchildren='inchildren' return="data"}
+        {contents field="id,title,cover,views,categoryid" catename="product" limit="4" order="add_time DESC" inchildren='inchildren' return="data"}
         <li>
-            <a href="{:url('lakecms/content/index', ['catename' => 'product', 'id' => $data['id']])}">
+            <a href="{:lakecms_content_url($data['cate']['name'], $data['id'])}">
               <img src="{$data.cover}" width="280" height="280"/>
               <p class="ccsl">{$data.title}</p>
           </a>

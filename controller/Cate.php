@@ -58,7 +58,6 @@ class Cate extends Base
             'cate' => $cate,
             'list' => $data['list'],
             'total' => $data['total'],
-            'page' => $data['page'],
         ]);
         
         // SEO信息

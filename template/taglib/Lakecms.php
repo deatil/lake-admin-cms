@@ -60,6 +60,10 @@ class Lakecms extends Taglib
             'close' => 1, 
             'level' => 3,
         ],
+        'contentscate' => [
+            'attr' => 'return', 
+            'close' => 0, 
+        ],
         'content' => [
             'attr' => 'return,cateid,catename,contentid,field,condition,var', 
             'close' => 1,
@@ -141,9 +145,18 @@ class Lakecms extends Taglib
      */
     public function tagExecute($tag, $content)
     {
+        // 执行语句
         $sql = isset($tag['sql']) ? $tag['sql'] : '';
+        
+        // 返回数据
+        $return = isset($tag['return']) ? $tag['return'] : 'sqldata';
+        
+        // 格式化
         $sql = addslashes($sql);
-        $parse = '{:\think\facade\Db::execute(\'' . $sql . '\')}';
+        
+        $parse = '{php}';
+        $parse .= '$' . $return . ' = \think\facade\Db::execute(\'' . $sql . '\');';
+        $parse .= '{/php}';
         
         $this->tpl->parse($parse);
         
@@ -180,7 +193,6 @@ class Lakecms extends Taglib
         $parse = '{php}';
         $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getNavbarList([' . implode(',', $params) . ']);';
         $parse .= '$__LAKECMS_NAVBARS_LIST__ = $__' . $var . '_list__ = $__' . $var . '__["list"];';
-        $parse .= '$__LAKECMS_NAVBARS_PAGE__ = $'.$paginate.' = $__' . $var . '__["page"];';
         $parse .= '$__LAKECMS_NAVBARS_TOTAL__ = $'.$pagetotal.' = $__' . $var . '__["total"];';
         $parse .= '{/php}';
         $parse .= '{volist name="$__' . $var . '_list__" id="' . $return . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
@@ -254,9 +266,7 @@ class Lakecms extends Taglib
         $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getCateList([' . implode(',', $params) . ']);';
         $parse .= '$__' . $var . '_list__ = ' . '$__' . $var . '__["list"];';
         $parse .= '$__' . $var . '_total__ = ' . '$__' . $var . '__["total"];';
-        $parse .= '$__' . $var . '_page__ = ' . '$__' . $var . '__["page"];';
         $parse .= '$__LAKECMS_CATES_LIST__ = $__' . $var . '_list__;';
-        $parse .= '$__LAKECMS_CATES_PAGE__ = $'.$paginate.' = $__' . $var . '_page__;';
         $parse .= '$__LAKECMS_CATES_TOTAL__ = $'.$pagetotal.' = $__' . $var . '_total__;';
         $parse .= '{/php}';
         $parse .= '{volist name="$__' . $var . '_list__" id="' . $return . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
@@ -331,15 +341,28 @@ class Lakecms extends Taglib
         $parse .= '$__' . $var . '_cate__ = ' . '$__' . $var . '__["cate"];';
         $parse .= '$__' . $var . '_list__ = ' . '$__' . $var . '__["list"];';
         $parse .= '$__' . $var . '_total__ = ' . '$__' . $var . '__["total"];';
-        $parse .= '$__' . $var . '_page__ = ' . '$__' . $var . '__["page"];';
         $parse .= '$__LAKECMS_CONTENTS_CATE__ = $__' . $var . '_cate__;';
         $parse .= '$__LAKECMS_CONTENTS_TOTAL__ = $'.$pagetotal.' = $__' . $var . '_total__;';
-        $parse .= '$__LAKECMS_CONTENTS_PAGE__ = $'.$paginate.' = $__' . $var . '_page__;';
         $parse .= '$__LAKECMS_CONTENTS_LIST__ = $__' . $var . '_list__;';
         $parse .= '{/php}';
         $parse .= '{volist name="$__' . $var . '_list__" id="' . $return . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
         $parse .= $content;
         $parse .= '{/volist}';
+        
+        $this->tpl->parse($parse);
+        
+        return $parse;
+    }
+    
+    /**
+     * 信息列表所属分类
+     */
+    public function tagContentscate($tag, $content)
+    {
+        // 返回数据
+        $return = isset($tag['return']) ? $tag['return'] : 'contentscate';
+        
+        $parse = '{php}$' . $return . ' = $__LAKECMS_CONTENTS_CATE__;{/php}';
         
         $this->tpl->parse($parse);
         
@@ -575,7 +598,6 @@ class Lakecms extends Taglib
         $parse = '{php}';
         $parse .= '$__' . $var . '__ = \app\lakecms\template\Model::getTagList([' . implode(',', $params) . ']);';
         $parse .= '$__LAKECMS_TAGS_LIST__ = $__' . $var . '_list__ = $__' . $var . '__["list"];';
-        $parse .= '$__LAKECMS_TAGS_PAGE__ = $'.$paginate.' = $__' . $var . '_page__ = $__' . $var . '__["page"];';
         $parse .= '$__LAKECMS_TAGS_TOTAL__ = $'.$pagetotal.' = $__' . $var . '_total__ = $__' . $var . '__["total"];';
         $parse .= '{/php}';
         $parse .= '{volist name="$__' . $var . '_list__" id="' . $return . '" empty="' . $empty . '" key="' . $key . '" mod="' . $mod . '"}';
@@ -642,7 +664,7 @@ class Lakecms extends Taglib
             $params[] = '"' . $k . '"=>' . $v;
         }
         
-        $parse .= '{php}';
+        $parse = '{php}';
         $parse .= 'echo \app\lakecms\template\Model::getSetting([' . implode(',', $params) . ']);';
         $parse .= '{/php}';
         

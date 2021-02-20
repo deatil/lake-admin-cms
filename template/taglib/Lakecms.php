@@ -642,12 +642,9 @@ class Lakecms extends Taglib
             $params[] = '"' . $k . '"=>' . $v;
         }
         
-        $parse = '{if !isset($__' . $name . '__)}';
         $parse .= '{php}';
-        $parse .= '$__' . $name . '__ = \app\lakecms\template\Model::getSetting([' . implode(',', $params) . ']);';
+        $parse .= 'echo \app\lakecms\template\Model::getSetting([' . implode(',', $params) . ']);';
         $parse .= '{/php}';
-        $parse .= '{/if}';
-        $parse .= '{$__' . $name . '__}';
         
         $this->tpl->parse($parse);
         

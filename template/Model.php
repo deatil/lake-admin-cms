@@ -74,13 +74,9 @@ class Model
         // 总数
         $total = $data->total();
         
-        // 分页
-        $page = $data->render();
-        
         return [
             'list' => $list, 
             'total' => $total,
-            'page' => $page,
         ];
     }
     
@@ -186,13 +182,9 @@ class Model
         // 总数
         $total = $data->total();
         
-        // 分页
-        $page = $data->render();
-        
         return [
             'list' => $list, 
             'total' => $total,
-            'page' => $page,
         ];
     }
     
@@ -277,7 +269,6 @@ class Model
                 'cate' => [], 
                 'list' => [], 
                 'total' => 0,
-                'page' => '',
             ];
         }
         
@@ -328,7 +319,6 @@ class Model
                 'cate' => [], 
                 'list' => [], 
                 'total' => 0,
-                'page' => '',
             ];
         }
         
@@ -385,9 +375,6 @@ class Model
         // 总数
         $total = $data->total();
         
-        // 分页
-        $page = $data->render();
-        
         // 格式化数据
         $modelField = ModelFieldModel::where([
                 'modelid' => $cate['model']['id'],
@@ -404,7 +391,6 @@ class Model
             'cate' => $cate, 
             'list' => $list, 
             'total' => $total,
-            'page' => $page,
         ];
     }
     
@@ -949,13 +935,9 @@ class Model
         // 总数
         $total = $data->total();
         
-        // 分页
-        $page = $data->render();
-        
         return [
             'list' => $list, 
             'total' => $total,
-            'page' => $page,
         ];
     }
     
@@ -1051,6 +1033,9 @@ class Model
         // 总数
         $total = isset($tag['total']) ? intval($tag['total']) : '';
         
+        // url的query. e.g: k=v&k1=v1&k2=v2
+        $query = isset($tag['query']) ? $tag['query'] : '';
+        
         // 简单列表
         $simple = isset($tag['simple']) ? true : false;
         
@@ -1058,10 +1043,15 @@ class Model
             return '';
         }
         
+        // 编码链接
         $url = urldecode($url);
+        
+        // 解析地址参数
+        parse_str($query, $newQuery);
         
         $result = new PaginatorPage([], 1, $page, $total, $simple, [
             'path' => $url, 
+            'query' => $newQuery,
             'simple' => $simple,
         ]);
         

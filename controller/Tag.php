@@ -57,7 +57,6 @@ class Tag extends Base
         $this->assign([
             'list' => $data['list'],
             'total' => $data['total'],
-            'page' => $data['page'],
         ]);
         
         // SEO信息

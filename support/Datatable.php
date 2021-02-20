@@ -273,6 +273,7 @@ class Datatable
     
     /**
      * create的别名
+     * 
      * @return boolen 
      */
     public function query() 
@@ -287,6 +288,7 @@ class Datatable
 
     /**
      * 创建动作
+     * 
      * @return boolen 
      */
     public function create() 
@@ -304,8 +306,8 @@ class Datatable
 
     /**
      * 获取指定的表名
+     * 
      * @var $table 要获取名字的表名
-     * @var $prefix 获取表前缀, 默认为不获取 false
      */
     public function getTablename($table) 
     {
@@ -316,7 +318,7 @@ class Datatable
     /**
      * 获取指定表名的所有字段及详细信息
      * 
-     * @var $table 要获取名字的表名
+     * @var $table 表名
      */
     public function getFields($table = false) 
     {
@@ -347,6 +349,7 @@ class Datatable
 
     /**
      * 确认表是否存在
+     * 
      * @var $table 表名
      */
     public function checkTable($table) 
@@ -359,6 +362,7 @@ class Datatable
 
     /**
      * 确认字段是否存在
+     * 
      * @var $table 表名 
      * @var $field 字段名 要检查的字段名
      */
